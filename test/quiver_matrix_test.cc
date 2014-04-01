@@ -75,4 +75,24 @@ namespace cluster {
 
 		EXPECT_TRUE(exp.equals(m.mutate(4, res)));
 	}
+	
+	TEST(QuiverMatrix, NotInfinite) {
+		int v1[] = {0, 2, -2, -2, 0, 2, 2, -2, 0};
+		int v2[] = {0, 1, -1, 0, -0, 0, 1, 0, 2, -1, 0, 1, -2, 0, 0, 0};
+		QuiverMatrix m(3, 3, v1);
+		QuiverMatrix n(4, 4, v2);
+
+		EXPECT_FALSE(m.is_infinite());
+		EXPECT_FALSE(n.is_infinite());
+	}
+	
+	TEST(QuiverMatrix, Infinite) {
+		int v1[] = {0, 2, -2, -2, 0, 3, 2, -2, 0};
+		int v2[] = {0, 1, -1, 0, -4, 0, 1, 0, 2, -1, 0, 1, -2, 0, 0, 0};
+		QuiverMatrix m(3, 3, v1);
+		QuiverMatrix n(4, 4, v2);
+
+		EXPECT_TRUE(m.is_infinite());
+		EXPECT_TRUE(n.is_infinite());
+	}
 }

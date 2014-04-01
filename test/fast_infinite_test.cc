@@ -5,11 +5,18 @@
 #include "gtest/gtest.h"
 #include "dynkin.h"
 #include "fast_infinite.h"
+#include <iostream>
 
 namespace cluster {
 
 	TEST(FastInfinite, A5) {
 		QuiverMatrix matrix = dynkin::A5;
+		std::cout << matrix << std::endl;
+		EXPECT_FALSE(fastinf::is_infinite(matrix));
+	}
+	
+	TEST(FastInfinite, G2) {
+		QuiverMatrix matrix = dynkin::G2;
 		EXPECT_FALSE(fastinf::is_infinite(matrix));
 	}
 

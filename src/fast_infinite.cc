@@ -4,6 +4,7 @@
 #include "fast_infinite.h"
 #include <random>
 #include <vector>
+#include <iostream>
 
 namespace cluster {
 	namespace fastinf {
@@ -14,7 +15,7 @@ namespace cluster {
 				return false;
 			}
 			std::vector<QuiverMatrix> mutated(2,
-			                                  QuiverMatrix(matrix.num_rows(), matrix.num_cols()));
+			            QuiverMatrix(matrix.num_rows(), matrix.num_cols()));
 
 			int lastMutation = -1;
 			int counter = 0;
@@ -30,6 +31,7 @@ namespace cluster {
 
 				/* Alternate between mutating the two matrices in the array. */
 				QuiverMatrix to_mutate = mutated[counter % 2];
+				std::cout << to_mutate << std::endl;
 				counter++;
 				to_mutate.mutate(rand, mutated[counter % 2]);
 				if (mutated[counter % 2].is_infinite()) {

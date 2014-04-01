@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "int_matrix.h"
 #include <iostream>
+#include <functional>
 
 namespace cluster {
 
@@ -150,5 +151,14 @@ namespace cluster {
 		IntMatrix res(6,6);
 		m.enlarge_matrix(3, 3, res);
 		EXPECT_TRUE(exp.equals(res));
+	}
+
+	TEST(IntMatrix, StlEqualOverride) {
+		int v1[] = {1,2,3,4,5,6,7,8,9};
+		IntMatrix m(3,3,v1);
+		IntMatrix n(3,3,v1);
+		std::equal_to<IntMatrix> eq;
+
+		EXPECT_TRUE(eq(m,n));
 	}
 }

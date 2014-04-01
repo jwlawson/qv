@@ -23,18 +23,19 @@ OBJ_DIR = $(BASE_DIR)/build
 
 # define any directories containing header files other than /usr/include
 # -I/home/newhall/include 
-INCLUDES = -I$(BASE_DIR)/include -I$(BASE_DIR)/src -I$(BASE_DIR)/lib -I$(BASE_DIR)/lib/include
+INCLUDES = -I$(BASE_DIR)/include -I$(BASE_DIR)/src -I$(BASE_DIR)/lib/include 
 
 # define library paths in addition to /usr/lib
 #   if I wanted to include libraries not in /usr/lib I'd specify
 #   their path using -Lpath, something like: -L/home/newhall/lib
-LFLAGS = -L$(BASE_DIR)/lib 
+LFLAGS = -L$(BASE_DIR)/lib -L$(BASE_DIR)/lib/cygwin -L$(BASE_DIR)/lib \
+				 -L$(BASE_DIR)/lib/linux 
 
 # define any libraries to link into executable:
 #   if I want to link in libraries (libx.so or libx.a) I use the -llibname 
 #   option, something like (this will link in libmylib.so and libm.so:
 LIBS =
-TEST_LIBS = -lgtest -lgtest_main
+TEST_LIBS = -lgtest -lgtest_main -lpthread
 
 # define the C source files
 SRCS = $(wildcard $(SRC_DIR)/*.cc)

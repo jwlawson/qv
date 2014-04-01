@@ -4,4 +4,6 @@ build/
 *.swp
 *~
 *#
+testqv
+*.orig
 

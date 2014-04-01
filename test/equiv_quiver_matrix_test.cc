@@ -18,10 +18,10 @@ namespace cluster{
 		
 		int v3[] = {0, 1, 0, -1, 0, 1, 0, -1, 0};
 		int v4[] = {0, -1, 0, 1, 0, -1, 0, 1, 0};
-		m1.set(3, 3, v3);
-		m2.set(3, 3, v4);
+		EquivQuiverMatrix m3(3, 3, v3);
+		EquivQuiverMatrix m4(3, 3, v4);
 
-		EXPECT_TRUE(m1.equals(m2));
+		EXPECT_TRUE(m3.equals(m4));
 	}
 
 	TEST(EquivMatrix,SameAreEqual) {
@@ -99,8 +99,10 @@ namespace cluster{
 
 	TEST(EquivMatrix,5x5) {
 	
-		int v1[] = {0, -1, 0, 0, 0, 1, 0, 0, -1, 1, 0, 0, 0, 1, -1, 0, 1, -1, 0, 0,	0, -1, 1, 0, 0};
-		int v2[] = {0, 0, 0, -1, 1, 0, 0, 1, 1, -1, 0, -1, 0, 0, 0, 1, -1, 0, 0, 0,	-1, 1, 0, 0, 0};
+		int v1[] = {0, -1, 0, 0, 0, 1, 0, 0, -1, 1, 0, 0, 0, 1, -1, 0, 1, -1, 0,
+			0,	0, -1, 1, 0, 0};
+		int v2[] = {0, 0, 0, -1, 1, 0, 0, 1, 1, -1, 0, -1, 0, 0, 0, 1, -1, 0, 0,
+			0,	-1, 1, 0, 0, 0};
 		EquivQuiverMatrix m1(5, 5, v1);
 		EquivQuiverMatrix m2(5, 5, v2);
 

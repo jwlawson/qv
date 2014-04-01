@@ -3,32 +3,31 @@
 #include "array_utils.h"
 #include <iostream>
 
-namespace cluster{
+namespace cluster {
+	EquivQuiverMatrix::EquivQuiverMatrix()
+		: QuiverMatrix() {}
 	EquivQuiverMatrix::EquivQuiverMatrix(const int rows, const int cols)
-		: QuiverMatrix(rows, cols)
-	{
+		: QuiverMatrix(rows, cols) {
 		checker_ = EquivalenceChecker::Get(rows);
 	}
-	EquivQuiverMatrix::EquivQuiverMatrix(const int rows, const int cols, const int values[])
-		: QuiverMatrix(rows, cols, values)
-	{
+	EquivQuiverMatrix::EquivQuiverMatrix(const int rows, const int cols,
+	                                     const int values[])
+		: QuiverMatrix(rows, cols, values) {
 		checker_ = EquivalenceChecker::Get(rows);
 	}
-	EquivQuiverMatrix::~EquivQuiverMatrix(){}
-	const bool EquivQuiverMatrix::equals(const IntMatrix& mat) const
-	{
+	EquivQuiverMatrix::~EquivQuiverMatrix() {}
+	bool EquivQuiverMatrix::equals(const IntMatrix &mat) const {
 		return checker_->are_equivalent(*this, mat);
 	}
 
 	/* Private methods */
 
-	const std::size_t EquivQuiverMatrix::compute_hash() const
-	{
+	std::size_t EquivQuiverMatrix::compute_hash() const {
 		std::size_t hash = 137;
-		int* rowSum = new int[num_rows()];
-		int* colSum = new int[num_cols()];
-		int* absRowSum = new int[num_rows()];
-		int* absColSum = new int[num_cols()];
+		int *rowSum = new int[num_rows()];
+		int *colSum = new int[num_cols()];
+		int *absRowSum = new int[num_rows()];
+		int *absColSum = new int[num_cols()];
 		for (int i = 0; i < num_rows(); i++) {
 			for (int j = 0; j < num_cols(); j++) {
 				rowSum[i] += get(i, j);

@@ -11,7 +11,6 @@ namespace cluster {
 
 	TEST(FastInfinite, A5) {
 		QuiverMatrix matrix = dynkin::A5;
-		std::cout << matrix << std::endl;
 		EXPECT_FALSE(fastinf::is_infinite(matrix));
 	}
 	

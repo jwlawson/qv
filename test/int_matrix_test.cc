@@ -161,4 +161,17 @@ namespace cluster {
 
 		EXPECT_TRUE(eq(m,n));
 	}
+	
+	TEST(IntMatrix, Assign) {
+		int v1[] = {1,2,3,4,5,6,7,8,9};
+		int v2[] = {4,5,6,7,8,9,0,1,2};
+		
+		IntMatrix m(3,3,v1);
+		IntMatrix n(3,3,v2);
+		
+		n = m;
+		
+		EXPECT_TRUE(m.equals(n));
+		EXPECT_TRUE(n.equals(m));
+	}
 }

@@ -8,7 +8,7 @@
 
 namespace cluster {
 
-	TEST(FastInfinite, Call) {
+	TEST(FastInfinite, A5) {
 		QuiverMatrix matrix = dynkin::A5;
 		EXPECT_FALSE(fastinf::is_infinite(matrix));
 	}
@@ -16,13 +16,13 @@ namespace cluster {
 	TEST(FastInfinite, Inf) {
 		int v[] = { 0, 1, 0, 0, -1, 0, 1, 1, 0, -1, 0, 1, 0, -1, -1, 0};
 		QuiverMatrix mat(4, 4, v);
-		EXPECT_FALSE(fastinf::is_infinite(mat));
+		EXPECT_TRUE(fastinf::is_infinite(mat));
 	}
 
 	TEST(FastInfinite, Infinite5) {
 		int v[] = { 0, -1, 1, 0, 2, 1, 0, -1, 0, -2, -1, 1, 0, 1, 2, 0, 0, -1, 0, 0, -2,
 				2, -2, 0, 0};
 		QuiverMatrix mat(5, 5, v);
-		EXPECT_FALSE(fastinf::is_infinite(mat));
+		EXPECT_TRUE(fastinf::is_infinite(mat));
 	}
 }

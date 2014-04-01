@@ -9,10 +9,11 @@ namespace cluster {
 		QuiverMatrix();
 		QuiverMatrix(const int rows, const int cols);
 		QuiverMatrix(const int rows, const int cols, const int values[]);
-		QuiverMatrix(const QuiverMatrix& mat);
-		QuiverMatrix(QuiverMatrix&& mat);
+		QuiverMatrix(const QuiverMatrix &mat);
+		QuiverMatrix(QuiverMatrix &&mat);
 		~QuiverMatrix();
 		bool is_infinite() const;
+		QuiverMatrix& operator=(QuiverMatrix mat);
 
 		template<class T>
 		T mutate(const int k, T &result) const {
@@ -46,3 +47,22 @@ namespace cluster {
 	 private:
 	};
 }
+
+namespace std {
+	/* Add hash function to the std::hash struct. */
+	template <>
+	struct hash<cluster::QuiverMatrix> {
+		size_t operator()(const cluster::QuiverMatrix &x) const {
+			return x.hash();
+		}
+	};
+	/* Add equals function to std::equal_to */
+	template<>
+	struct equal_to<cluster::QuiverMatrix> {
+		bool operator()(const cluster::QuiverMatrix &lhs,
+		                const cluster::QuiverMatrix &rhs) const {
+			return lhs.equals(rhs);
+		}
+	};
+}
+

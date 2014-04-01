@@ -20,6 +20,12 @@ namespace cluster {
 		return checker_->are_equivalent(*this, mat);
 	}
 
+
+		EquivQuiverMatrix& EquivQuiverMatrix::operator=(EquivQuiverMatrix mat){
+			IntMatrix::operator=(mat);
+			return *this;
+		}
+
 	/* Private methods */
 
 	std::size_t EquivQuiverMatrix::compute_hash() const {

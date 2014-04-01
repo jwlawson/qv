@@ -7,11 +7,16 @@ namespace cluster {
 		: IntMatrix(rows, cols) {}
 	QuiverMatrix::QuiverMatrix(const int rows, const int cols, const int values[])
 		: IntMatrix(rows, cols, values) {}
-	QuiverMatrix::QuiverMatrix(const QuiverMatrix& mat)
+	QuiverMatrix::QuiverMatrix(const QuiverMatrix &mat)
 		: IntMatrix(mat) {}
-	QuiverMatrix::QuiverMatrix(QuiverMatrix&& mat)
+	QuiverMatrix::QuiverMatrix(QuiverMatrix &&mat)
 		: IntMatrix(mat) {}
 	QuiverMatrix::~QuiverMatrix() {}
+
+	QuiverMatrix& QuiverMatrix::operator=(QuiverMatrix mat) {
+		IntMatrix::operator=(mat);
+		return *this;
+	}
 	bool QuiverMatrix::is_infinite() const {
 		for (int i = 0; i < num_rows(); i++) {
 			for (int j = 0; j < num_cols(); j++) {

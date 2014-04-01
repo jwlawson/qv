@@ -9,12 +9,19 @@
 
 namespace cluster {
 	template<class T>
+		LinkHolder<T>::LinkHolder() {}
+
+	template<class T>
 	LinkHolder<T>::LinkHolder(const int size)
 		: links_(size, false) {}
 
 	template<class T>
 	LinkHolder<T>::~LinkHolder() {}
 
+	template<class T>
+		void LinkHolder<T>::size(const int size){
+			links_.reserve(size);
+		}
 	template<class T>
 	void LinkHolder<T>::matrix(T mat) {
 		matrix_ = mat;

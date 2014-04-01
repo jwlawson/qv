@@ -8,9 +8,11 @@ namespace cluster {
 	template<class T>
 	class	LinkHolder {
 
-	 public:
+		public:
+		LinkHolder();
 		LinkHolder(const int k);
 		~LinkHolder();
+		void size(const int size);
 		void matrix(T mat);
 		T matrix() const;
 		void link(const int k);

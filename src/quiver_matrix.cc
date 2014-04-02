@@ -9,11 +9,13 @@ namespace cluster {
 		: IntMatrix(rows, cols, values) {}
 	QuiverMatrix::QuiverMatrix(const QuiverMatrix &mat)
 		: IntMatrix(mat) {}
+	QuiverMatrix::QuiverMatrix(IntMatrix matrix)
+		: IntMatrix(matrix) {}
 	QuiverMatrix::QuiverMatrix(QuiverMatrix &&mat)
 		: IntMatrix(mat) {}
 	QuiverMatrix::~QuiverMatrix() {}
 
-	QuiverMatrix& QuiverMatrix::operator=(QuiverMatrix mat) {
+	QuiverMatrix &QuiverMatrix::operator=(QuiverMatrix mat) {
 		IntMatrix::operator=(mat);
 		return *this;
 	}

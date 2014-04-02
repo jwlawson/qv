@@ -83,7 +83,7 @@ namespace cluster {
 	 private:
 		int num_rows_;
 		int num_cols_;
-		int *data_;
+		std::vector<int> data_;
 
 		int get_index(const int row, const int col) const;
 		virtual std::size_t compute_hash() const;

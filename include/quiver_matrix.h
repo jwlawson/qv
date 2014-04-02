@@ -10,10 +10,11 @@ namespace cluster {
 		QuiverMatrix(const int rows, const int cols);
 		QuiverMatrix(const int rows, const int cols, const int values[]);
 		QuiverMatrix(const QuiverMatrix &mat);
+		QuiverMatrix(IntMatrix matrix);
 		QuiverMatrix(QuiverMatrix &&mat);
 		~QuiverMatrix();
 		bool is_infinite() const;
-		QuiverMatrix& operator=(QuiverMatrix mat);
+		QuiverMatrix &operator=(QuiverMatrix mat);
 
 		template<class T>
 		T mutate(const int k, T &result) const {

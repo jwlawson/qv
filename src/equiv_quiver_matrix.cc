@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include "equiv_quiver_matrix.h"
 #include "array_utils.h"
-#include <iostream>
+#include <algorithm>
 
 namespace cluster {
 	EquivQuiverMatrix::EquivQuiverMatrix()
@@ -15,25 +15,29 @@ namespace cluster {
 		: QuiverMatrix(rows, cols, values) {
 		checker_ = EquivalenceChecker::Get(rows);
 	}
+	EquivQuiverMatrix::EquivQuiverMatrix(IntMatrix matrix)
+		: QuiverMatrix(matrix) {
+		checker_ = EquivalenceChecker::Get(matrix.num_rows());
+	}
 	EquivQuiverMatrix::~EquivQuiverMatrix() {}
 	bool EquivQuiverMatrix::equals(const IntMatrix &mat) const {
 		return checker_->are_equivalent(*this, mat);
 	}
 
 
-		EquivQuiverMatrix& EquivQuiverMatrix::operator=(EquivQuiverMatrix mat){
-			IntMatrix::operator=(mat);
-			return *this;
-		}
+	EquivQuiverMatrix &EquivQuiverMatrix::operator=(EquivQuiverMatrix mat) {
+		IntMatrix::operator=(mat);
+		return *this;
+	}
 
 	/* Private methods */
 
 	std::size_t EquivQuiverMatrix::compute_hash() const {
 		std::size_t hash = 137;
-		int *rowSum = new int[num_rows()];
-		int *colSum = new int[num_cols()];
-		int *absRowSum = new int[num_rows()];
-		int *absColSum = new int[num_cols()];
+		std::vector<int> rowSum(num_rows(), 0);
+		std::vector<int> colSum(num_cols(), 0);
+		std::vector<int> absRowSum(num_rows(), 0);
+		std::vector<int> absColSum(num_cols(), 0);
 		for (int i = 0; i < num_rows(); i++) {
 			for (int j = 0; j < num_cols(); j++) {
 				rowSum[i] += get(i, j);
@@ -42,19 +46,14 @@ namespace cluster {
 				absColSum[j] += std::abs(get(i, j));
 			}
 		}
-		arrays::sort(rowSum, num_rows());
-		arrays::sort(colSum, num_cols());
-		arrays::sort(absRowSum, num_rows());
-		arrays::sort(absColSum, num_cols());
-		hash += 257 * arrays::hash(rowSum, num_rows());
-		hash += 73 * arrays::hash(colSum, num_cols());
-		hash += 67 * arrays::hash(absRowSum, num_rows());
-		hash += 157 * arrays::hash(absColSum, num_cols());
-
-		delete rowSum;
-		delete colSum;
-		delete absRowSum;
-		delete absColSum;
+		std::sort(rowSum.begin(), rowSum.end());
+		std::sort(absRowSum.begin(), absRowSum.end());
+		std::sort(colSum.begin(), colSum.end());
+		std::sort(absColSum.begin(), absColSum.end());
+		hash += 257 * arrays::hash(rowSum);
+		hash += 73 * arrays::hash(colSum);
+		hash += 67 * arrays::hash(absRowSum);
+		hash += 157 * arrays::hash(absColSum);
 
 		return hash;
 	}

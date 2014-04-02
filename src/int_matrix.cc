@@ -1,43 +1,34 @@
 #include "int_matrix.h"
 #include <functional>
+#include <iostream>
 
 namespace cluster {
 
-	IntMatrix::IntMatrix() : num_rows_(0), num_cols_(0) {
-		data_ = new int[0];
-	}
+	IntMatrix::IntMatrix() : num_rows_(0), num_cols_(0), data_(0) {}
 
 	IntMatrix::IntMatrix(const int rows, const int cols)
-		: num_rows_(rows), num_cols_(cols) {
-		data_ = new int[rows * cols];
-		for (int i = 0; i < rows * cols; i++) {
-			data_[i] = 0;
-		}
-	}
+		: num_rows_(rows), num_cols_(cols), data_(rows *cols, 0) {}
 
 	IntMatrix::IntMatrix(const int rows, const int cols, const int values[])
-		: num_rows_(rows), num_cols_(cols) {
-		data_ = new int[rows * cols];
+		: num_rows_(rows), num_cols_(cols), data_(rows *cols) {
 		for (int i = 0; i < rows * cols; i++) {
 			data_[i] = values[i];
 		}
 	}
 	IntMatrix::IntMatrix(const IntMatrix &mat)
-		: IntMatrix(mat.num_rows_, mat.num_cols_, mat.data_) {}
+		: num_rows_(mat.num_rows_), num_cols_(mat.num_cols_), data_(mat.data_) {}
 
 	IntMatrix::IntMatrix(IntMatrix&& mat)
 		: IntMatrix() {
 		swap(*this, mat);
 	}
 
-	IntMatrix::~IntMatrix() {
-		delete[] data_;
-	}
+	IntMatrix::~IntMatrix() {}
 
 	/* Public methods */
 
 	IntMatrix &IntMatrix::operator= (IntMatrix mat) {
-		set(mat);
+		swap(*this, mat);
 		return *this;
 	}
 	int IntMatrix::num_rows() const {
@@ -74,17 +65,6 @@ namespace cluster {
 	void IntMatrix::set(IntMatrix mat) {
 		swap(*this, mat);
 	}
-
-//	void IntMatrix::set (const int rows, const int cols, const int *values) {
-//		reset();
-//		delete[] data_;
-//		data_ = new int[rows * cols];
-//		num_rows_ = rows;
-//		num_cols_ = cols;
-//		for (int i = 0; i < rows * cols; i++) {
-//			data_[i] = values[i];
-//		}
-//	}
 
 	void IntMatrix::set(const int row, const int col, const int value) {
 		data_[get_index(row, col)] = value;

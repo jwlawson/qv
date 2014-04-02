@@ -56,7 +56,7 @@ namespace cluster {
 
 	TEST(QuiverMatrix, Enlarge2) {
 		int v1[] = {0, 2, -2, -2, 0, 2, 2, -2, 0};
-		int v2[] = {0, 2, -2, 0, 0, -2, 0, 2, 0, 0, 2, -2, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0};
+		int v2[] = {0, 2, -2, 0, 0, -2, 0, 2, 0, 0, 2, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		QuiverMatrix m(3, 3, v1);
 		QuiverMatrix exp(5, 5, v2);
 		QuiverMatrix res(5, 5);
@@ -66,16 +66,18 @@ namespace cluster {
 
 	TEST(QuiverMatrix, 5Mut) {
 		int v1[] = {0, 0, -1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, -1, 1, -1, 0, 1, 0,
-						-1, 0, -1, -1, 1, 0};
+		            -1, 0, -1, -1, 1, 0
+		           };
 		int v2[] = {0, 0, -1, 1, 0, 0, 0, 0, 1, -1, 1, 0, 0, 0, -1, -1, -1, 0,
-						0, 1, 0, 1, 1, -1, 0};
+		            0, 1, 0, 1, 1, -1, 0
+		           };
 		QuiverMatrix m(5, 5, v1);
 		QuiverMatrix exp(5, 5, v2);
 		QuiverMatrix res(5, 5);
 
 		EXPECT_TRUE(exp.equals(m.mutate(4, res)));
 	}
-	
+
 	TEST(QuiverMatrix, NotInfinite) {
 		int v1[] = {0, 2, -2, -2, 0, 2, 2, -2, 0};
 		int v2[] = {0, 1, -1, 0, -0, 0, 1, 0, 2, -1, 0, 1, -2, 0, 0, 0};
@@ -85,7 +87,7 @@ namespace cluster {
 		EXPECT_FALSE(m.is_infinite());
 		EXPECT_FALSE(n.is_infinite());
 	}
-	
+
 	TEST(QuiverMatrix, Infinite) {
 		int v1[] = {0, 2, -2, -2, 0, 3, 2, -2, 0};
 		int v2[] = {0, 1, -1, 0, -4, 0, 1, 0, 2, -1, 0, 1, -2, 0, 0, 0};
@@ -97,26 +99,26 @@ namespace cluster {
 	}
 
 	TEST(QuiverMatrix, Assign) {
-		int v1[] = {1,2,3,4,5,6,7,8,9};
-		int v2[] = {4,5,6,7,8,9,0,1,2};
-		
-		QuiverMatrix m(3,3,v1);
-		QuiverMatrix n(3,3,v2);
-		
+		int v1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+		int v2[] = {4, 5, 6, 7, 8, 9, 0, 1, 2};
+
+		QuiverMatrix m(3, 3, v1);
+		QuiverMatrix n(3, 3, v2);
+
 		n = m;
-		
+
 		EXPECT_TRUE(m.equals(n));
 		EXPECT_TRUE(n.equals(m));
 	}
 
 	TEST(QuiverMatrix, ZeroMutation) {
-		int v[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-		QuiverMatrix m(4,4,v);
-		QuiverMatrix exp(4,4,v);
-		QuiverMatrix res (4,4);
-		
+		int v[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		QuiverMatrix m(4, 4, v);
+		QuiverMatrix exp(4, 4, v);
+		QuiverMatrix res(4, 4);
+
 		m.mutate(3, res);
 		EXPECT_TRUE(res.equals(exp));
 	}
-		
+
 }

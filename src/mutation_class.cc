@@ -12,19 +12,21 @@ namespace cluster {
 	const T MutationClass<T>::INFINITE;
 
 	template<class T>
-	MutationClass<T>::MutationClass() {}
-
-	template<class T>
 	MutationClass<T>::MutationClass(T mat)
 		: matrix_(mat),
 		  should_calc_(true),
 		  size_(mat.num_rows()),
 		  map_(),
-		  queue_() {}
+		  queue_() {
+		map_[matrix_].matrix(matrix_);
+		map_[matrix_].size(size_);
+		queue_.push_back(matrix_);
+	}
 
 	template<class T>
 	T MutationClass<T>::next() {
 		T result = queue_.front();
+		queue_.pop_front();
 		if (compute_mutations(result)) {
 			return result;
 		} else {
@@ -61,6 +63,7 @@ namespace cluster {
 				}
 			}
 		}
+		remove_handled(mat);
 		return true;
 	}
 
@@ -90,7 +93,9 @@ namespace cluster {
 	void MutationClass<T>::unseen_matrix(const T &matrix, const T &previous,
 	                                     const int vertex) {
 		queue_.push_back(matrix);
+		map_[matrix].size(size_);
 		map_[matrix].link(vertex);
+		map_[matrix].matrix(matrix);
 		map_[previous].link(vertex);
 	}
 
@@ -101,7 +106,7 @@ namespace cluster {
 
 	template<class T>
 	bool MutationClass<T>::mutate_at(const T &matrix, const int i) {
-		return map_[matrix].has_link(i);
+		return map_.count(matrix) > 0 && !map_[matrix].has_link(i);
 	}
 	template class MutationClass<QuiverMatrix>;
 	template class MutationClass<EquivQuiverMatrix>;

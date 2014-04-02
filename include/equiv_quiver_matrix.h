@@ -5,15 +5,16 @@
 namespace cluster {
 	class EquivQuiverMatrix :
 		public QuiverMatrix {
-public:
+	 public:
 		EquivQuiverMatrix();
 		EquivQuiverMatrix(const int rows, const int cols);
 		EquivQuiverMatrix(const int rows, const int cols, const int values[]);
+		EquivQuiverMatrix(IntMatrix);
 		~EquivQuiverMatrix();
 		virtual bool equals(const IntMatrix &mat) const;
-		EquivQuiverMatrix& operator=(EquivQuiverMatrix mat);
+		EquivQuiverMatrix &operator=(EquivQuiverMatrix mat);
 
-private:
+	 private:
 		std::shared_ptr<EquivalenceChecker> checker_;
 
 		virtual std::size_t compute_hash() const;

@@ -1,3 +1,8 @@
+/*
+ * mutation_class.h
+ */
+#pragma once
+
 #include <unordered_map>
 #include <deque>
 #include "link_holder.h"
@@ -9,7 +14,13 @@ namespace cluster {
 	 public:
 		const static T INFINITE;
 
-		MutationClass();
+		/**
+		 * Create a new MutationClass starting from the specified inital matrix.
+		 *
+		 * The class provides an iterator-like interface to go through all matrices
+		 * in the mutation class.
+		 * @param initial Matrix to seed the mutation class
+		 */
 		MutationClass(const T initial);
 		/**
 		 * Get the next unique matrix in the mutation class.
@@ -38,11 +49,40 @@ namespace cluster {
 
 	 protected:
 		T matrix_;
-		bool should_calc_;
 		int size_;
 		std::unordered_map<T, LinkHolder<T>> map_;
-		std::deque<T> queue_;
 
+		/**
+		 * Handle a matrix which has been seen before.
+		 *
+		 * The matrix was attained by a mutation from the previous at the specified
+		 * vertex.
+		 * @param matrix Matrix which was attained and has been seen before
+		 * @param previous Matrix which was mutated
+		 * @param vertex Vertex at which previous was mutated to give matrix
+		 */
+		virtual void seen_matrix(const T &matrix, const T &previous, const int vertex);
+		/**
+		 * Handle a matrix which has not been seen before.
+		 *
+		 * The matrix was attained by a mutation from the previous at the specified
+		 * vertex.
+		 * @param matrix Matrix which was attained and has been seen before
+		 * @param previous Matrix which was mutated
+		 * @param vertex Vertex at which previous was mutated to give matrix
+		 */
+		virtual void unseen_matrix(const T &matrix, const T &previous,
+		                           const int vertex);
+		/**
+		 * Check whether the specified matrix has been seen before.
+		 * @param matrix Matrix to check
+		 * @return true if the matrix has been seen
+		 */
+		virtual bool have_seen(const T &matrix);
+
+	 private:
+		bool should_calc_;
+		std::deque<T> queue_;
 		/**
 		 * Compute all mutations of the matrix and add to the map and queue if the
 		 * new matrices should be.
@@ -51,14 +91,29 @@ namespace cluster {
 		 * matrix is found.
 		 */
 		bool compute_mutations(const T &matrix);
+		/**
+		 * Check whether the matrix is complete, that is whether all possible
+		 * mutations have been seen.
+		 * @param Matrix to check
+		 * @return true if the matrix is complete
+		 */
 		bool is_complete(const T &matrix);
+		/**
+		 * Remove the matrix from the map.
+		 * @param Matrix to remove
+		 */
 		void remove_handled(const T &matrix);
+		/**
+		 * Remove the matrix from the map.
+		 * @param Matrix to remove
+		 */
 		void remove_complete(const T &matrix);
-		void seen_matrix(const T &matrix, const T &previous, const int vertex);
-		void unseen_matrix(const T &matrix, const T &previous, const int vertex);
-		bool have_seen(const T &matrix);
-
-	 private:
+		/**
+		 * Check whether to mutate at the specified vertex.
+		 * @param matrix Matrix to check against
+		 * @param i Index of the vertex
+		 * @return true if should mutate
+		 */
 		bool mutate_at(const T &matrix, const int i);
 	};
 }

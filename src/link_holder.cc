@@ -9,25 +9,31 @@
 
 namespace cluster {
 	template<class T>
-		LinkHolder<T>::LinkHolder() {}
+	LinkHolder<T>::LinkHolder()
+		: links_(0, false) {}
 
 	template<class T>
 	LinkHolder<T>::LinkHolder(const int size)
-		: links_(size, false) {}
+		: links_(size, false), size_(size) {}
 
 	template<class T>
 	LinkHolder<T>::~LinkHolder() {}
 
 	template<class T>
-		void LinkHolder<T>::size(const int size){
-			links_.reserve(size);
+	void LinkHolder<T>::size(const int size) {
+		size_ = size;
+		links_.reserve(size);
+		/* Reserve makes bools which are true. We want false. */
+		for (int i = 0; i < size; i++) {
+			links_[i] = false;
 		}
+	}
 	template<class T>
-	void LinkHolder<T>::matrix(T mat) {
+	void LinkHolder<T>::matrix(const T &mat) {
 		matrix_ = mat;
 	}
 	template<class T>
-	T LinkHolder<T>::matrix() const {
+	const T LinkHolder<T>::matrix() const {
 		return matrix_;
 	}
 	template<class T>
@@ -40,7 +46,7 @@ namespace cluster {
 	}
 	template<class T>
 	bool LinkHolder<T>::is_complete() const {
-		for (uint i = 0; i < links_.size(); i++) {
+		for (int i = 0; i < size_; i++) {
 			if (!links_[i]) {
 				return false;
 			}

@@ -9,3 +9,6 @@ testqv
 lib/
 .ycm_xtra_conf.pyc
 *.a
+callgrind.*
+core.*
+

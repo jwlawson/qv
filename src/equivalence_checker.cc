@@ -4,6 +4,9 @@
 #include <iostream>
 
 namespace cluster {
+	std::weak_ptr<EquivalenceChecker> EquivalenceChecker::instance_ = 
+		std::make_shared<EquivalenceChecker>();
+
 	std::shared_ptr<EquivalenceChecker> EquivalenceChecker::Get(const int size) {
 		std::shared_ptr<EquivalenceChecker> result = instance_.lock();
 		if (!result || result->size_ != size) {
@@ -14,10 +17,19 @@ namespace cluster {
 	}
 
 	EquivalenceChecker::EquivalenceChecker()
-		: permutations_(0, IntMatrix(0, 0)), ap_(0, 0), pb_(0, 0) {}
+		: permutations_(), 
+			ap_(0, 0), 
+			pb_(0, 0), 
+			size_(0) {}
 	EquivalenceChecker::EquivalenceChecker(const int size)
-		: permutations_(factorial(size), IntMatrix(size, size)), ap_(size, size),
-		  pb_(size, size) {
+		: permutations_(factorial(size), IntMatrix(size, size)),
+			ap_(size, size),
+		  pb_(size, size),
+			size_(size) {
+		if(size == 0) {
+			/* Don't even bother trying to do anything. */
+			return;
+		}
 		int count = 0;
 		int *values = new int[size];
 		for (int i = 0; i < std::pow(size, size); i++) {
@@ -28,12 +40,13 @@ namespace cluster {
 			for (int j = 0; j < size; j++) {
 				permutations_[count].set(j, values[j], 1);
 			}
+			permutations_[count].reset();
 			count++;
 		}
-		delete values;
+		delete [] values;
 	}
 	EquivalenceChecker::~EquivalenceChecker() {}
-	const bool EquivalenceChecker::are_equivalent(const IntMatrix &a,
+	bool EquivalenceChecker::are_equivalent(const IntMatrix &a,
 	    const IntMatrix &b) {
 		if (IntMatrix::are_equal(a, b)) {
 			return true;
@@ -71,7 +84,7 @@ namespace cluster {
 			return false;
 		}
 
-		std::vector<int>  row_mappings = new_mapping_array(a_rows);
+		std::vector<int> row_mappings = new_mapping_array(a_rows);
 		std::vector<int> col_mappings = new_mapping_array(a_cols);
 
 		bool rows_match =
@@ -102,8 +115,12 @@ namespace cluster {
 		return false;
 	}
 
+	EquivalenceChecker& EquivalenceChecker::operator=(EquivalenceChecker mat) {
+		swap(*this, mat);
+		return *this;
+	}
+
 	/* Private methods */
-	std::weak_ptr<EquivalenceChecker> EquivalenceChecker::instance_;
 
 	bool EquivalenceChecker::perm_values(const int size, const int i,
 	                                     int *values) const {
@@ -161,10 +178,10 @@ namespace cluster {
 		return cols_match;
 	}
 	bool EquivalenceChecker::do_rows_match(const IntMatrix a, const IntMatrix b,
-	                                       const int a_rows,
-	                                       const std::vector<int> a_row_sum, const std::vector<int> a_abs_row_sum,
-	                                       const std::vector<int> b_row_sum,
-	                                       const std::vector<int> b_abs_row_sum, std::vector<int> &row_mappings) const {
+	    const int a_rows,
+	    const std::vector<int> a_row_sum, const std::vector<int> a_abs_row_sum,
+	    const std::vector<int> b_row_sum,
+	    const std::vector<int> b_abs_row_sum, std::vector<int> &row_mappings) const {
 		bool rows_match = true;
 		for (int a_ind = 0; a_ind < a_rows && rows_match; a_ind++) {
 			int inRow = arrays::number_in(b_row_sum, a_row_sum[a_ind]);
@@ -222,6 +239,14 @@ namespace cluster {
 		std::sort(b.begin(), b.end());
 		bool equal = arrays::equal(a, b);
 		return equal;
+	}
+
+	void swap(EquivalenceChecker& f, EquivalenceChecker& s) {
+		using std::swap;
+		swap(f.permutations_, s.permutations_);
+		swap(f.ap_, s.ap_);
+		swap(f.pb_, s.pb_);
+		swap(f.size_, s.size_);
 	}
 }
 

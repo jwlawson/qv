@@ -137,4 +137,23 @@ namespace cluster {
 
 		EXPECT_TRUE(eq(m1, m2));
 	}
+	TEST(EquivMatrix, Equivalent3) {
+		int v1[] = {0, 1, 0, -1, 0, 1, 0, -1, 0};
+		int v2[] = {0, -1, 0, 1, 0, -1, 0, 1, 0};
+
+		EquivQuiverMatrix m1(3, 3, v1);
+		EquivQuiverMatrix m2(3, 3, v2);
+
+		EXPECT_TRUE(m1.equals(m2));
+	}	
+	
+	TEST(EquivMatrix, EquivalentHash) {
+		int v1[] = {0, 1, 0, -1, 0, 1, 0, -1, 0};
+		int v2[] = {0, -1, 0, 1, 0, -1, 0, 1, 0};
+
+		EquivQuiverMatrix m1(3, 3, v1);
+		EquivQuiverMatrix m2(3, 3, v2);
+
+		EXPECT_EQ(m1.hash(), m2.hash());
+	}
 }

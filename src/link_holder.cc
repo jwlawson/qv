@@ -10,7 +10,7 @@
 namespace cluster {
 	template<class T>
 	LinkHolder<T>::LinkHolder()
-		: links_(0, false) {}
+		: links_(0, false), size_(0) {}
 
 	template<class T>
 	LinkHolder<T>::LinkHolder(const int size)

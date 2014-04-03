@@ -10,20 +10,23 @@ namespace cluster {
 		EquivalenceChecker();
 		EquivalenceChecker(const int size);
 		~EquivalenceChecker();
-		const bool are_equivalent(const IntMatrix &lhs, const IntMatrix &rhs);
+		bool are_equivalent(const IntMatrix &lhs, const IntMatrix &rhs);
+		EquivalenceChecker& operator=(EquivalenceChecker mat);
+		friend void swap(EquivalenceChecker& f, EquivalenceChecker& s);
+
 	 private:
 		static std::weak_ptr<EquivalenceChecker> instance_;
 
-		int size_;
 		std::vector<IntMatrix> permutations_;
 		IntMatrix ap_;
 		IntMatrix pb_;
+		int size_;
 
 		bool perm_values(const int size, const int i, int *values) const;
 		int factorial(const int num) const;
 		std::vector<int> new_mapping_array(const int size) const;
 		bool do_columns_match(const IntMatrix a, const IntMatrix b, const int a_cols,
-		                      const std::vector<int> a_col_sum, const std::vector<int> a_abs_col_sum,
+		                      const std::vector<int> a_col_sum,const std::vector<int> a_abs_col_sum,
 		                      const std::vector<int> b_col_sum, const std::vector<int> b_abs_col_sum,
 		                      std::vector<int> &col_mappings) const;
 		bool do_rows_match(const IntMatrix a, const IntMatrix b, const int a_rows,

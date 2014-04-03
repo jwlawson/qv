@@ -4,19 +4,30 @@
 
 namespace cluster {
 
-	IntMatrix::IntMatrix() : num_rows_(0), num_cols_(0), data_(0) {}
+	IntMatrix::IntMatrix() : num_rows_(0), num_cols_(0), data_(0), hashcode_(0) {}
 
 	IntMatrix::IntMatrix(const int rows, const int cols)
-		: num_rows_(rows), num_cols_(cols), data_(rows *cols, 0) {}
+		: num_rows_(rows),
+			num_cols_(cols),
+			data_(rows *cols, 0),
+			hashcode_(0) {}
 
 	IntMatrix::IntMatrix(const int rows, const int cols, const int values[])
-		: num_rows_(rows), num_cols_(cols), data_(rows *cols) {
+		: num_rows_(rows),
+			num_cols_(cols),
+			data_(rows *cols),
+			hashcode_(0) {
 		for (int i = 0; i < rows * cols; i++) {
 			data_[i] = values[i];
 		}
+		hashcode_=compute_hash();
 	}
 	IntMatrix::IntMatrix(const IntMatrix &mat)
-		: num_rows_(mat.num_rows_), num_cols_(mat.num_cols_), data_(mat.data_) {}
+		: num_rows_(mat.num_rows_),
+			num_cols_(mat.num_cols_),
+			data_(mat.data_),
+			hashcode_(mat.hashcode_) {
+		}
 
 	IntMatrix::IntMatrix(IntMatrix&& mat)
 		: IntMatrix() {
@@ -78,7 +89,9 @@ namespace cluster {
 		return result;
 	}
 
-	void IntMatrix::reset() {}
+	void IntMatrix::reset() {
+		hashcode_ = compute_hash();
+	}
 
 	int IntMatrix::zero_row() const {
 		bool isZero = false;
@@ -114,7 +127,7 @@ namespace cluster {
 	}
 
 	std::size_t IntMatrix::hash() const {
-		return compute_hash();
+		return hashcode_;
 	}
 
 	bool IntMatrix::are_equal(const IntMatrix &lhs, const IntMatrix &rhs) {
@@ -138,7 +151,7 @@ namespace cluster {
 	std::size_t IntMatrix::compute_hash() const {
 		std::size_t hash = 113;
 		for (int i = 0; i < num_rows_ * num_cols_; i++) {
-			hash *= 523;
+			hash *= 31;
 			hash += data_[i];
 		}
 		return hash;
@@ -164,6 +177,7 @@ namespace cluster {
 		swap(first.data_, second.data_);
 		swap(first.num_rows_, second.num_rows_);
 		swap(first.num_cols_, second.num_cols_);
+		swap(first.hashcode_, second.hashcode_);
 	}
 }
 

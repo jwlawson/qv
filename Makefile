@@ -7,7 +7,7 @@
 
 # define any compile-time flags
 # Using cygwin -std=gnu++11 should be used rather than -std=c++11
-CXXFLAGS = -Wall -g -std=gnu++11
+CXXFLAGS = -Wall -std=gnu++11 -march=native -g #-O3
 
 # Specify base directory
 BASE_DIR = .

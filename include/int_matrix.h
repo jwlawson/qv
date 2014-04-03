@@ -20,7 +20,6 @@ namespace cluster {
 		const std::vector<int> get_row(const int row) const;
 		const std::vector<int> get_col(const int col) const;
 		void set(const IntMatrix mat);
-		//	void set (const int rows, const int cols, const int *values);
 		void set(const int row, const int col, const int value);
 		std::unique_ptr<IntMatrix> copy() const;
 		void reset();
@@ -42,7 +41,6 @@ namespace cluster {
 		template<class T>
 		T submatrix(const int row, const int col, T &result) const {
 			IntMatrix res = static_cast<IntMatrix>(result);
-			result.reset();
 			int resInd = 0;
 			int origInd = 0;
 
@@ -61,10 +59,12 @@ namespace cluster {
 				} while (changed);
 				result.data_[resInd++] = data_[origInd++];
 			}
+			result.reset();
 			return result;
 		}
+		// TODO Remove unneeded parameters.
 		template<class T>
-		T enlarge_matrix(const int extra_rows, const int extra_cols, T &result) const {
+		T enlarge_matrix(const int e, const int extra_cols, T &result) const {
 			IntMatrix res = static_cast<IntMatrix>(result);
 			int sub = 0;
 			for (int index = 0; index < result.num_rows_ * result.num_cols_; index++) {
@@ -77,6 +77,7 @@ namespace cluster {
 					result.data_[index] = data_[index - sub];
 				}
 			}
+			result.reset();
 			return result;
 		}
 
@@ -84,6 +85,7 @@ namespace cluster {
 		int num_rows_;
 		int num_cols_;
 		std::vector<int> data_;
+		std::size_t hashcode_;
 
 		int get_index(const int row, const int col) const;
 		virtual std::size_t compute_hash() const;
@@ -91,7 +93,6 @@ namespace cluster {
 		template<class T>
 		T mult(const IntMatrix &left, const IntMatrix &right, T &result) const {
 			IntMatrix res = static_cast<IntMatrix>(result);
-			result.reset();
 			int col_inc = right.num_rows_;
 			int leftInd;
 			int leftIndStart = 0;
@@ -112,6 +113,7 @@ namespace cluster {
 				}
 				leftIndStart += left.num_cols_;
 			}
+			result.reset();
 			return result;
 		}
 	};

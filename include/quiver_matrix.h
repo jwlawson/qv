@@ -30,6 +30,7 @@ namespace cluster {
 					result.set(i, j, a);
 				}
 			}
+			result.reset();
 			return result;
 		}
 		template<class T>
@@ -42,6 +43,7 @@ namespace cluster {
 				// Should decrement reference number for the old result
 				result = tmp;
 			}
+			result.reset();
 			return result;
 		}
 

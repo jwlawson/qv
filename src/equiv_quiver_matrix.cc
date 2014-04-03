@@ -14,10 +14,12 @@ namespace cluster {
 	                                     const int values[])
 		: QuiverMatrix(rows, cols, values) {
 		checker_ = EquivalenceChecker::Get(rows);
+		reset();
 	}
 	EquivQuiverMatrix::EquivQuiverMatrix(IntMatrix matrix)
 		: QuiverMatrix(matrix) {
 		checker_ = EquivalenceChecker::Get(matrix.num_rows());
+		reset();
 	}
 	EquivQuiverMatrix::~EquivQuiverMatrix() {}
 	bool EquivQuiverMatrix::equals(const IntMatrix &mat) const {
@@ -27,6 +29,7 @@ namespace cluster {
 
 	EquivQuiverMatrix &EquivQuiverMatrix::operator=(EquivQuiverMatrix mat) {
 		IntMatrix::operator=(mat);
+		checker_ = mat.checker_;
 		return *this;
 	}
 

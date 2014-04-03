@@ -18,16 +18,26 @@ namespace cluster {
 
 		template<class T>
 		T mutate(const int k, T &result) const {
+			
+			int index = 0;
+			std::vector<int> k_row(std::move(get_row(k)));
+			std::vector<int> k_col(std::move(get_col(k)));
 			for (int i = 0; i < num_rows(); i++) {
-				for (int j = 0; j < num_cols(); j++) {
-					int a;
-					if (i == k || j == k) {
-						a = -1 * get(i, j);
-					} else {
-						a =	get(i, j) + (std::abs(get(i, k)) * get(k, j) + get(i, k)
-						                 * std::abs(get(k, j))) / 2;
+				if(i == k) {
+					for(int j = 0; j < num_cols_; ++j) {
+						result.data_[index] = -1 * data_[index];
+						++index;
 					}
-					result.set(i, j, a);
+				} else {
+					for(int j = 0; j< num_cols_; ++j) {
+						if(j==k) {
+							result.data_[index] = -1 * data_[index];
+						} else {
+						result.data_[index] = data_[index] + (std::abs(k_col[i]) * k_row[j] + k_col[i]
+						                 * std::abs(k_row[j])) / 2;
+						}
+						++index;
+					}
 				}
 			}
 			result.reset();
@@ -38,7 +48,7 @@ namespace cluster {
 			submatrix(k, k, result);
 			int zero = result.zero_row();
 			if (zero != -1) {
-				auto tmp = T(result.num_rows() - 1, result.num_cols() - 1);
+				T tmp(result.num_rows() - 1, result.num_cols() - 1);
 				result.subquiver(zero, tmp);
 				result=std::move(tmp);
 			}

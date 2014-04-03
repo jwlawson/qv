@@ -81,10 +81,12 @@ namespace cluster {
 			return result;
 		}
 
-	 private:
+	 protected:
 		int num_rows_;
 		int num_cols_;
 		std::vector<int> data_;
+
+	 private:
 		std::size_t hashcode_;
 
 		int get_index(const int row, const int col) const;

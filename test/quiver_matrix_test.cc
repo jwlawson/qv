@@ -18,6 +18,7 @@ namespace cluster {
 		QuiverMatrix mat(3, 3, v1);
 		QuiverMatrix exp1(3, 3, v2);
 		QuiverMatrix res(3, 3);
+		mat.mutate(0, res);
 
 		EXPECT_TRUE(exp1.equals(mat.mutate(0, res)));
 	}

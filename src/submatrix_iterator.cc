@@ -3,7 +3,6 @@
  */
 
 #include "submatrix_iterator.h"
-#include "int_matrix.h"
 #include "quiver_matrix.h"
 #include "equiv_quiver_matrix.h"
 
@@ -15,8 +14,8 @@ namespace cluster {
 	template<class T>
 	T SubmatrixIterator<T>::next() {
 		T result(matrix_.num_rows() - 1, matrix_.num_cols() - 1);
-		matrix_.submatrix(count_, count_, result);
-		count_++;
+		matrix_.subquiver(count_, result);
+		++count_;
 		return result;
 	}
 
@@ -26,7 +25,6 @@ namespace cluster {
 	}
 
 
-	template class SubmatrixIterator<IntMatrix>;
 	template class SubmatrixIterator<QuiverMatrix>;
 	template class SubmatrixIterator<EquivQuiverMatrix>;
 

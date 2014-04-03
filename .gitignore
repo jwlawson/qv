@@ -7,7 +7,7 @@ build/
 testqv
 *.orig
 lib/
-.ycm_xtra_conf.pyc
+.ycm_extra_conf.pyc
 *.a
 callgrind.*
 core.*

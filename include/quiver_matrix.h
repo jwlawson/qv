@@ -11,7 +11,7 @@ namespace cluster {
 		QuiverMatrix(const int rows, const int cols, const int values[]);
 		QuiverMatrix(const QuiverMatrix &mat);
 		QuiverMatrix(IntMatrix matrix);
-		QuiverMatrix(QuiverMatrix &&mat);
+		QuiverMatrix(QuiverMatrix&&);
 		~QuiverMatrix();
 		bool is_infinite() const;
 		QuiverMatrix &operator=(QuiverMatrix mat);
@@ -34,14 +34,13 @@ namespace cluster {
 			return result;
 		}
 		template<class T>
-		std::shared_ptr<T> subquiver(const int k, std::shared_ptr<T> result) const {
-			result = submatrix(k, k, result);
+		T subquiver(const int k, T& result) const {
+			submatrix(k, k, result);
 			int zero = result.zero_row();
 			if (zero != -1) {
-				auto tmp = std::make_shared<T> (result.num_rows(), result.num_cols());
-				tmp = result.subquiver(zero, tmp);
-				// Should decrement reference number for the old result
-				result = tmp;
+				auto tmp = T(result.num_rows() - 1, result.num_cols() - 1);
+				result.subquiver(zero, tmp);
+				result=std::move(tmp);
 			}
 			result.reset();
 			return result;

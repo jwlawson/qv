@@ -81,6 +81,9 @@ test: $(OBJS) $(TEST_OBJS)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(TEST) $(TEST_OBJS) $(OBJS) $(LFLAGS) $(TEST_LIBS)
 	@echo Running tests
 	@./$(TEST)
+
+lib: $(OBJS)
+	$(AR) rcs libqv.a $(OBJS)
 	
 
 # this is a suffix replacement rule for building .o's from .c's

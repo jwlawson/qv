@@ -7,4 +7,5 @@ build/
 testqv
 *.orig
 lib/
-
+.ycm_xtra_conf.pyc
+*.a

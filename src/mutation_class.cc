@@ -14,9 +14,9 @@ namespace cluster {
 	template<class T>
 	MutationClass<T>::MutationClass(T mat)
 		: matrix_(mat),
-		  should_calc_(true),
 		  size_(mat.num_rows()),
 		  map_(),
+		  should_calc_(true),
 		  queue_() {
 		map_[matrix_].matrix(matrix_);
 		map_[matrix_].size(size_);

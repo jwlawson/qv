@@ -14,7 +14,8 @@ namespace cluster {
 	}
 
 	void EquivMutationClass::seen_matrix(const EquivQuiverMatrix &mat,
-	                                     const EquivQuiverMatrix &previous, const int vertex) {
+	                                     const EquivQuiverMatrix &previous,
+																			 const int vertex) {
 		map_[previous].link(vertex);
 		if (map_.count(mat) > 0 && IntMatrix::are_equal(mat, map_[mat].matrix())) {
 			/* New matrix is the same not just equivalent to the one seen before. */
@@ -23,7 +24,8 @@ namespace cluster {
 	}
 
 	void EquivMutationClass::unseen_matrix(const EquivQuiverMatrix &mat,
-	                                       const EquivQuiverMatrix &previous, const int vertex) {
+	                                       const EquivQuiverMatrix &previous,
+																				 const int vertex) {
 		set_.insert(mat);
 		MutationClass<EquivQuiverMatrix>::unseen_matrix(mat, previous, vertex);
 	}

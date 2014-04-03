@@ -33,8 +33,8 @@ namespace cluster {
 						if(j==k) {
 							result.data_[index] = -1 * data_[index];
 						} else {
-						result.data_[index] = data_[index] + (std::abs(k_col[i]) * k_row[j] + k_col[i]
-						                 * std::abs(k_row[j])) / 2;
+							result.data_[index] = data_[index] + (std::abs(k_col[i]) * k_row[j] 
+									+ k_col[i] * std::abs(k_row[j])) / 2;
 						}
 						++index;
 					}

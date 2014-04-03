@@ -4,13 +4,13 @@
 
 namespace cluster {
 
-	IntMatrix::IntMatrix() : num_rows_(0), num_cols_(0), data_(0), hashcode_(0) {}
+	IntMatrix::IntMatrix() : num_rows_(0), num_cols_(0), data_(0), hashcode_(113) {}
 
 	IntMatrix::IntMatrix(const int rows, const int cols)
 		: num_rows_(rows),
 			num_cols_(cols),
 			data_(rows *cols, 0),
-			hashcode_(0) {}
+			hashcode_(113) {}
 
 	IntMatrix::IntMatrix(const int rows, const int cols, const int values[])
 		: num_rows_(rows),
@@ -115,15 +115,7 @@ namespace cluster {
 	}
 
 	bool IntMatrix::equals(const IntMatrix &rhs) const {
-		if (num_rows_ * num_cols_ != rhs.num_rows_ * rhs.num_cols_) {
-			return false;
-		}
-		for (int i = 0; i < num_rows_ * num_cols_; i++) {
-			if (data_[i] != rhs.data_[i]) {
-				return false;
-			}
-		}
-		return true;
+		return hashcode_ == rhs.hashcode_ && data_ == rhs.data_;
 	}
 
 	std::size_t IntMatrix::hash() const {
@@ -131,15 +123,7 @@ namespace cluster {
 	}
 
 	bool IntMatrix::are_equal(const IntMatrix &lhs, const IntMatrix &rhs) {
-		if (lhs.num_rows_ * lhs.num_cols_ != rhs.num_rows_ * rhs.num_cols_) {
-			return false;
-		}
-		for (int i = 0; i < lhs.num_rows_ * lhs.num_cols_; i++) {
-			if (lhs.data_[i] != rhs.data_[i]) {
-				return false;
-			}
-		}
-		return true;
+		return lhs.hashcode_ == rhs.hashcode_ && lhs.data_ == rhs.data_;
 	}
 
 	/* Private methods */

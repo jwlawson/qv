@@ -20,12 +20,10 @@ namespace cluster {
 		return *this;
 	}
 	bool QuiverMatrix::is_infinite() const {
-		for (int i = 0; i < num_rows(); i++) {
-			for (int j = 0; j < num_cols(); j++) {
-				int val = get(i, j);
-				if (val >= 3 || val <= -3) {
-					return true;
-				}
+		for (int i = 0; i < num_rows_ * num_cols_; i++) {
+			int val = data_[i];
+			if (val >= 3 || val <= -3) {
+				return true;
 			}
 		}
 		return false;

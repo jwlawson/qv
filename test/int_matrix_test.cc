@@ -44,11 +44,11 @@ namespace cluster {
 		IntMatrix res1(3, 3);
 		IntMatrix res2(3, 3);
 
-		IntMatrix pa = p.mult_right(m1, res1);
-		IntMatrix bp = p.mult_left(m2, res2);
+		p.mult_right(m1, res1);
+		p.mult_left(m2, res2);
 
-		EXPECT_TRUE(pa.equals(bp));
-		EXPECT_TRUE(bp.equals(pa));
+		EXPECT_TRUE(res2.equals(res1));
+		EXPECT_TRUE(res1.equals(res2));
 	}
 
 	TEST(IntMatrix, Multiplication) {
@@ -85,8 +85,11 @@ namespace cluster {
 		IntMatrix id(3, 3, v2);
 		IntMatrix res(3, 3);
 
-		EXPECT_TRUE(a.equals(a.mult_left(id, res)));
-		EXPECT_TRUE(a.equals(id.mult_left(a, res)));
+		a.mult_left(id, res);
+		EXPECT_TRUE(a.equals(res));
+
+		id.mult_left(a, res);
+		EXPECT_TRUE(a.equals(res));
 	}
 
 	TEST(IntMatrix, Submatrix3x3a) {
@@ -95,8 +98,9 @@ namespace cluster {
 		IntMatrix m(3, 3, v1);
 		IntMatrix exp(2, 2, v2);
 		IntMatrix res(2, 2);
+		m.submatrix(0, 0, res);
 
-		EXPECT_TRUE(exp.equals(m.submatrix(0, 0, res)));
+		EXPECT_TRUE(exp.equals(res));
 	}
 
 	TEST(IntMatrix, Submatrix3x3b) {
@@ -105,7 +109,8 @@ namespace cluster {
 		IntMatrix m(3, 3, v1);
 		IntMatrix exp(2, 2, v2);
 		IntMatrix res(2, 2);
-		EXPECT_TRUE(exp.equals(m.submatrix(2, 0, res)));
+		m.submatrix(2, 0, res);
+		EXPECT_TRUE(exp.equals(res));
 	}
 
 	TEST(IntMatrix, Submatrix3x3c) {
@@ -114,8 +119,9 @@ namespace cluster {
 		IntMatrix m(3, 3, v1);
 		IntMatrix exp(2, 2, v2);
 		IntMatrix res(2, 2);
+		m.submatrix(1, 2, res);
 
-		EXPECT_TRUE(exp.equals(m.submatrix(1, 2, res)));
+		EXPECT_TRUE(exp.equals(res));
 	}
 
 	TEST(IntMatrix, ZeroRow) {

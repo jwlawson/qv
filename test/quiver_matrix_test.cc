@@ -20,7 +20,7 @@ namespace cluster {
 		QuiverMatrix res(3, 3);
 		mat.mutate(0, res);
 
-		EXPECT_TRUE(exp1.equals(mat.mutate(0, res)));
+		EXPECT_TRUE(exp1.equals(res));
 	}
 
 	TEST(QuiverMatrix, Mutate2) {
@@ -29,8 +29,8 @@ namespace cluster {
 		QuiverMatrix mat(3, 3, v1);
 		QuiverMatrix exp(3, 3, v2);
 		QuiverMatrix res(3, 3);
-
-		EXPECT_TRUE(exp.equals(mat.mutate(1, res)));
+		mat.mutate(1, res);
+		EXPECT_TRUE(exp.equals(res));
 	}
 
 	TEST(QuiverMatrix, Markov) {
@@ -39,10 +39,15 @@ namespace cluster {
 		QuiverMatrix mat(3, 3, v1);
 		QuiverMatrix exp(3, 3, v2);
 		QuiverMatrix res(3, 3);
+		
+		mat.mutate(0, res);
+		EXPECT_TRUE(exp.equals(res));
+		
+		mat.mutate(1, res);
+		EXPECT_TRUE(exp.equals(res));
 
-		EXPECT_TRUE(exp.equals(mat.mutate(0, res)));
-		EXPECT_TRUE(exp.equals(mat.mutate(1, res)));
-		EXPECT_TRUE(exp.equals(mat.mutate(2, res)));
+		mat.mutate(2, res);
+		EXPECT_TRUE(exp.equals(res));
 	}
 
 	TEST(QuiverMatrix, Enlarge) {
@@ -51,8 +56,9 @@ namespace cluster {
 		QuiverMatrix m(3, 3, v1);
 		QuiverMatrix exp(4, 4, v2);
 		QuiverMatrix res(4, 4);
+		m.enlarge_matrix(1, 1, res);
 
-		EXPECT_TRUE(exp.equals(m.enlarge_matrix(1, 1, res)));
+		EXPECT_TRUE(exp.equals(res));
 	}
 
 	TEST(QuiverMatrix, Enlarge2) {
@@ -61,8 +67,8 @@ namespace cluster {
 		QuiverMatrix m(3, 3, v1);
 		QuiverMatrix exp(5, 5, v2);
 		QuiverMatrix res(5, 5);
-
-		EXPECT_TRUE(exp.equals(m.enlarge_matrix(2, 2, res)));
+		m.enlarge_matrix(2, 2, res);
+		EXPECT_TRUE(exp.equals(res));
 	}
 
 	TEST(QuiverMatrix, 5Mut) {
@@ -75,8 +81,8 @@ namespace cluster {
 		QuiverMatrix m(5, 5, v1);
 		QuiverMatrix exp(5, 5, v2);
 		QuiverMatrix res(5, 5);
-
-		EXPECT_TRUE(exp.equals(m.mutate(4, res)));
+		m.mutate(4, res);
+		EXPECT_TRUE(exp.equals(res));
 	}
 
 	TEST(QuiverMatrix, NotInfinite) {

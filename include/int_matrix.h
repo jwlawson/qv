@@ -10,10 +10,13 @@ namespace cluster {
 		IntMatrix();
 		IntMatrix(const int rows, const int cols);
 		IntMatrix(const int rows, const int cols, const int values[]);
+//	 private:
 		IntMatrix(const IntMatrix &mat);
+//	 public:
 		IntMatrix(IntMatrix &&mat);
-		~IntMatrix();
+	 private:
 		IntMatrix &operator=(IntMatrix mat);
+	 public:
 		int num_rows() const;
 		int num_cols() const;
 		int get(const int row, const int col) const;
@@ -21,7 +24,6 @@ namespace cluster {
 		const std::vector<int> get_col(const int col) const;
 		void set(const IntMatrix mat);
 		void set(const int row, const int col, const int value);
-		std::unique_ptr<IntMatrix> copy() const;
 		void reset();
 		int zero_row() const;
 		virtual bool equals(const IntMatrix &mat) const;
@@ -31,16 +33,15 @@ namespace cluster {
 		friend void swap(IntMatrix &first, IntMatrix &second);
 
 		template<class T>
-		T mult_left(const IntMatrix &left, T &result) const {
-			return IntMatrix::mult(left, *this, result);
+		void mult_left(const IntMatrix &left, T &result) const {
+			IntMatrix::mult(left, *this, result);
 		}
 		template<class T>
-		T mult_right(const IntMatrix &right, T &result) const {
-			return IntMatrix::mult(*this, right, result);
+		void mult_right(const IntMatrix &right, T &result) const {
+			IntMatrix::mult(*this, right, result);
 		}
 		template<class T>
-		T submatrix(const int row, const int col, T &result) const {
-			IntMatrix res = static_cast<IntMatrix>(result);
+		void submatrix(const int row, const int col, T &result) const {
 			int resInd = 0;
 			int origInd = 0;
 
@@ -60,12 +61,10 @@ namespace cluster {
 				result.data_[resInd++] = data_[origInd++];
 			}
 			result.reset();
-			return result;
 		}
 		// TODO Remove unneeded parameters.
 		template<class T>
-		T enlarge_matrix(const int e, const int extra_cols, T &result) const {
-			IntMatrix res = static_cast<IntMatrix>(result);
+		void enlarge_matrix(const int e, const int extra_cols, T &result) const {
 			int sub = 0;
 			for (int index = 0; index < result.num_rows_ * result.num_cols_; index++) {
 				if (index % (num_cols_ + extra_cols) >= num_cols_) {
@@ -78,7 +77,6 @@ namespace cluster {
 				}
 			}
 			result.reset();
-			return result;
 		}
 
 	 protected:
@@ -93,8 +91,7 @@ namespace cluster {
 		virtual std::size_t compute_hash() const;
 
 		template<class T>
-		T mult(const IntMatrix &left, const IntMatrix &right, T &result) const {
-			IntMatrix res = static_cast<IntMatrix>(result);
+		void mult(const IntMatrix &left, const IntMatrix &right, T &result) const {
 			int col_inc = right.num_rows_;
 			int leftInd;
 			int leftIndStart = 0;
@@ -116,7 +113,6 @@ namespace cluster {
 				leftIndStart += left.num_cols_;
 			}
 			result.reset();
-			return result;
 		}
 	};
 }

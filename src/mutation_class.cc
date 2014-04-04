@@ -12,7 +12,7 @@ namespace cluster {
 	const T MutationClass<T>::INFINITE;
 
 	template<class T>
-	MutationClass<T>::MutationClass(T mat)
+	MutationClass<T>::MutationClass(const T& mat)
 		: matrix_(mat),
 		  size_(mat.num_rows()),
 		  map_(),
@@ -25,12 +25,12 @@ namespace cluster {
 
 	template<class T>
 	T MutationClass<T>::next() {
-		T result = queue_.front();
+		T result = std::move(queue_.front());
 		queue_.pop_front();
 		if (compute_mutations(result)) {
-			return result;
+			return std::move(result);
 		} else {
-			return INFINITE;
+			return std::move(INFINITE);
 		}
 	}
 
@@ -49,7 +49,7 @@ namespace cluster {
 		for (int i = 0; i < size_ && should_calc_; i++) {
 			if (mutate_at(mat, i)) {
 				T new_matrix(mat.num_rows(), mat.num_cols());
-				new_matrix = mat.mutate(i, new_matrix);
+				mat.mutate(i, new_matrix);
 				if (have_seen(new_matrix)) {
 					seen_matrix(new_matrix, mat, i);
 					if (is_complete(new_matrix)) {

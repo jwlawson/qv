@@ -34,8 +34,6 @@ namespace cluster {
 		swap(*this, mat);
 	}
 
-	IntMatrix::~IntMatrix() {}
-
 	/* Public methods */
 
 	IntMatrix &IntMatrix::operator= (IntMatrix mat) {
@@ -60,7 +58,7 @@ namespace cluster {
 		for (int j = 0; j < num_cols_; j++) {
 			result[j] = data_[count++];
 		}
-		return result;
+		return std::move(result);
 	}
 
 	const std::vector<int> IntMatrix::get_col(const int col) const {
@@ -70,7 +68,7 @@ namespace cluster {
 			result[j] = data_[count];
 			count += num_cols_;
 		}
-		return result;
+		return std::move(result);
 	}
 
 	void IntMatrix::set(IntMatrix mat) {
@@ -79,14 +77,6 @@ namespace cluster {
 
 	void IntMatrix::set(const int row, const int col, const int value) {
 		data_[get_index(row, col)] = value;
-	}
-
-	std::unique_ptr<IntMatrix> IntMatrix::copy() const {
-		std::unique_ptr<IntMatrix> result(new IntMatrix(num_rows_, num_cols_));
-		for (int i = 0; i < num_rows_ * num_cols_; i++) {
-			result->data_[i] = data_[i];
-		}
-		return result;
 	}
 
 	void IntMatrix::reset() {

@@ -9,10 +9,10 @@
 namespace cluster {
 	template<class T>
 	ExtensionIterator<T>::ExtensionIterator(const T& matrix) 
-			: size_(matrix.num_rows()),
+			: matrix_(matrix.num_rows() + 1, matrix.num_cols() + 1),
+				size_(matrix.num_rows()),
 				index_(0),
 				max_(ipow(5, size_)) {
-		T matrix_(matrix.num_rows() + 1, matrix.num_cols() + 1);
 		matrix.enlarge_matrix(1, 1, matrix_);
 	}
 		
@@ -26,7 +26,8 @@ namespace cluster {
 			result.set(i, size_, -val);
 		}
 		++index_;
-		return result;
+		result.reset();
+		return std::move(result);
 	}
 
 	template<class T>

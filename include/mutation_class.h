@@ -1,5 +1,12 @@
-/*
+/**
  * mutation_class.h
+ *
+ * Contains the MutationClass class headers.
+ *
+ * MutationClass is an iterator over all elements in the mutation class of a
+ * seed matrix. If any matrix which is calculated is found to be infinite then
+ * the special value MutationClass::INFINITE is returned by 
+ * MutationClass::next() instead of the next matrix.
  */
 #pragma once
 
@@ -12,6 +19,9 @@ namespace cluster {
 	class MutationClass {
 
 	 public:
+		/**
+		 * Matrix which is returned if the mutation class is found to be infinite.
+		 */
 		const static T INFINITE;
 
 		/**
@@ -21,7 +31,7 @@ namespace cluster {
 		 * in the mutation class.
 		 * @param initial Matrix to seed the mutation class
 		 */
-		MutationClass(const T initial);
+		MutationClass(const T& initial);
 		/**
 		 * Get the next unique matrix in the mutation class.
 		 *
@@ -48,8 +58,20 @@ namespace cluster {
 		void calc_more(const bool calc);
 
 	 protected:
+		/**
+		 * Initial matrix used to seed the mutation class.
+		 */
 		T matrix_;
+		/**
+		 * Size of the initial matrix. Assumes that the matrix is square, so is
+		 * usually matrix_.num_rows().
+		 */
 		int size_;
+		/**
+		 * Map used to store the matrices in the mutation class which have not 
+		 * yet been handled. TEach matrix is a key to the LinkHolder which stores
+		 * information about which mutations of the matrix have been seen.
+		 */
 		std::unordered_map<T, LinkHolder<T>> map_;
 
 		/**
@@ -81,7 +103,14 @@ namespace cluster {
 		virtual bool have_seen(const T &matrix);
 
 	 private:
+		/**
+		 * True if more matrixces should be calculated each time a new matrix is
+		 * taken from the iterator.
+		 */
 		bool should_calc_;
+		/**
+		 * Queue of unhandled matrices.
+		 */
 		std::deque<T> queue_;
 		/**
 		 * Compute all mutations of the matrix and add to the map and queue if the

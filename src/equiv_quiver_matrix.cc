@@ -21,7 +21,11 @@ namespace cluster {
 		checker_ = EquivalenceChecker::Get(matrix.num_rows());
 		reset();
 	}
-	EquivQuiverMatrix::~EquivQuiverMatrix() {}
+	EquivQuiverMatrix::EquivQuiverMatrix(EquivQuiverMatrix&& mat) 
+		: QuiverMatrix(std::move(mat)) {
+		checker_ = EquivalenceChecker::Get(num_rows_);
+	}
+			
 	bool EquivQuiverMatrix::equals(const IntMatrix &mat) const {
 		return checker_->are_equivalent(*this, mat);
 	}

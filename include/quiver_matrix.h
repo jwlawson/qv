@@ -1,3 +1,13 @@
+/**
+ * quiver_matrix.h
+ *
+ * Contains the QuiverMatrix class.
+ *
+ * QuiverMatrix is a basic integer matrix wth added methods to mutate the
+ * matrix at one of its vertices. There are also convenience methods for
+ * finding the subquiver of the matrix, by removing one of its vertices which
+ * ensures that the quiver returned does not contain any disconnected vertices.
+ */
 #pragma once
 #include "int_matrix.h"
 #include <cstdlib>
@@ -6,18 +16,64 @@ namespace cluster {
 	class QuiverMatrix :
 		public IntMatrix {
 	 public:
+		 /** Construct a default QuiverMatrix of size 0. */
 		QuiverMatrix();
+		/**
+		 * Construct a QuiverMatrix of specified size, but full of zeros.
+		 * @param rows Number of rows in matrix
+		 * @param cols Number of columns in matrix
+		 */
 		QuiverMatrix(const int rows, const int cols);
+		/**
+		 * Construct a QuiverMatrix of specified size and fill with the values
+		 * provided in the array.
+		 * 
+		 * @param rows Number of rows in matrix
+		 * @param cols Number of columns in matrix
+		 * @param values Data to put into the matrix
+		 */
 		QuiverMatrix(const int rows, const int cols, const int values[]);
+	 private:
+		/**
+		 * Copy constructor. Copies all data from the specified matrix.
+		 * @param mat Matrix to copy
+		 */
 		QuiverMatrix(const QuiverMatrix &mat);
+	 public:
+		/**
+		 * Similar to the copy constructor, this method takes a matrix which the
+		 * compiler has already copied and sets this matrix to that.
+		 * @param matrix Matrix to copy
+		 */
 		QuiverMatrix(IntMatrix matrix);
+		/**
+		 * Move constructor.
+		 * @param matrix Matrix to move into this one
+		 */
 		QuiverMatrix(QuiverMatrix&&);
-		~QuiverMatrix();
+		/**
+		 * Check whether this matrix is definitely mutation infinite.
+		 * As no information is known about the mutation class, this can only check
+		 * the data in theis matrix.
+		 * @return true if the matrix is mutaion infinite
+		 */
 		bool is_infinite() const;
+	 private:
+		/**
+		 * Assignment operator.
+		 * @param mat Matrix to set this to
+		 */
 		QuiverMatrix &operator=(QuiverMatrix mat);
+	 public:
 
+		/**
+		 * Mutate this matrix at the specified vertex. The resulting matrix is
+		 * stored in the provided matrix.
+		 * @param k Vertex to mutate at
+		 * @param result Matrix to store result in
+		 */
 		template<class T>
-		T mutate(const int k, T &result) const {
+		void mutate(const int k, T &result) const {
 			
 			int index = 0;
 			std::vector<int> k_row(std::move(get_row(k)));
@@ -41,10 +97,19 @@ namespace cluster {
 				}
 			}
 			result.reset();
-			return result;
 		}
+		/**
+		 * Find the subquiver by removing the vertex specified.
+		 *
+		 * If by removing the vertex there is an unconnected vertex in the
+		 * subquiver, this vertex is removed. Be careful as this can mean that the
+		 * quiver returned contains no vertices and is really just an empty matrix.
+		 *
+		 * @param k Vertex to remove
+		 * @param result Matrix to store result in
+		 */
 		template<class T>
-		T subquiver(const int k, T& result) const {
+		void subquiver(const int k, T& result) const {
 			submatrix(k, k, result);
 			int zero = result.zero_row();
 			if (zero != -1) {
@@ -53,7 +118,6 @@ namespace cluster {
 				result=std::move(tmp);
 			}
 			result.reset();
-			return result;
 		}
 
 	 private:

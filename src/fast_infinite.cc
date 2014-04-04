@@ -13,11 +13,12 @@ namespace cluster {
 			if (matrix.num_rows() == 2 && matrix.num_cols() == 2) {
 				return false;
 			}
-			std::vector<QuiverMatrix> mutated(2,
-			                                  QuiverMatrix(matrix.num_rows(), matrix.num_cols()));
-			mutated[0] = matrix;
+			std::vector<QuiverMatrix> mutated;
+			mutated.reserve(2);
+			mutated[0].set(matrix);
 
 			int lastMutation = -1;
+			int last_count;
 			int counter = 0;
 			std::default_random_engine gen;
 			std::uniform_int_distribution<int> dist(0, matrix.num_rows() - 1);
@@ -30,9 +31,9 @@ namespace cluster {
 				} while (rand == lastMutation);
 
 				/* Alternate between mutating the two matrices in the array. */
-				QuiverMatrix to_mutate = mutated[counter % 2];
+				last_count = counter % 2;
 				counter++;
-				to_mutate.mutate(rand, mutated[counter % 2]);
+				mutated[last_count].mutate(rand, mutated[counter % 2]);
 				if (mutated[counter % 2].is_infinite()) {
 					return true;
 				}

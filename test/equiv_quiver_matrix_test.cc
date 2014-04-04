@@ -114,7 +114,9 @@ namespace cluster {
 		IntMatrix perm(5, 5, v3);
 		IntMatrix res1(5, 5);
 		IntMatrix res2(5, 5);
-		EXPECT_TRUE(m1.mult_right(perm, res1).equals(m2.mult_left(perm, res2)));
+		m1.mult_right(perm, res1);
+		m2.mult_left(perm, res2);
+		EXPECT_TRUE(res1.equals(res2));
 	}
 
 	TEST(EquivMatrix, stdequal) {

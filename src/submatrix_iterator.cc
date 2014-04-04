@@ -21,7 +21,7 @@ namespace cluster {
 
 	template<class T>
 	bool SubmatrixIterator<T>::has_next() {
-		return count_ >= max_;
+		return count_ < max_;
 	}
 
 

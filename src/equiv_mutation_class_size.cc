@@ -7,7 +7,7 @@
 namespace cluster {
 	namespace equivsize {
 
-		int Size(const EquivQuiverMatrix matrix) {
+		int Size(const EquivQuiverMatrix& matrix) {
 			EquivMutationClass c(matrix);
 			int result = 0;
 			while (c.has_next()) {

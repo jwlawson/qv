@@ -33,13 +33,11 @@ namespace cluster {
 		 * @param values Data to put into the matrix
 		 */
 		QuiverMatrix(const int rows, const int cols, const int values[]);
-	 private:
 		/**
 		 * Copy constructor. Copies all data from the specified matrix.
 		 * @param mat Matrix to copy
 		 */
 		QuiverMatrix(const QuiverMatrix &mat);
-	 public:
 		/**
 		 * Similar to the copy constructor, this method takes a matrix which the
 		 * compiler has already copied and sets this matrix to that.
@@ -58,13 +56,11 @@ namespace cluster {
 		 * @return true if the matrix is mutaion infinite
 		 */
 		bool is_infinite() const;
-	 private:
 		/**
 		 * Assignment operator.
 		 * @param mat Matrix to set this to
 		 */
 		QuiverMatrix &operator=(QuiverMatrix mat);
-	 public:
 
 		/**
 		 * Mutate this matrix at the specified vertex. The resulting matrix is

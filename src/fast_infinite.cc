@@ -13,8 +13,8 @@ namespace cluster {
 			if (matrix.num_rows() == 2 && matrix.num_cols() == 2) {
 				return false;
 			}
-			std::vector<QuiverMatrix> mutated;
-			mutated.reserve(2);
+			std::vector<QuiverMatrix> mutated(2, QuiverMatrix(matrix.num_rows(), 
+						matrix.num_cols()));
 			mutated[0].set(matrix);
 
 			int lastMutation = -1;

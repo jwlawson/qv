@@ -10,13 +10,9 @@ namespace cluster {
 		IntMatrix();
 		IntMatrix(const int rows, const int cols);
 		IntMatrix(const int rows, const int cols, const int values[]);
-//	 private:
 		IntMatrix(const IntMatrix &mat);
-//	 public:
 		IntMatrix(IntMatrix &&mat);
-	 private:
 		IntMatrix &operator=(IntMatrix mat);
-	 public:
 		int num_rows() const;
 		int num_cols() const;
 		int get(const int row, const int col) const;

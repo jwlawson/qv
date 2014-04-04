@@ -9,13 +9,14 @@ namespace cluster {
 		EquivQuiverMatrix();
 		EquivQuiverMatrix(const int rows, const int cols);
 		EquivQuiverMatrix(const int rows, const int cols, const int values[]);
-		EquivQuiverMatrix(IntMatrix);
-		EquivQuiverMatrix(EquivQuiverMatrix&&);
+		EquivQuiverMatrix(const QuiverMatrix& mat);
+		EquivQuiverMatrix(const EquivQuiverMatrix& mat);
+		EquivQuiverMatrix(EquivQuiverMatrix&& mat);
 		virtual bool equals(const IntMatrix &mat) const;
+		EquivQuiverMatrix &operator=(EquivQuiverMatrix mat);
 
 	 private:
 		std::shared_ptr<EquivalenceChecker> checker_;
-		EquivQuiverMatrix &operator=(EquivQuiverMatrix mat);
 
 		virtual std::size_t compute_hash() const;
 	};

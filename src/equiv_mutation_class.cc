@@ -17,7 +17,8 @@ namespace cluster {
 	                                     std::shared_ptr<M> previous,
 																			 const int vertex) {
 		map_[previous].link(vertex);
-		if (map_.count(mat) > 0 && IntMatrix::are_equal(*mat, *map_[mat].matrix())) {
+		if (map_.count(mat) > 0 
+					&& IntMatrix::are_equal(*mat, *map_[mat].matrix())) {
 			/* New matrix is the same not just equivalent to the one seen before. */
 			map_[mat].link(vertex);
 		}

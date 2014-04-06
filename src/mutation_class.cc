@@ -28,7 +28,7 @@ namespace cluster {
 		std::shared_ptr<T> result = queue_.front();
 		queue_.pop_front();
 		if (compute_mutations(result)) {
-			return *result;
+			return std::move(*result);
 		} else {
 			return INFINITE;
 		}

@@ -12,6 +12,7 @@
 
 #include <unordered_map>
 #include <deque>
+#include <memory>
 #include "link_holder.h"
 
 namespace cluster {
@@ -57,11 +58,11 @@ namespace cluster {
 		 */
 		void calc_more(const bool calc);
 
-	 protected:
+	protected:
 		/**
 		 * Initial matrix used to seed the mutation class.
 		 */
-		T matrix_;
+		std::shared_ptr<T> matrix_;
 		/**
 		 * Size of the initial matrix. Assumes that the matrix is square, so is
 		 * usually matrix_.num_rows().
@@ -72,7 +73,7 @@ namespace cluster {
 		 * yet been handled. TEach matrix is a key to the LinkHolder which stores
 		 * information about which mutations of the matrix have been seen.
 		 */
-		std::unordered_map<T, LinkHolder<T>> map_;
+		std::unordered_map<std::shared_ptr<T>, LinkHolder<T>> map_;
 
 		/**
 		 * Handle a matrix which has been seen before.
@@ -83,7 +84,9 @@ namespace cluster {
 		 * @param previous Matrix which was mutated
 		 * @param vertex Vertex at which previous was mutated to give matrix
 		 */
-		virtual void seen_matrix(const T &matrix, const T &previous, const int vertex);
+		virtual void seen_matrix(std::shared_ptr<T>matrix,
+														 std::shared_ptr<T>previous,
+														 const int vertex);
 		/**
 		 * Handle a matrix which has not been seen before.
 		 *
@@ -93,14 +96,15 @@ namespace cluster {
 		 * @param previous Matrix which was mutated
 		 * @param vertex Vertex at which previous was mutated to give matrix
 		 */
-		virtual void unseen_matrix(const T &matrix, const T &previous,
+		virtual void unseen_matrix(std::shared_ptr<T> matrix, 
+															 std::shared_ptr<T> previous,
 		                           const int vertex);
 		/**
 		 * Check whether the specified matrix has been seen before.
 		 * @param matrix Matrix to check
 		 * @return true if the matrix has been seen
 		 */
-		virtual bool have_seen(const T &matrix);
+		virtual bool have_seen(std::shared_ptr<T> matrix);
 
 	 private:
 		/**
@@ -111,7 +115,7 @@ namespace cluster {
 		/**
 		 * Queue of unhandled matrices.
 		 */
-		std::deque<T> queue_;
+		std::deque<std::shared_ptr<T>> queue_;
 		/**
 		 * Compute all mutations of the matrix and add to the map and queue if the
 		 * new matrices should be.
@@ -119,31 +123,31 @@ namespace cluster {
 		 * @return true if all mutations handled. false is returned if an infinite
 		 * matrix is found.
 		 */
-		bool compute_mutations(const T &matrix);
+		bool compute_mutations(std::shared_ptr<T> matrix);
 		/**
 		 * Check whether the matrix is complete, that is whether all possible
 		 * mutations have been seen.
 		 * @param Matrix to check
 		 * @return true if the matrix is complete
 		 */
-		bool is_complete(const T &matrix);
+		bool is_complete(std::shared_ptr<T> matrix);
 		/**
 		 * Remove the matrix from the map.
 		 * @param Matrix to remove
 		 */
-		void remove_handled(const T &matrix);
+		void remove_handled(std::shared_ptr<T> matrix);
 		/**
 		 * Remove the matrix from the map.
 		 * @param Matrix to remove
 		 */
-		void remove_complete(const T &matrix);
+		void remove_complete(std::shared_ptr<T> matrix);
 		/**
 		 * Check whether to mutate at the specified vertex.
 		 * @param matrix Matrix to check against
 		 * @param i Index of the vertex
 		 * @return true if should mutate
 		 */
-		bool mutate_at(const T &matrix, const int i);
+		bool mutate_at(std::shared_ptr<T> matrix, const int i);
 	};
 }
 

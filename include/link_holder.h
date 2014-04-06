@@ -3,6 +3,7 @@
  */
 #pragma once
 #include <vector>
+#include <memory>
 
 namespace cluster {
 	template<class T>
@@ -13,14 +14,14 @@ namespace cluster {
 		LinkHolder(const int k);
 		~LinkHolder();
 		void size(const int size);
-		void matrix(const T &mat);
-		const T matrix() const;
+		void matrix(std::shared_ptr<T> mat);
+		std::shared_ptr<T> matrix() const;
 		void link(const int k);
 		bool has_link(const int k) const;
 		bool is_complete() const;
 
 	 private:
-		T matrix_;
+		std::shared_ptr<T> matrix_;
 		std::vector<bool> links_;
 		int size_;
 

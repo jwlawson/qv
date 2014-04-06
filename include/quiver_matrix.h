@@ -128,12 +128,25 @@ namespace std {
 			return x.hash();
 		}
 	};
+	template <>
+	struct hash<std::shared_ptr<cluster::QuiverMatrix>> {
+		size_t operator()(const std::shared_ptr<cluster::QuiverMatrix> &x) const {
+			return x->hash();
+		}
+	};
 	/* Add equals function to std::equal_to */
 	template<>
 	struct equal_to<cluster::QuiverMatrix> {
 		bool operator()(const cluster::QuiverMatrix &lhs,
 		                const cluster::QuiverMatrix &rhs) const {
 			return lhs.equals(rhs);
+		}
+	};
+	template<>
+	struct equal_to<std::shared_ptr<cluster::QuiverMatrix>> {
+		bool operator()(const std::shared_ptr<cluster::QuiverMatrix> &lhs,
+		                const std::shared_ptr<cluster::QuiverMatrix> &rhs) const {
+			return lhs->equals(*rhs);
 		}
 	};
 }

@@ -30,12 +30,26 @@ namespace std {
 			return x.hash();
 		}
 	};
+	template <>
+	struct hash<std::shared_ptr<cluster::EquivQuiverMatrix>> {
+		size_t operator()(const std::shared_ptr<cluster::EquivQuiverMatrix> &x)
+				const {
+			return x->hash();
+		}
+	};
 	/* Add equals function to std::equal_to */
 	template<>
 	struct equal_to<cluster::EquivQuiverMatrix> {
 		bool operator()(const cluster::EquivQuiverMatrix &lhs,
 		                const cluster::EquivQuiverMatrix &rhs) const {
 			return lhs.equals(rhs);
+		}
+	};
+	template<>
+	struct equal_to<std::shared_ptr<cluster::EquivQuiverMatrix>> {
+		bool operator()(const std::shared_ptr<cluster::EquivQuiverMatrix> &lhs,
+		                const std::shared_ptr<cluster::EquivQuiverMatrix> &rhs) const {
+			return lhs->equals(*rhs);
 		}
 	};
 }

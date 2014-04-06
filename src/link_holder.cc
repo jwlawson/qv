@@ -29,11 +29,11 @@ namespace cluster {
 		}
 	}
 	template<class T>
-	void LinkHolder<T>::matrix(const T &mat) {
+	void LinkHolder<T>::matrix(std::shared_ptr<T> mat) {
 		matrix_ = mat;
 	}
 	template<class T>
-	const T LinkHolder<T>::matrix() const {
+	std::shared_ptr<T> LinkHolder<T>::matrix() const {
 		return matrix_;
 	}
 	template<class T>

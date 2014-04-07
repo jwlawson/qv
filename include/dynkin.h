@@ -3,6 +3,8 @@
  */
 #pragma once
 #include "quiver_matrix.h"
+#include <map>
+#include <string>
 
 namespace cluster {
 	class dynkin {
@@ -40,6 +42,7 @@ namespace cluster {
 		static const QuiverMatrix E7;
 		static const QuiverMatrix E8;
 		static const QuiverMatrix G2;
+		static const std::map<std::string, QuiverMatrix> MAP;
 	};
 }
 

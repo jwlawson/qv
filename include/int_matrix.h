@@ -23,6 +23,7 @@ namespace cluster {
 		void reset();
 		int zero_row() const;
 		virtual bool equals(const IntMatrix &mat) const;
+		const int* data() const;
 		std::size_t hash() const;
 		static bool are_equal(const IntMatrix &lhs, const IntMatrix &rhs);
 		friend std::ostream &operator<< (std::ostream &os, const IntMatrix &mat);

@@ -104,6 +104,11 @@ namespace cluster {
 		return -1;
 	}
 
+	const int* IntMatrix::data() const {
+		return data_.data();
+	}
+
+
 	bool IntMatrix::equals(const IntMatrix &rhs) const {
 		return hashcode_ == rhs.hashcode_ && data_ == rhs.data_;
 	}

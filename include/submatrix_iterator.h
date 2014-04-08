@@ -7,7 +7,7 @@ namespace cluster {
 	class SubmatrixIterator {
 
 	 public:
-		SubmatrixIterator(const T initial);
+		SubmatrixIterator(const T& initial);
 
 		T next();
 		bool has_next();

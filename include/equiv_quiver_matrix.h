@@ -1,3 +1,10 @@
+/*
+ * equiv_quiver_matrix.h
+ *
+ * Contains the EquivQuiverMatrix class which is a QuiverMatrix whose equals
+ * method has been changed so that matrices which are the same up to permuting
+ * their rows and columns are considered equal.
+ */
 #pragma once
 #include "quiver_matrix.h"
 #include "equivalence_checker.h"
@@ -5,20 +12,74 @@
 namespace cluster {
 	class EquivQuiverMatrix :
 		public QuiverMatrix {
-	 public:
-		EquivQuiverMatrix();
-		EquivQuiverMatrix(const int rows, const int cols);
-		EquivQuiverMatrix(const int rows, const int cols, const int values[]);
-		EquivQuiverMatrix(const QuiverMatrix& mat);
-		EquivQuiverMatrix(const EquivQuiverMatrix& mat);
-		EquivQuiverMatrix(EquivQuiverMatrix&& mat);
-		virtual bool equals(const IntMatrix &mat) const;
-		EquivQuiverMatrix &operator=(EquivQuiverMatrix mat);
+		public:
+			/** 
+			 * Create a default matrix of size 0.
+			 */
+			EquivQuiverMatrix();
+			/**
+			 * Create a matrix of specified size and with all values set to 0.
+			 *
+			 * @param rows Number of rows
+			 * @param cols Number of columns
+			 */
+			EquivQuiverMatrix(const int rows, const int cols);
+			/**
+			 * Create a matrix with specified values.
+			 *
+			 * The values in the array should be in row major form, that is all the
+			 * entries of the first row, then the second row etc.
+			 *
+			 * @param rows Number of rows
+			 * @param cols Numer of columns
+			 * @param values Values to put into the matrix
+			 */
+			EquivQuiverMatrix(const int rows, const int cols, const int values[]);
+			/**
+			 * Copy constructor for the subclass QuiverMatrix.
+			 *
+			 * Useful for making EquivQuiverMatrices from the matrices provided in
+			 * Dynkin.
+			 *
+			 * @param mat Matrix to copy
+			 */
+			EquivQuiverMatrix(const QuiverMatrix& mat);
+			/**
+			 * Copy constructor.
+			 * @param mat Matrix to copy
+			 */
+			EquivQuiverMatrix(const EquivQuiverMatrix& mat);
+			/**
+			 * Move constructor.
+			 * @param mat Matrix to move into this one.
+			 */
+			EquivQuiverMatrix(EquivQuiverMatrix&& mat);
+			/**
+			 * Create a EquivQuiverMatrix from a string. The string is expected to be
+			 * formatted like one from the << method.
+			 *
+			 * @see IntMatrix#IntMatrix(std::String)
+			 * @param str String containing matrix information
+			 */
+			EquivQuiverMatrix(std::string str);
+			/** Overwritten equals method which ensures that two matrices which are
+			 * the same up to permuting their rows and columns are considered equal.
+			 *
+			 * @param mat Matrix to check
+			 * @return true if equal up to permuting rows and columns
+			 */
+			virtual bool equals(const IntMatrix &mat) const;
+			/**
+			 * Assignment operator.
+			 */
+			EquivQuiverMatrix &operator=(EquivQuiverMatrix mat);
 
-	 private:
-		std::shared_ptr<EquivalenceChecker> checker_;
+		private:
+			/** Equivalence checker to check if matrices are equivalent. */
+			std::shared_ptr<EquivalenceChecker> checker_;
 
-		virtual std::size_t compute_hash() const;
+			/** Overwritten hash function. */
+			virtual std::size_t compute_hash() const;
 	};
 }
 
@@ -30,6 +91,10 @@ namespace std {
 			return x.hash();
 		}
 	};
+	/**
+	 * Annoyingly the standard shared_ptr hash function which passes the
+	 * function to the object in the pointer doesn't seem to work.
+	 */
 	template <>
 	struct hash<std::shared_ptr<cluster::EquivQuiverMatrix>> {
 		size_t operator()(const std::shared_ptr<cluster::EquivQuiverMatrix> &x)

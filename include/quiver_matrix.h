@@ -50,6 +50,14 @@ namespace cluster {
 		 */
 		QuiverMatrix(QuiverMatrix&&);
 		/**
+		 * Create a quiverMatrix from a string. The string is expected to be
+		 * formatted like one from the << method.
+		 *
+		 * @see IntMatrix#IntMatrix(std::String)
+		 * @param str String containing matrix information
+		 */
+		QuiverMatrix(std::string str);
+		/**
 		 * Check whether this matrix is definitely mutation infinite.
 		 * As no information is known about the mutation class, this can only check
 		 * the data in theis matrix.

@@ -9,7 +9,7 @@
 
 namespace cluster {
 	namespace fastinf {
-		bool is_infinite(QuiverMatrix matrix);
+		bool is_infinite(const QuiverMatrix& matrix);
 	}
 }
 

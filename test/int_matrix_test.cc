@@ -2,6 +2,7 @@
 #include "int_matrix.h"
 #include <iostream>
 #include <functional>
+#include <string>
 
 namespace cluster {
 
@@ -180,5 +181,15 @@ namespace cluster {
 
 		EXPECT_TRUE(m.equals(n));
 		EXPECT_TRUE(n.equals(m));
+	}
+
+	TEST(IntMatrix, String) {
+		std::string str = "{ { 0 1 2 } { 3 4 5 } { 6 7 8 } }";
+		IntMatrix a(str);
+
+		int v[] = {0,1,2,3,4,5,6,7,8};
+		IntMatrix exp(3,3,v);
+
+		EXPECT_TRUE(exp.equals(a));
 	}
 }

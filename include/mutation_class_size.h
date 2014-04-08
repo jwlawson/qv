@@ -8,7 +8,7 @@
 namespace cluster {
 	namespace classsize {
 
-		int Size(QuiverMatrix matrix);
+		int Size(const QuiverMatrix& matrix);
 
 	}
 }

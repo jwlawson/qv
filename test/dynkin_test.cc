@@ -9,7 +9,7 @@ namespace cluster {
 
 	TEST(Dynkin, GetFromMap) {
 
-		QuiverMatrix a = dynkin::MAP["A3"];
+		QuiverMatrix a = dynkin::MAP.at("A3");
 		
 		EXPECT_TRUE(a.equals(dynkin::A3));
 	}

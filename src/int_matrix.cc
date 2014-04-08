@@ -1,5 +1,6 @@
 #include "int_matrix.h"
 #include <functional>
+#include <sstream>
 #include <iostream>
 
 namespace cluster {
@@ -33,6 +34,57 @@ namespace cluster {
 		: IntMatrix() {
 		swap(*this, mat);
 	}
+
+	IntMatrix::IntMatrix(std::string str) {
+		std::stringstream ss;
+		ss << str;
+		std::string buf;
+		std::vector<int> data;
+		data.reserve((str.size()/2) -4);
+		int row_size = 0;
+		int col_size = 0;
+		bool start = false;
+		bool end = false;
+		bool in_row = false;
+		bool row_done = false;
+		while(!end) {
+			ss >> buf;
+			if(!start) {
+				if("{"==buf) {
+				start = true;
+				}
+				continue;
+			}
+			if("{"==buf){
+				/* Started new row. */
+				in_row = true;
+			} else if("}"==buf){
+				/* Reached end of row. */
+				if(!in_row) {
+					/* End of matrix */
+					end = true;
+				} else {
+					row_done = true;
+					in_row = false;
+					++col_size;
+				}
+			} else {
+				/* Should be integer. */
+				if(!row_done) {
+					++row_size;
+				}
+				data.push_back(std::stoi(buf));
+			}
+		}
+
+		data.shrink_to_fit();
+
+		num_rows_ = row_size;
+		num_cols_ = col_size;
+		data_ = std::move(data);
+		hashcode_ = compute_hash();
+	}
+
 
 	/* Public methods */
 

@@ -4,36 +4,45 @@
 #include <algorithm>
 
 namespace cluster {
-	EquivQuiverMatrix::EquivQuiverMatrix()
-		: QuiverMatrix() {}
+	EquivQuiverMatrix::EquivQuiverMatrix() : QuiverMatrix() {}
+
 	EquivQuiverMatrix::EquivQuiverMatrix(const int rows, const int cols)
 		: QuiverMatrix(rows, cols) {
 		checker_ = EquivalenceChecker::Get(rows);
 	}
+
 	EquivQuiverMatrix::EquivQuiverMatrix(const int rows, const int cols,
 	                                     const int values[])
 		: QuiverMatrix(rows, cols, values) {
 		checker_ = EquivalenceChecker::Get(rows);
 		reset();
 	}
+
 	EquivQuiverMatrix::EquivQuiverMatrix(const QuiverMatrix& matrix)
 		: QuiverMatrix(static_cast<IntMatrix>(matrix)) {
 		checker_ = EquivalenceChecker::Get(matrix.num_rows());
 		reset();
 	}
+
 	EquivQuiverMatrix::EquivQuiverMatrix(const EquivQuiverMatrix& mat)
 		: QuiverMatrix(static_cast<IntMatrix>(mat)) {
 			checker_ = mat.checker_;
 			reset();
 	}
+
 	EquivQuiverMatrix::EquivQuiverMatrix(EquivQuiverMatrix&& mat) 
 		: QuiverMatrix(std::move(mat)) {
 			checker_ = EquivalenceChecker::Get(num_rows_);
 	}
+
+	EquivQuiverMatrix::EquivQuiverMatrix(std::string str) 
+		: QuiverMatrix(str) {
+			checker_ = EquivalenceChecker::Get(num_rows_);
+	}
+
 	bool EquivQuiverMatrix::equals(const IntMatrix &mat) const {
 		return checker_->are_equivalent(*this, mat);
 	}
-
 
 	EquivQuiverMatrix &EquivQuiverMatrix::operator=(EquivQuiverMatrix mat) {
 		IntMatrix::operator=(mat);

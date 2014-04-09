@@ -236,6 +236,8 @@ namespace cluster {
 		int num_cols_;
 		/** The data in the matrix. */
 		std::vector<int> data_;
+		/** Compute the hash for this matrix. */
+		virtual std::size_t compute_hash() const;
 
 	 private:
 		/** Cached hashcode for the matrix. */
@@ -243,8 +245,6 @@ namespace cluster {
 
 		/** Get the index in the array for the provided position. */
 		int get_index(const int row, const int col) const;
-		/** Compute the hash for this matrix. */
-		virtual std::size_t compute_hash() const;
 
 		/** Multiply left and right together and put the result into result. */
 		void mult(const IntMatrix &left, const IntMatrix &right, IntMatrix &result) const;

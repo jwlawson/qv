@@ -159,8 +159,17 @@ namespace cluster {
 		EXPECT_EQ(m1.hash(), m2.hash());
 	}
 	
-	TEST(EquivMatrix, DISABLED_StringHuge) {
-		std::string str = "{ { 0 1 0 0 0 0 0 0 0 0 } { -1 0 1 0 0 0 0 0 0 0 } { 0 -1 0 1 0 0 0 0 0 0 } { 0 0 -1 0 1 0 0 0 0 0 } { 0 0 0 -1 0 1 0 0 0 0 } { 0 0 0 0 -1 0 1 0 0 -1 } { 0 0 0 0 0 -1 0 1 0 0 } { 0 0 0 0 0 0 -1 0 1 0 } { 0 0 0 0 0 0 0 -1 0 1 } { 0 0 0 0 0 1 0 0 -1 0 } }";
+	TEST(EquivMatrix, StringHuge) {
+		std::string str = "{ { 0 1 0 0 0 0 0 0 0 0 } "
+		"{ -1 0 1 0 0 0 0 0 0 0 } "
+		"{ 0 -1 0 1 0 0 0 0 0 0 } "
+		"{ 0 0 -1 0 1 0 0 0 0 0 } "
+		"{ 0 0 0 -1 0 1 0 0 0 0 } "
+		"{ 0 0 0 0 -1 0 1 0 0 -1 } "
+		"{ 0 0 0 0 0 -1 0 1 0 0 } "
+		"{ 0 0 0 0 0 0 -1 0 1 0 } "
+		"{ 0 0 0 0 0 0 0 -1 0 1 } "
+		"{ 0 0 0 0 0 1 0 0 -1 0 } }";
 		EquivQuiverMatrix a(str);
 
 		int v[] = {	0,1,0,0,0,0,0,0,0,0,
@@ -175,7 +184,7 @@ namespace cluster {
 					0,0,0,0,0,1,0,0,-1,0};
 		EquivQuiverMatrix exp(10, 10, v);
 
-		EXPECT_TRUE(exp.equals(a));
+		EXPECT_TRUE(IntMatrix::are_equal(exp,a));
 	}	
 
 	TEST(EquivMatrix, FallThrough) {

@@ -74,12 +74,14 @@ namespace cluster {
 			 */
 			EquivQuiverMatrix &operator=(EquivQuiverMatrix mat);
 
+		protected:
+			/** Overwritten hash function. */
+			virtual std::size_t compute_hash() const;
+
 		private:
 			/** Equivalence checker to check if matrices are equivalent. */
 			std::shared_ptr<EquivalenceChecker> checker_;
 
-			/** Overwritten hash function. */
-			virtual std::size_t compute_hash() const;
 	};
 }
 

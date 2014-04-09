@@ -158,4 +158,43 @@ namespace cluster {
 
 		EXPECT_EQ(m1.hash(), m2.hash());
 	}
+	
+	TEST(EquivMatrix, DISABLED_StringHuge) {
+		std::string str = "{ { 0 1 0 0 0 0 0 0 0 0 } { -1 0 1 0 0 0 0 0 0 0 } { 0 -1 0 1 0 0 0 0 0 0 } { 0 0 -1 0 1 0 0 0 0 0 } { 0 0 0 -1 0 1 0 0 0 0 } { 0 0 0 0 -1 0 1 0 0 -1 } { 0 0 0 0 0 -1 0 1 0 0 } { 0 0 0 0 0 0 -1 0 1 0 } { 0 0 0 0 0 0 0 -1 0 1 } { 0 0 0 0 0 1 0 0 -1 0 } }";
+		EquivQuiverMatrix a(str);
+
+		int v[] = {	0,1,0,0,0,0,0,0,0,0,
+					-1,0,1,0,0,0,0,0,0,0,
+					0,-1,0,1,0,0,0,0,0,0,
+					0,0,-1,0,1,0,0,0,0,0,
+					0,0,0,-1,0,1,0,0,0,0,
+					0,0,0,0,-1,0,1,0,0,-1,
+					0,0,0,0,0,-1,0,1,0,0,
+					0,0,0,0,0,0,-1,0,1,0,
+					0,0,0,0,0,0,0,-1,0,1,
+					0,0,0,0,0,1,0,0,-1,0};
+		EquivQuiverMatrix exp(10, 10, v);
+
+		EXPECT_TRUE(exp.equals(a));
+	}	
+
+	TEST(EquivMatrix, FallThrough) {
+		std::string s1 = "{ { 0 1 -1 0 0 } { -1 0 0 0 0 } { 1 0 0 1 0 } { 0 0 -1 0 -1 } { 0 0 0 1 0 } }";
+		std::string s2 = "{ { 0 -1 0 0 0 } { 1 0 1 0 0 } { 0 -1 0 1 0 } { 0 0 -1 0 -1 } { 0 0 0 1 0 } }";
+		EquivQuiverMatrix a(s1);
+		EquivQuiverMatrix b(s2);
+
+		EXPECT_FALSE(a.equals(b));
+	}
+
+	TEST(EquivMatrix, DiffMapping) {
+		std::string s1 = "{ { 0 0 -1 1 } { 0 0 2 -1 } { 1 -2 0 0 } { -1 1 0 0 } }";
+		std::string s2 = "{ { 0 1 0 -2 } { -1 0 1 0 } { 0 -1 0 1 } { 2 0 -1 0 } }";
+
+		EquivQuiverMatrix a(s1);
+		EquivQuiverMatrix b(s2);
+
+		EXPECT_TRUE(a.equals(b));
+	}
 }
+

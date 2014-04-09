@@ -2,6 +2,7 @@
 #include "equiv_quiver_matrix.h"
 #include "array_utils.h"
 #include <algorithm>
+#include <iostream>
 
 namespace cluster {
 	EquivQuiverMatrix::EquivQuiverMatrix() : QuiverMatrix() {}
@@ -37,6 +38,7 @@ namespace cluster {
 
 	EquivQuiverMatrix::EquivQuiverMatrix(std::string str) 
 		: QuiverMatrix(str) {
+			std::cout << "Making matrix "<< str << std::endl;
 			checker_ = EquivalenceChecker::Get(num_rows_);
 	}
 

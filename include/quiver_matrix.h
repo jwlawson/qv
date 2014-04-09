@@ -50,7 +50,7 @@ namespace cluster {
 		 */
 		QuiverMatrix(QuiverMatrix&&);
 		/**
-		 * Create a quiverMatrix from a string. The string is expected to be
+		 * Create a QuiverMatrix from a string. The string is expected to be
 		 * formatted like one from the << method.
 		 *
 		 * @see IntMatrix#IntMatrix(std::String)

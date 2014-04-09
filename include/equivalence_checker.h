@@ -44,12 +44,19 @@ namespace cluster {
 						col_mappings(size) {}
 				void reset() {
 					for(uint i = 0; i < row_mappings.size(); ++i) {
-						row_mappings[i] = 57;
-						col_mappings[i] = 57;
+						row_mappings[i].clear();
+						col_mappings[i].clear();
 					}
 				}
-				std::vector<int> row_mappings;
-				std::vector<int> col_mappings;
+				void update_row_mapping(const int a_index, const int b_index){
+					row_mappings[a_index].push_back(b_index);
+				}
+				void update_column_mapping(const int a_index, const int b_index){
+					col_mappings[a_index].push_back(b_index);
+				}
+
+				std::vector<std::vector<int>> row_mappings;
+				std::vector<std::vector<int>> col_mappings;
 		};
 
 		std::vector<IntMatrix> permutations_;
@@ -65,15 +72,11 @@ namespace cluster {
 		void calc_sums(const IntMatrix &a, const IntMatrix &b);
 		bool do_columns_match(const IntMatrix& a, const IntMatrix& b);
 		bool do_rows_match(const IntMatrix& a, const IntMatrix& b);
-		void update_row_mapping(const int a_index, const int b_index);
-		void update_column_mapping(const int a_index, const int b_index);
 		bool permutation_valid(const IntMatrix& perm) const;
-		bool perm_column_valid(int mapping,
-		                       const IntMatrix& perm,
+		bool perm_column_valid(const IntMatrix& perm,
 		                       const int index)const;
-		bool perm_row_valid(int mapping,
-		                       const IntMatrix& perm,
-		                       const int index)const;
+		bool perm_row_valid(const IntMatrix& perm,
+		                    const int index)const;
 		bool sums_equivalent() const;
 		bool arrays_equivalent(std::vector<int> a, std::vector<int> b) const;
 

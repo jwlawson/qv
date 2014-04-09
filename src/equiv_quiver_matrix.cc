@@ -38,7 +38,6 @@ namespace cluster {
 
 	EquivQuiverMatrix::EquivQuiverMatrix(std::string str) 
 		: QuiverMatrix(str) {
-			std::cout << "Making matrix "<< str << std::endl;
 			checker_ = EquivalenceChecker::Get(num_rows_);
 	}
 

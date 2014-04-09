@@ -17,8 +17,7 @@ namespace cluster {
 	}
 
 	EquivalenceChecker::EquivalenceChecker()
-		: permutations_(), 
-			ap_(0, 0), 
+		: ap_(0, 0), 
 			pb_(0, 0), 
 			size_(0),
 			ai_(0),
@@ -26,37 +25,15 @@ namespace cluster {
 			maps_(0) {}
 
 	EquivalenceChecker::EquivalenceChecker(const int size)
-		: permutations_(factorial(size), IntMatrix(size, size)),
-			ap_(size, size),
+		: ap_(size, size),
 		  pb_(size, size),
 			size_(size),
 			ai_(size),
 			bi_(size),
-			maps_(size) {
-		if(size == 0) {
-			/* Don't even bother trying to do anything. */
-			return;
-		}
-		int count = 0;
-		int *values = new int[size];
-		for (int i = 0; i < std::pow(size, size); i++) {
-			bool valid = perm_values(size, i, values);
-			if (!valid) {
-				continue;
-			}
-			for (int j = 0; j < size; j++) {
-				permutations_[count].set(j, values[j], 1);
-			}
-			permutations_[count].reset();
-			count++;
-		}
-		delete [] values;
-	}
+			maps_(size) {}
 
 	bool EquivalenceChecker::are_equivalent(const IntMatrix &a,
 	    const IntMatrix &b) {
-		//std::cout << "Checking matrices" << std::endl;
-		//std::cout << a << std::endl << b << std::endl;
 		if (IntMatrix::are_equal(a, b)) {
 			return true;
 		}
@@ -78,25 +55,6 @@ namespace cluster {
 		if (!cols_match) {
 			return false;
 		}
-
-		//std::cout << "Rows: ";
-		for(int i = 0; i < size_; i++) {
-			//std::cout << i<< "->";
-			for(uint j = 0; j < maps_.row_mappings[i].size(); j++) {
-				//std::cout << maps_.row_mappings[i][j] << " ";
-			}
-			//std::cout << ", ";
-		}
-		//std::cout << std::endl << "Cols: ";
-		for(int i = 0; i < size_; i++) {
-			//std::cout << i << "->";
-			for(uint j = 0; j < maps_.col_mappings[i].size(); j++){
-				//std::cout << maps_.col_mappings[i][j] << " ";
-			}
-			//std::cout << ", ";
-		}
-		//std::cout << std::endl;
-
 		bool valid;
 		for(int i = 0; i < size_; ++i) {
 			valid = false;
@@ -113,20 +71,10 @@ namespace cluster {
 			}
 		}
 
-		for(uint i = 0; i < permutations_.size(); ++i) {
-			if (!permutation_valid(permutations_[i])) {
-				continue;
-			}
-			// Check if PA == BP or PAP^(-1) == B
-			a.mult_right(permutations_[i], ap_);
-			b.mult_left(permutations_[i], pb_);
-			if (IntMatrix::are_equal(pb_, ap_)) {
-			//std::cout << "Equal" << permutations_[i] << std::endl;
-				return true;
-			}
-		}
-		//std::cout << "Not equal" << std::endl;
-		return false;
+		std::vector<int> vec;
+		vec.reserve(size_);
+		return check_perm(vec, 0, a, b);
+
 	}
 
 	EquivalenceChecker& EquivalenceChecker::operator=(EquivalenceChecker mat) {
@@ -136,20 +84,6 @@ namespace cluster {
 
 	/* Private methods */
 
-	bool EquivalenceChecker::perm_values(const int size, const int i,
-	                                     int *values) const {
-		int id = i;
-		for (int j = 0; j < size; j++) {
-			values[j] = id % (size);
-			for (int k = 0; k < j; k++) {
-				if (values[j] == values[k]) {
-					return false;
-				}
-			}
-			id /= size;
-		}
-		return true;
-	}
 	int EquivalenceChecker::factorial(const int num) const {
 		if (num == 1) {
 			return 1;
@@ -231,47 +165,6 @@ namespace cluster {
 		}
 		return rows_match;
 	}
-	bool EquivalenceChecker::permutation_valid(
-	    const IntMatrix& p) const {
-		//std::cout << "Checking " << p << std::endl;
-		for (uint i = 0; i < maps_.col_mappings.size(); i++) {
-			if(
-					!perm_column_valid(p, i)
-				|| 
-				!perm_row_valid(p, i)
-				) {
-		//std::cout <<"Not valid" << std::endl;
-				return false;
-			}
-		}
-		//std::cout << "Valid"<< std::endl;
-		return true;
-	}
-	bool EquivalenceChecker::perm_column_valid(
-	    const IntMatrix& perm,
-	    const int index)const {
-		//std::cout << "c" << index << "-> ";
-		for(uint i = 0; i < maps_.col_mappings[index].size(); ++i) {
-			//std::cout << maps_.col_mappings[index][i] << " (" << perm.get(maps_.col_mappings[index][i], index) << ") ";
-			if (perm.get(maps_.col_mappings[index][i], index) == 1) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	bool EquivalenceChecker::perm_row_valid(
-			const IntMatrix& perm,
-			const int index) const {
-		//std::cout << "r" << index << "-> ";
-		for(uint i = 0; i < maps_.row_mappings[index].size(); ++i) {
-			//std::cout << maps_.row_mappings[index][i] << " (" << perm.get(index, maps_.row_mappings[index][i]) << ") ";
-			if(perm.get(index, maps_.row_mappings[index][i]) == 1) {
-				return true;
-			}
-		}
-		return false;
-	}
 
 	bool EquivalenceChecker::sums_equivalent() const {
 		return arrays_equivalent(ai_.row_sum, bi_.row_sum)
@@ -288,9 +181,41 @@ namespace cluster {
 		return equal;
 	}
 
+	bool EquivalenceChecker::check_perm(std::vector<int>& row_map, int index,
+			const IntMatrix& a, const IntMatrix& b) {
+		bool result = false;
+		if(index == size_) {
+			/* Compute. */
+			std::vector<int> col_map(size_);
+			for(int i = 0; i < size_; i++) {
+				col_map[row_map[i]] = i;
+			}
+			a.permute_rows(row_map, ap_);
+			b.permute_columns(col_map, pb_);
+			result = ap_.equals(pb_);
+
+		} else {
+			for(uint i = 0; i < maps_.row_mappings[index].size() && !result; ++i) {
+				int val = maps_.row_mappings[index][i];
+				bool rec = true;
+				for(uint j = 0; j < row_map.size(); ++j) {
+					if(row_map[j] == val) {
+						rec = false;
+					}
+				}
+				if(rec) {
+					row_map[index] = val;
+					result = check_perm(row_map, index + 1, a, b);
+				}
+			}
+		}
+		return result;
+	}
+
+	/* Friends. */
+
 	void swap(EquivalenceChecker& f, EquivalenceChecker& s) {
 		using std::swap;
-		swap(f.permutations_, s.permutations_);
 		swap(f.ap_, s.ap_);
 		swap(f.pb_, s.pb_);
 		swap(f.size_, s.size_);

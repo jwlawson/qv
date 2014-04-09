@@ -206,6 +206,28 @@ namespace cluster {
 		 */
 		// TODO Remove unneeded parameters.
 		void enlarge_matrix(const int e, const int extra_cols, IntMatrix &result) const;
+		/**
+		 * Permute the rows of this matrix and write the result in the provided
+		 * matrix.
+		 *
+		 * The vector gives the mapping for the rows. The ith entry should be an
+		 * integer which states where the ith row should be moved to.
+		 *
+		 * @param vec Vector of mappings
+		 * @param result Matrix to write the result to
+		 */
+		void permute_rows(const std::vector<int>& vec, IntMatrix& result) const;
+		/**
+		 * Permute the columns of this matrix and write the result in the provided
+		 * matrix.
+		 *
+		 * The vector gives the mapping for the columns. The ith entry should be an
+		 * integer which states where the ith column should be moved to.
+		 *
+		 * @param vec Vector of mappings
+		 * @param result Matrix to write the result to
+		 */
+		void permute_columns(const std::vector<int>& vec, IntMatrix& result) const;
 
 	 protected:
 		/** Number of rows in the matrix. */

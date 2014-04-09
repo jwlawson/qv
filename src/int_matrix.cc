@@ -174,7 +174,8 @@ namespace cluster {
 	}
 
 
-	void IntMatrix::submatrix(const int row, const int col, IntMatrix &result) const {
+	void IntMatrix::submatrix(const int row, const int col,
+			IntMatrix &result) const {
 		int resInd = 0;
 		int origInd = 0;
 
@@ -196,7 +197,8 @@ namespace cluster {
 		result.reset();
 	}
 
-	void IntMatrix::enlarge_matrix(const int e, const int extra_cols, IntMatrix &result) const {
+	void IntMatrix::enlarge_matrix(const int e, const int extra_cols,
+			IntMatrix &result) const {
 		int sub = 0;
 		for (int index = 0; index < result.num_rows_ * result.num_cols_; index++) {
 			if (index % (num_cols_ + extra_cols) >= num_cols_) {
@@ -210,6 +212,29 @@ namespace cluster {
 		}
 		result.reset();
 	}
+
+	void IntMatrix::permute_rows(const std::vector<int>& vec,
+			IntMatrix& result) const {
+		int ind = 0;
+		for(int i = 0; i < num_rows_; ++i) {
+			for(int j =0; j < num_cols_; ++j) {
+				result.data_[vec[i] * num_cols_ + j] = data_[ind++];
+			}
+		}
+		result.reset();
+	}
+
+	void IntMatrix::permute_columns(const std::vector<int>& vec,
+			IntMatrix& result) const {
+		int ind = 0;
+		for(int i = 0; i < num_rows_; ++i) {
+			for(int j = 0; j < num_cols_; ++j) {
+				result.data_[i * num_cols_ + vec[j]] = data_[ind++];
+			}
+		}
+		result.reset();
+	}
+
 	/* Private methods */
 
 	int IntMatrix::get_index(const int row, const int col) const {
@@ -226,7 +251,8 @@ namespace cluster {
 	}
 
 
-	void IntMatrix::mult(const IntMatrix &left, const IntMatrix &right, IntMatrix &result) const {
+	void IntMatrix::mult(const IntMatrix &left, const IntMatrix &right,
+			IntMatrix &result) const {
 		int col_inc = right.num_rows_;
 		int leftInd;
 		int leftIndStart = 0;
@@ -242,7 +268,6 @@ namespace cluster {
 					leftInd++;
 					rightInd += col_inc;
 				}
-
 				calcInd++;
 			}
 			leftIndStart += left.num_cols_;

@@ -59,7 +59,6 @@ namespace cluster {
 				std::vector<std::vector<int>> col_mappings;
 		};
 
-		std::vector<IntMatrix> permutations_;
 		IntMatrix ap_;
 		IntMatrix pb_;
 		int size_;
@@ -67,18 +66,14 @@ namespace cluster {
 		Info bi_;
 		Mapping maps_;
 
-		bool perm_values(const int size, const int i, int *values) const;
 		int factorial(const int num) const;
 		void calc_sums(const IntMatrix &a, const IntMatrix &b);
 		bool do_columns_match(const IntMatrix& a, const IntMatrix& b);
 		bool do_rows_match(const IntMatrix& a, const IntMatrix& b);
-		bool permutation_valid(const IntMatrix& perm) const;
-		bool perm_column_valid(const IntMatrix& perm,
-		                       const int index)const;
-		bool perm_row_valid(const IntMatrix& perm,
-		                    const int index)const;
 		bool sums_equivalent() const;
 		bool arrays_equivalent(std::vector<int> a, std::vector<int> b) const;
+		bool check_perm(std::vector<int>& row_map, int index, 
+				const IntMatrix& a, const IntMatrix& b);
 
 	};
 }

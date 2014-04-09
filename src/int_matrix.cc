@@ -173,6 +173,43 @@ namespace cluster {
 		return lhs.hashcode_ == rhs.hashcode_ && lhs.data_ == rhs.data_;
 	}
 
+
+	void IntMatrix::submatrix(const int row, const int col, IntMatrix &result) const {
+		int resInd = 0;
+		int origInd = 0;
+
+		while (resInd < result.num_rows_ * result.num_cols_) {
+			bool changed;
+			do {
+				changed = false;
+				if (origInd == row * num_cols_) {
+					origInd += num_cols_;
+					changed = true;
+				}
+				if (origInd % num_cols_ == col) {
+					origInd++;
+					changed = true;
+				}
+			} while (changed);
+			result.data_[resInd++] = data_[origInd++];
+		}
+		result.reset();
+	}
+
+	void IntMatrix::enlarge_matrix(const int e, const int extra_cols, IntMatrix &result) const {
+		int sub = 0;
+		for (int index = 0; index < result.num_rows_ * result.num_cols_; index++) {
+			if (index % (num_cols_ + extra_cols) >= num_cols_) {
+				result.data_[index] = 0;
+				sub++;
+			} else if (index >= num_rows_ * (num_cols_ + extra_cols)) {
+				result.data_[index] = 0;
+			} else {
+				result.data_[index] = data_[index - sub];
+			}
+		}
+		result.reset();
+	}
 	/* Private methods */
 
 	int IntMatrix::get_index(const int row, const int col) const {
@@ -186,6 +223,31 @@ namespace cluster {
 			hash += data_[i];
 		}
 		return hash;
+	}
+
+
+	void IntMatrix::mult(const IntMatrix &left, const IntMatrix &right, IntMatrix &result) const {
+		int col_inc = right.num_rows_;
+		int leftInd;
+		int leftIndStart = 0;
+		int rightInd;
+		int calcInd = 0;
+		for (int i = 0; i < left.num_rows_; i++) {
+			for (int j = 0; j < right.num_cols_; j++) {
+				leftInd = leftIndStart;
+				rightInd = j;
+				result.data_[calcInd] = 0;
+				while (leftInd < leftIndStart + left.num_cols_) {
+					result.data_[calcInd] += left.data_[leftInd] * right.data_[rightInd];
+					leftInd++;
+					rightInd += col_inc;
+				}
+
+				calcInd++;
+			}
+			leftIndStart += left.num_cols_;
+		}
+		result.reset();
 	}
 
 	/* Friends */

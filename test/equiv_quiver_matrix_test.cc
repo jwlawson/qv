@@ -110,7 +110,8 @@ namespace cluster {
 
 		EXPECT_TRUE(m1.equals(m2));
 
-		int v3[] = {0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,	0};
+		int v3[] = {0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+			0, 0, 1,	0};
 		IntMatrix perm(5, 5, v3);
 		IntMatrix res1(5, 5);
 		IntMatrix res2(5, 5);
@@ -188,8 +189,16 @@ namespace cluster {
 	}	
 
 	TEST(EquivMatrix, FallThrough) {
-		std::string s1 = "{ { 0 1 -1 0 0 } { -1 0 0 0 0 } { 1 0 0 1 0 } { 0 0 -1 0 -1 } { 0 0 0 1 0 } }";
-		std::string s2 = "{ { 0 -1 0 0 0 } { 1 0 1 0 0 } { 0 -1 0 1 0 } { 0 0 -1 0 -1 } { 0 0 0 1 0 } }";
+		std::string s1 = "{ { 0 1 -1 0 0 } "
+		"{ -1 0 0 0 0 } "
+		"{ 1 0 0 1 0 } "
+		"{ 0 0 -1 0 -1 } "
+		"{ 0 0 0 1 0 } }";
+		std::string s2 = "{ { 0 -1 0 0 0 } "
+		"{ 1 0 1 0 0 } "
+		"{ 0 -1 0 1 0 } "
+		"{ 0 0 -1 0 -1 } "
+		"{ 0 0 0 1 0 } }";
 		EquivQuiverMatrix a(s1);
 		EquivQuiverMatrix b(s2);
 

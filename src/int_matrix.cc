@@ -169,8 +169,13 @@ namespace cluster {
 		return hashcode_;
 	}
 
+	/*
+	 * Cannot check hashcode here, as implementing classes can change the way the
+	 * hashcode is computed. This means that two matrices with the same entries
+	 * can have different hashcodes if they are instances of different classes.
+	 */
 	bool IntMatrix::are_equal(const IntMatrix &lhs, const IntMatrix &rhs) {
-		return lhs.hashcode_ == rhs.hashcode_ && lhs.data_ == rhs.data_;
+		return lhs.data_ == rhs.data_;
 	}
 
 

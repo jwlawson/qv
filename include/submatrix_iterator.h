@@ -1,6 +1,9 @@
 /*
  * submatrix_iterator.h
  */
+#pragma once
+
+#include <memory>
 
 namespace cluster {
 	template<class T>
@@ -9,7 +12,7 @@ namespace cluster {
 	 public:
 		SubmatrixIterator(const T& initial);
 
-		T next();
+		std::shared_ptr<T> next();
 		bool has_next();
 
 	 private:

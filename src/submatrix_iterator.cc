@@ -1,10 +1,10 @@
 /*
  * submatrix_iterator.cc
  */
-
 #include "submatrix_iterator.h"
-#include "quiver_matrix.h"
+
 #include "equiv_quiver_matrix.h"
+#include "quiver_matrix.h"
 
 namespace cluster {
 	template<class T>
@@ -12,9 +12,10 @@ namespace cluster {
 		: matrix_(matrix), count_(0), max_(matrix.num_rows()) {}
 
 	template<class T>
-	T SubmatrixIterator<T>::next() {
-		T result(matrix_.num_rows() - 1, matrix_.num_cols() - 1);
-		matrix_.subquiver(count_, result);
+	std::shared_ptr<T> SubmatrixIterator<T>::next() {
+		std::shared_ptr<T> result = std::make_shared<T>(matrix_.num_rows() - 1,
+				matrix_.num_cols() - 1);
+		matrix_.subquiver(count_, *result);
 		++count_;
 		return result;
 	}

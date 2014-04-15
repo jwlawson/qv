@@ -1,9 +1,10 @@
 /*
  * submatrix_iterator_test.cc
  */
+#include "submatrix_iterator.h"
 
 #include "gtest/gtest.h"
-#include "submatrix_iterator.h"
+
 #include "quiver_matrix.h"
 
 namespace cluster {
@@ -17,7 +18,7 @@ namespace cluster {
 
 		SubmatrixIterator<QuiverMatrix> iter(m);
 
-		EXPECT_TRUE(exp.equals(iter.next()));
+		EXPECT_TRUE(exp.equals(*(iter.next())));
 	}
 
 	TEST(SubmatrixIter, Second) {
@@ -30,7 +31,7 @@ namespace cluster {
 		SubmatrixIterator<QuiverMatrix> iter(m);
 		iter.next();
 
-		EXPECT_TRUE(exp.equals(iter.next()));
+		EXPECT_TRUE(exp.equals(*(iter.next())));
 	}
 
 	TEST( SubmatrixIter, Degenerate) {
@@ -41,6 +42,6 @@ namespace cluster {
 
 		SubmatrixIterator<QuiverMatrix> iter(m);
 
-		EXPECT_TRUE(exp.equals(iter.next()));
+		EXPECT_TRUE(exp.equals(*(iter.next())));
 	}
 }

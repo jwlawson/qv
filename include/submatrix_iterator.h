@@ -10,6 +10,7 @@ namespace cluster {
 	class SubmatrixIterator {
 
 	 public:
+		SubmatrixIterator();
 		SubmatrixIterator(const T& initial);
 
 		std::shared_ptr<T> next();

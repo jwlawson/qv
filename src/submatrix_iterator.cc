@@ -7,6 +7,11 @@
 #include "quiver_matrix.h"
 
 namespace cluster {
+
+
+	template<class T>
+	SubmatrixIterator<T>::SubmatrixIterator() {}
+
 	template<class T>
 	SubmatrixIterator<T>::SubmatrixIterator(const T& matrix)
 		: matrix_(matrix), count_(0), max_(matrix.num_rows()) {}

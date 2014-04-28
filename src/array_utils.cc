@@ -44,14 +44,6 @@ namespace cluster {
 			}
 			return count;
 		}
-		int next_index_of(const std::vector<int>& arr, const int val, const int prev) {
-			for (uint i = prev + 1; i < arr.size(); i++) {
-				if (arr[i] == val) {
-					return i;
-				}
-			}
-			return -1;
-		}
 		bool equal(const std::vector<int>& a, const std::vector<int>& b) {
 			if (a.size() != b.size()) {
 				return false;

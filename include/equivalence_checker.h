@@ -1,49 +1,77 @@
 #pragma once
 #include "int_matrix.h"
 #include <vector>
+#include <utility>
 
 namespace cluster {
 	class EquivalenceChecker {
 	 public:
+		 /**
+			* Get the singleton instance of EquivalenceChecker.
+			* This is less important now that we are not creating every possible
+			* permutation, but still reduces the amount of allocations.
+			*/
 		static std::shared_ptr<EquivalenceChecker> Get(const int size);
 
+		/** Create empty checker that is essentially useless. */
 		EquivalenceChecker();
+		/**
+		 * Create instance with pre-allocated vectors of the required size.
+		 * @param size Size of matrices to be checked
+		 */
 		EquivalenceChecker(const int size);
+		/**
+		 * Check if the two matrices are equivalent up to a permutation of their
+		 * rows and columns.
+		 * @param lhs First matrix
+		 * @param rhs Second matrix
+		 * @return true if matrices are equivalent
+		 */
 		bool are_equivalent(const IntMatrix &lhs, const IntMatrix &rhs);
+		/**
+		 * Allocation operator.
+		 */
 		EquivalenceChecker& operator=(EquivalenceChecker mat);
+		/**
+		 * Swap function used in allocating. Swaps each of the private data members.
+		 */
 		friend void swap(EquivalenceChecker& f, EquivalenceChecker& s);
 
 	 private:
+		/** Cached singleton instance. */
 		static std::weak_ptr<EquivalenceChecker> instance_;
 
+		/**
+		 * Class to hold the row/column sums and absolute value versions. Provides
+		 * method to easily reset these.
+		 */
 		class Info {
 			public:
 				Info(int size)
-					: row_sum(size),
-						abs_row_sum(size),
-						col_sum(size),
-						abs_col_sum(size) {}
+					: rows(size),
+						cols(size) {}
 				void reset() {
-					for(uint i = 0; i < row_sum.size(); ++i) {
-						row_sum[i] = 0;
-						abs_row_sum[i] = 0;
-						col_sum[i] = 0;
-						abs_col_sum[i] = 0;
+					for(std::size_t i = 0; i < rows.size(); ++i) {
+						rows[i].first = 0;
+						rows[i].second = 0;
+						cols[i].first = 0;
+						cols[i].second = 0;
 					}
 				}
-				std::vector<int> row_sum;
-				std::vector<int> abs_row_sum;
-				std::vector<int> col_sum;
-				std::vector<int> abs_col_sum;
+				std::vector<std::pair<int, int>> rows;
+				std::vector<std::pair<int, int>> cols;
 		};
 
+		/**
+		 * Stores information about possible mappings between the matrices.
+		 */
 		class Mapping {
 			public:
 				Mapping(int size)
 					: row_mappings(size),
 						col_mappings(size) {}
 				void reset() {
-					for(uint i = 0; i < row_mappings.size(); ++i) {
+					for(std::size_t i = 0; i < row_mappings.size(); ++i) {
 						row_mappings[i].clear();
 						col_mappings[i].clear();
 					}
@@ -66,12 +94,24 @@ namespace cluster {
 		Info bi_;
 		Mapping maps_;
 
-		int factorial(const int num) const;
+		/** Fill the Info sums with the correct values for both a and b. */
 		void calc_sums(const IntMatrix &a, const IntMatrix &b);
+		/** Check whether the columns of the matrices match. */
 		bool do_columns_match(const IntMatrix& a, const IntMatrix& b);
+		/** Check whether the rows of the matrices match. */
 		bool do_rows_match(const IntMatrix& a, const IntMatrix& b);
+		/** Check whether the row/column sums match. */
 		bool sums_equivalent() const;
-		bool arrays_equivalent(std::vector<int> a, std::vector<int> b) const;
+		/** 
+		 * Convenience method to check if two int vectors contain the same numbers
+		 * in different orders.
+		 */
+		bool arrays_equivalent(const std::vector<int>& a,
+				const std::vector<int>& b) const;
+		/**
+		 * Check whether the two matrices are permutations by considering the
+		 * mappings calculated earlier. Uses recursion on the index.
+		 */
 		bool check_perm(std::vector<int>& row_map, int index, 
 				const IntMatrix& a, const IntMatrix& b);
 

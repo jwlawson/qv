@@ -21,11 +21,21 @@ namespace cluster {
 		}
 	}
 	
-	bool Cycle::equals(const Cycle& rhs) {
+	bool Cycle::equals(const Cycle& rhs) const {
 		return cycle_ == rhs.cycle_;
 	}
 
-	bool Cycle::contains(const int value) {
+	std::size_t Cycle::hash() const {
+		using std::size_t;
+		size_t hash = 1;
+		for(size_t i = 0; i < cycle_.size(); ++i) {
+			hash *= 47;
+			hash += cycle_[i];
+		}
+		return hash;
+	}
+
+	bool Cycle::contains(const int value) const {
 		using std::size_t;
 		for(size_t i = 0; i < cycle_.size(); ++i) {
 			if(cycle_[i] == value) {

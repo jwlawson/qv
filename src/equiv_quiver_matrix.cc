@@ -1,8 +1,14 @@
-#include <cstdlib>
+/*
+ * equiv_quiver_matrix.cc
+ */
 #include "equiv_quiver_matrix.h"
-#include "array_utils.h"
+
+#include <cstdlib>
 #include <algorithm>
 #include <iostream>
+#include <utility>
+
+#include "array_utils.h"
 
 namespace cluster {
 	EquivQuiverMatrix::EquivQuiverMatrix() : QuiverMatrix() {}
@@ -56,26 +62,21 @@ namespace cluster {
 
 	std::size_t EquivQuiverMatrix::compute_hash() const {
 		std::size_t hash = 137;
-		std::vector<int> rowSum(num_rows(), 0);
-		std::vector<int> colSum(num_cols(), 0);
-		std::vector<int> absRowSum(num_rows(), 0);
-		std::vector<int> absColSum(num_cols(), 0);
+		std::vector<std::pair<int, int>> rows(num_rows_, std::make_pair(0, 0));
+		std::vector<std::pair<int, int>> cols(num_cols_, std::make_pair(0, 0));
+
 		for (int i = 0; i < num_rows(); i++) {
 			for (int j = 0; j < num_cols(); j++) {
-				rowSum[i] += get(i, j);
-				colSum[j] += get(i, j);
-				absRowSum[i] += std::abs(get(i, j));
-				absColSum[j] += std::abs(get(i, j));
+				rows[i].first += get(i,j);
+				rows[i].second += std::abs(get(i,j));
+				cols[j].first += get(i,j);
+				cols[j].second += std::abs(get(i,j));
 			}
 		}
-		std::sort(rowSum.begin(), rowSum.end());
-		std::sort(absRowSum.begin(), absRowSum.end());
-		std::sort(colSum.begin(), colSum.end());
-		std::sort(absColSum.begin(), absColSum.end());
-		hash += 257 * arrays::hash(rowSum);
-		hash += 73 * arrays::hash(colSum);
-		hash += 67 * arrays::hash(absRowSum);
-		hash += 157 * arrays::hash(absColSum);
+		std::sort(rows.begin(), rows.end());
+		std::sort(cols.begin(), cols.end());
+		hash += 257 * arrays::hash(rows);
+		hash += 73 * arrays::hash(cols);
 
 		return hash;
 	}

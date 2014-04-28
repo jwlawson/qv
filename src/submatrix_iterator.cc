@@ -10,7 +10,8 @@ namespace cluster {
 
 
 	template<class T>
-	SubmatrixIterator<T>::SubmatrixIterator() {}
+	SubmatrixIterator<T>::SubmatrixIterator() 
+		: count_(0), max_(0) {}
 
 	template<class T>
 	SubmatrixIterator<T>::SubmatrixIterator(const T& matrix)

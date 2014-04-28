@@ -33,4 +33,55 @@ namespace cluster {
 
 		EXPECT_EQ(exp, res);
 	}
+
+	/**
+	 * This test was included after a strange bug appeared only in this mutation
+	 * class. At the 1458 matrix to be taken from the class, computing the 
+	 * mutation at the 3rd vertex resulted in a call to the hash map for the
+	 * matrix:
+	 * { 	{ 0 -1 1 0 0 1 0 0 }
+	 * 		{ 1 0 0 0 1 0 0 -1 }
+	 * 		{ -1 0 0 0 0 0 0 0 }
+	 * 		{ 0 0 0 0 0 1 0 0 }
+	 * 		{ 0 -1 0 0 0 0 0 0 }
+	 * 		{ -1 0 0 -1 0 0 0 1 }
+	 * 		{ 0 0 0 0 0 0 0 -1 }
+	 * 		{ 0 1 0 0 0 -1 1 0 } }
+	 *
+	 * For some reason, the first time map_.count was called it would return 1,
+	 * but then subsequent calls would return 0. Checking which matrix was
+	 * considered 'equal' it was:
+	 * { 	{ 0 0 1 0 -1 1 0 0 }
+	 * 		{ 0 0 0 0 1 0 0 0 }
+	 * 		{ -1 0 0 0 0 0 0 0 }
+	 * 		{ 0 0 0 0 0 1 0 0 }
+	 * 		{ 1 -1 0 0 0 0 0 -1 }
+	 * 		{ -1 0 0 -1 0 0 0 1 }
+	 * 		{ 0 0 0 0 0 0 0 -1 }
+	 * 		{ 0 0 0 0 1 -1 1 0 } }
+	 *
+	 * Checking these matrices separately (see equiv_quiver_matrix_test) these are
+	 * *not* equivalent, yet for some reason they were coming up as equal.
+	 *
+	 * I changed the hashcode, so that these matrices no longer have the same
+	 * hash, which seems to have prevented this from cropping up.
+	 *
+	 * The test is now ignored as it takes ~3 mins to run.
+	 */
+	/*
+	TEST(EquivMutationClassSize, Big) {
+		std::string str = "{ { 0 1 0 0 0 0 0 0 } "
+												"{ -1 0 1 0 0 0 0 0 } "
+												"{ 0 -1 0 1 1 0 0 0 } "
+												"{ 0 0 -1 0 0 0 0 0 } "
+												"{ 0 0 -1 0 0 1 0 0 } "
+												"{ 0 0 0 0 -1 0 0 -1 } "
+												"{ 0 0 0 0 0 0 0 -1 } "
+												"{ 0 0 0 0 0 1 1 0 } }";
+		EquivQuiverMatrix m(str);
+
+		int result = equivsize::Size(m);
+		EXPECT_TRUE(result > 0);
+	}
+	*/
 }

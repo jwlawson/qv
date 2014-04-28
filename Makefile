@@ -7,7 +7,7 @@
 
 # define any compile-time flags
 # Using cygwin -std=gnu++11 should be used rather than -std=c++11
-CXXFLAGS = -Wall -std=gnu++11 -march=native -O3
+CXXFLAGS = -Wall -std=gnu++11 -march=native -g #-O3
 
 # Specify base directory
 BASE_DIR = .
@@ -23,13 +23,12 @@ OBJ_DIR = $(BASE_DIR)/build
 
 # define any directories containing header files other than /usr/include
 # -I/home/newhall/include 
-INCLUDES = -I$(BASE_DIR)/include -I$(BASE_DIR)/src -I$(BASE_DIR)/lib/include 
+INCLUDES = -I$(BASE_DIR)/include -I$(BASE_DIR)/src -I$(BASE_DIR)/lib/include
 
 # define library paths in addition to /usr/lib
 #   if I wanted to include libraries not in /usr/lib I'd specify
 #   their path using -Lpath, something like: -L/home/newhall/lib
-LFLAGS = -L$(BASE_DIR)/lib -L$(BASE_DIR)/lib/cygwin -L$(BASE_DIR)/lib \
-				 -L$(BASE_DIR)/lib/linux 
+LFLAGS = -L$(BASE_DIR)/lib -L$(BASE_DIR)/lib
 
 # define any libraries to link into executable:
 #   if I want to link in libraries (libx.so or libx.a) I use the -llibname 
@@ -41,7 +40,7 @@ TEST_LIBS = -lgtest -lgtest_main -lpthread
 SRCS = $(wildcard $(SRC_DIR)/*.cc)
 TEST_SRCS = $(wildcard $(TEST_DIR)/*.cc)
 
-# define the C object files 
+# define the C object files
 #
 # This uses Suffix Replacement within a macro:
 #   $(name:string1=string2)
@@ -59,7 +58,6 @@ TEST_OBJS = $(patsubst $(TEST_DIR)/%,$(OBJ_DIR)/%,$(_TEST_OBJS))
 # define the executable file 
 MAIN = qv
 TEST = testqv
-
 
 #
 # The following part of the makefile is generic; it can be used to 

@@ -48,6 +48,7 @@ namespace cluster {
 
 		EXPECT_TRUE(exp1.equals(*res.submatrix));
 		EXPECT_TRUE(mat.equals(*res.matrix));
+		EXPECT_TRUE(0 == res.removed);
 	}
 }
 

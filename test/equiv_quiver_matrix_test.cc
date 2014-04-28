@@ -214,5 +214,16 @@ namespace cluster {
 
 		EXPECT_TRUE(a.equals(b));
 	}
+
+	TEST(EquivMatrix, StrangeEqual) {
+		std::string s1 = "{ { 0 -1 1 0 0 1 0 0 } { 1 0 0 0 1 0 0 -1 } { -1 0 0 0 0 0 0 0 } { 0 0 0 0 0 1 0 0 } { 0 -1 0 0 0 0 0 0 } { -1 0 0 -1 0 0 0 1 } { 0 0 0 0 0 0 0 -1 } { 0 1 0 0 0 -1 1 0 } }";
+		std::string s2 = "{ { 0 0 1 0 -1 1 0 0 } { 0 0 0 0 1 0 0 0 } { -1 0 0 0 0 0 0 0 } { 0 0 0 0 0 1 0 0 } { 1 -1 0 0 0 0 0 -1 } { -1 0 0 -1 0 0 0 1 } { 0 0 0 0 0 0 0 -1 } { 0 0 0 0 1 -1 1 0 } }";
+
+		EquivQuiverMatrix a(s1);
+		EquivQuiverMatrix b(s2);
+
+		EXPECT_FALSE(a.equals(b));
+		EXPECT_FALSE(b.equals(a));
+	}
 }
 

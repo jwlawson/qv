@@ -6,6 +6,8 @@
 #include "equiv_quiver_matrix.h"
 #include "mutation_class.h"
 
+#include <iostream>
+
 namespace cluster {
 
 	template< class T>
@@ -21,12 +23,14 @@ namespace cluster {
 		map_[matrix_].matrix(matrix_);
 		map_[matrix_].size(size_);
 		queue_.push_back(matrix_);
+		count_ = 0;
 	}
 
 	template<class T>
 	T MutationClass<T>::next() {
 		std::shared_ptr<T> result = queue_.front();
 		queue_.pop_front();
+		count_++;
 		if (compute_mutations(result)) {
 			return std::move(*result);
 		} else {
@@ -48,11 +52,46 @@ namespace cluster {
 	bool MutationClass<T>::compute_mutations(std::shared_ptr<T> mat) {
 		for (int i = 0; i < size_ && should_calc_; i++) {
 			if (mutate_at(mat, i)) {
-				std::shared_ptr<T> new_matrix =
+				if(count_ == 1459) std::cout<< "mutating at "<< i << std::endl;
+				const std::shared_ptr<T> new_matrix =
 					std::make_shared<T>(mat->num_rows(), mat->num_cols());
 				mat->mutate(i, *new_matrix);
+				if(count_ == 1459) std::cout<< "Got " << *new_matrix << new_matrix << std::endl;
 				if (have_seen(new_matrix)) {
+					if(count_ == 1459) {
+						std::hash<T> thash;
+						std::hash<std::shared_ptr<T>> phash;
+						std::cout << thash(*new_matrix) << " / " << phash(new_matrix) << std::endl;
+						auto found = map_.find(new_matrix);
+						if(found == map_.end()) {
+							std::cout << "Matrix not found" << std::endl;
+						} else {
+							std::cout << found->first << " mapped to " << found->second.matrix() << std::endl;
+							std::cout << "Equal? " << (*new_matrix).equals(*found->first)<< std::endl;
+							std::cout << *(found->first) << " mapped to " << std::endl;
+							std::cout << thash(*found->first) << " / " << phash(found->first) << std::endl;
+							int count = map_.count(new_matrix);
+							std::cout << "Count: "<< count << new_matrix << *new_matrix << std::endl;
+							std::cout << phash(new_matrix) << std::endl;
+							for(auto& a : map_) {
+								std::cout << phash(a.first) << std::endl;
+								if(phash(new_matrix) == phash(a.first) ) {
+									std::cout << "In map " << a.first << " " << *a.first << std::endl;
+									std::cout << "Equal? " << (*new_matrix).equals(*a.first)<< std::endl;
+								}
+							}
+							auto found1 = map_.find(new_matrix);
+							if(found1 == map_.end()) {
+								std::cout << "Not found ????" << std::endl;
+							} else {
+							std::cout << "Same? " << (found->first == found1->first)  << " " << found1->first << "->" << found1->second.matrix() << std::endl;
+							int count2 = map_.count(new_matrix);
+							std::cout << "Count: "<< count2 << std::endl;
+							}
+						}
+					}
 					seen_matrix(new_matrix, mat, i);
+					if(count_ == 1459) std::cout<< "No!" << std::endl;
 					if (is_complete(new_matrix)) {
 						remove_complete(new_matrix);
 					}

@@ -56,5 +56,17 @@ namespace cluster {
 
 		EXPECT_FALSE(a.equals(b));
 	}
+
+	TEST(Cycle, PermutationEquals) {
+		std::vector<int> v1 = {0, 1, 2};
+		std::vector<int> v2 = {1, 2, 3};
+		std::vector<int> map = {3, 0, 1, 2};
+
+		Cycle a(v1);
+		Cycle b(v2);
+
+		bool res = a.equals(b, map);
+		EXPECT_TRUE(res);
+	}
 }
 

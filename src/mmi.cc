@@ -7,7 +7,6 @@
 #include "submatrix_iterator.h"
 #include "equiv_quiver_matrix.h"
 #include "equiv_mutation_class_size.h"
-#include <iostream>
 
 namespace cluster {
 	namespace mmi {

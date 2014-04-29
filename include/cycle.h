@@ -8,6 +8,7 @@
 
 #include <functional>
 #include <memory>
+#include <ostream>
 #include <vector>
 
 namespace cluster {
@@ -28,11 +29,28 @@ namespace cluster {
 		Cycle(const std::vector<int>& vec);
 
 		/**
+		 * Create a cycle with part of a vector. the size tells how many of the
+		 * values from the vector should be used from the first.
+		 * @param vec Vector of vertex labels
+		 * @param size Number of elements in cycle
+		 */
+		Cycle(const std::vector<int>& vec, const int size);
+
+		/**
 		 * Check whether this cycle is equal to the one provided.
 		 * @param rhs Cycle to check if equal to
 		 * @return true if equal
 		 */
 		bool equals(const Cycle& rhs) const;
+		
+		/**
+		 * Check whether this cycle is equivalent to the one provided when it is
+		 * permuted by the values given.
+		 * @param rhs Cycle to check
+		 * @param permutation Mappings from one vertex to another
+		 * @return true if equivalent
+		 */
+		bool equals(const Cycle& rhs, const std::vector<int>& permutation) const;
 
 		/**
 		 * Hash the cycle and return the hashcode.
@@ -48,11 +66,21 @@ namespace cluster {
 		bool contains(const int value) const;
 
 		/**
+		 * Check whether the cycle contains the values in the order that is
+		 * specified by the pair.
+		 * @param pair The pair of integers to check
+		 * @return true if both number are in the cycle and in the same order
+		 */
+		bool contains(const std::pair<int, int>& pair) const;
+
+		/**
 		 * Need to overload == to allow unordered_sets of cycles to be compared.
 		 */
 		friend bool operator ==(const Cycle& lhs, const Cycle& rhs) {
 			return lhs.equals(rhs);
 		}
+
+		friend std::ostream& operator <<(std::ostream& os, const Cycle& cycle);
 
 		private:
 		/**
@@ -67,6 +95,14 @@ namespace cluster {
 		 */
 		static std::size_t smallest_index(const std::vector<int>& vec);
 
+		/**
+		 * Find the index in the vector of the smallest value stored in the first
+		 * size values in the vector.
+		 * @param vec Vector to check
+		 * @param size Number of values to check from the beginning of the vector
+		 * @return Index of the smallest value
+		 */
+		static std::size_t smallest_index(const std::vector<int>& vec, const int size);
 	};
 }
 

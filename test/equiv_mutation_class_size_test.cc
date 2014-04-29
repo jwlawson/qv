@@ -34,6 +34,15 @@ namespace cluster {
 		EXPECT_EQ(exp, res);
 	}
 
+	TEST(EquivMutationClassSize, Infinite) {
+		std::string str = "{	{ 0 1 0 0 } { -1 0 1 1 } { 0 -1 0 1 } { 0 -1 -1 0 }";
+		EquivQuiverMatrix m(str);
+
+		int res = equivsize::Size(m);
+
+		EXPECT_EQ(-1, res);
+	}
+
 	/**
 	 * This test was included after a strange bug appeared only in this mutation
 	 * class. At the 1458 matrix to be taken from the class, computing the 
@@ -78,6 +87,30 @@ namespace cluster {
 												"{ 0 0 0 0 -1 0 0 -1 } "
 												"{ 0 0 0 0 0 0 0 -1 } "
 												"{ 0 0 0 0 0 1 1 0 } }";
+		EquivQuiverMatrix m(str);
+
+		int result = equivsize::Size(m);
+		EXPECT_TRUE(result > 0);
+	}
+	*/
+
+	/*
+	 * This is another example of a matrix which appeared to be in the map, even
+	 * though the matrix returned by find is not actually equivalent to it. This
+	 * one did not get fixed by changing the hashcode, so I have added an extra
+	 * call to map_.find after map_.count to ensure that this cannot cause a crash
+	 * - but perhaps it will run a bit slower.
+	 */
+	/*
+	TEST(EquivMutationClassSize, Big) {
+		std::string str = "{ { 0 1 0 0 0 0 0 1 } "
+												"{ -1 0 1 0 0 0 0 0 } "
+												"{ 0 -1 0 1 0 0 0 0 } "
+												"{ 0 0 -1 0 0 0 0 0 } "
+												"{ 0 0 0 0 0 0 1 0 } "
+												"{ 0 0 0 0 0 0 1 -1 } "
+												"{ 0 0 0 0 -1 -1 0 0 } "
+												"{ -1 0 0 0 0 1 0 0 } }";
 		EquivQuiverMatrix m(str);
 
 		int result = equivsize::Size(m);

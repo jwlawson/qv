@@ -52,5 +52,6 @@ namespace cluster {
 
 		EXPECT_TRUE(mmi::slow_mmi(a));
 	}
+
 }
 

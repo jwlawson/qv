@@ -157,7 +157,7 @@ namespace cluster {
 		IntMatrix m(3, 3, v1);
 		IntMatrix exp(6, 6, v2);
 		IntMatrix res(6, 6);
-		m.enlarge_matrix(3, 3, res);
+		m.enlarge_matrix(res);
 		EXPECT_TRUE(exp.equals(res));
 	}
 
@@ -247,6 +247,46 @@ namespace cluster {
 		IntMatrix exp(10, 10, v);
 
 		EXPECT_TRUE(exp.equals(a));
+	}
+
+	TEST(IntMatrix, SubmatrixVector) {
+
+		std::string str = "{ { 0 1 2 } { 3 4 5 } { 6 7 8 } }";
+		IntMatrix a(str);
+
+		std::vector<int> row = {0, 1};
+		std::vector<int> col = {2};
+
+		IntMatrix res(2, 1);
+		a.submatrix(std::move(row), std::move(col), res);
+
+		std::string exp_str = "{ { 2 } { 5 } }";
+		IntMatrix exp(exp_str);
+
+		EXPECT_TRUE(exp.equals(res));
+	}
+
+	TEST(IntMatrix, SubmatrixVectorBig) {
+		std::string str = "{ {  1  2  3  4  5  6 } "
+												"{  7  8  9 10 11 12 } "
+												"{ 13 14 15 16 17 18 } "
+												"{ 19 20 21 22 23 24 } "
+												"{ 25 26 27 28 29 30 } "
+												"{ 31 32 33 34 35 36 } }";
+		IntMatrix a(str);
+
+		std::vector<int> row = {0, 4, 5};
+		std::vector<int> col = {1, 3, 4, 5};
+
+		IntMatrix res(3, 4);
+		a.submatrix(std::move(row), std::move(col), res);
+
+		std::string exp_str = "{ {  2  4  5  6 } "
+														"{ 26 28 29 30 } "
+														"{ 32 34 35 36 } }";
+		IntMatrix exp(exp_str);
+
+		EXPECT_TRUE(exp.equals(res));
 	}
 	
 }

@@ -13,7 +13,7 @@ namespace cluster {
 				size_(matrix.num_rows()),
 				index_(0),
 				max_(ipow(5, size_)) {
-		matrix.enlarge_matrix(1, 1, matrix_);
+		matrix.enlarge_matrix(matrix_);
 	}
 		
 	template<class T>

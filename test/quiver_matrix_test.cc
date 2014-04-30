@@ -56,7 +56,7 @@ namespace cluster {
 		QuiverMatrix m(3, 3, v1);
 		QuiverMatrix exp(4, 4, v2);
 		QuiverMatrix res(4, 4);
-		m.enlarge_matrix(1, 1, res);
+		m.enlarge_matrix(res);
 
 		EXPECT_TRUE(exp.equals(res));
 	}
@@ -67,7 +67,7 @@ namespace cluster {
 		QuiverMatrix m(3, 3, v1);
 		QuiverMatrix exp(5, 5, v2);
 		QuiverMatrix res(5, 5);
-		m.enlarge_matrix(2, 2, res);
+		m.enlarge_matrix(res);
 		EXPECT_TRUE(exp.equals(res));
 	}
 

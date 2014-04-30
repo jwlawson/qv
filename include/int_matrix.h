@@ -199,13 +199,22 @@ namespace cluster {
 		 */
 		void submatrix(const int row, const int col, IntMatrix &result) const;
 		/**
+		 * Compute the submatrix of this matrix which consists of the specified rows
+		 * and columns as supplied in the vectors.
+		 * @param rows Vector of row indices to appear in the submatrix
+		 * @pararm cols Vector of column indices to appear in the submatrix
+		 * @param result Matrix to write the result into
+		 */
+		void submatrix(std::vector<int> rows, std::vector<int> cols,
+				IntMatrix& result) const;
+
+		/**
 		 * Embed this matrix into the provided matrix, so that this matrix is the
 		 * first submatrix. All other values are set to 0.
 		 *
 		 * @param result Matrix to wrtie the result into.
 		 */
-		// TODO Remove unneeded parameters.
-		void enlarge_matrix(const int e, const int extra_cols, IntMatrix &result) const;
+		void enlarge_matrix(IntMatrix &result) const;
 		/**
 		 * Permute the rows of this matrix and write the result in the provided
 		 * matrix.

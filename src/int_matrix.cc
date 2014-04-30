@@ -1,4 +1,6 @@
 #include "int_matrix.h"
+
+#include <algorithm>
 #include <functional>
 #include <sstream>
 #include <iostream>
@@ -202,14 +204,48 @@ namespace cluster {
 		result.reset();
 	}
 
-	void IntMatrix::enlarge_matrix(const int e, const int extra_cols,
-			IntMatrix &result) const {
+	void IntMatrix::submatrix(std::vector<int> rows, std::vector<int> cols,
+			IntMatrix& result) const {
+		int row_ind = 0;
+		int col_ind = 0;
+		int rows_vec_ind = 0;
+		int cols_vec_ind = 0;
+		int this_index = 0;
+		int result_index = 0;
+		/* Sort the vectors and keep track of the current index to avoid searching
+		 * through the arrays continuously. */
+		std::sort(rows.begin(), rows.end());
+		std::sort(cols.begin(), cols.end());
+		
+		while(row_ind < num_rows_) {
+			if(rows[rows_vec_ind] == row_ind) {
+				rows_vec_ind++;
+				col_ind = 0;
+				cols_vec_ind = 0;
+				while(col_ind < num_cols_) {
+					if(cols[cols_vec_ind] == col_ind) {
+						cols_vec_ind++;
+						result.data_[result_index++] = data_[this_index++];
+					} else {
+						this_index++;
+					}
+					col_ind++;
+				}
+			} else {
+				this_index += num_cols_;
+			}
+			row_ind++;
+		}
+		result.reset();
+	}
+
+	void IntMatrix::enlarge_matrix(IntMatrix &result) const {
 		int sub = 0;
 		for (int index = 0; index < result.num_rows_ * result.num_cols_; index++) {
-			if (index % (num_cols_ + extra_cols) >= num_cols_) {
+			if (index % result.num_cols_ >= num_cols_) {
 				result.data_[index] = 0;
 				sub++;
-			} else if (index >= num_rows_ * (num_cols_ + extra_cols)) {
+			} else if (index >= num_rows_ * result.num_cols_) {
 				result.data_[index] = 0;
 			} else {
 				result.data_[index] = data_[index - sub];

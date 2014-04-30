@@ -4,6 +4,9 @@
  * Contains the CycleInfo class. This extracts the cycles in a quiver and stores
  * this information. There are then methods to compare the cycle information for
  * different quivers.
+ *
+ * CycleInfo does not take into account the direction that the arrows in the
+ * quiver are oriented.
  */
 #pragma once
 
@@ -44,6 +47,13 @@ namespace cluster {
 		 * @param matrix The matrix to extract cycle information from
 		 */
 		CycleInfo(const QuiverMatrix& matrix);
+
+		/**
+		 * Check whether any cycles contain the specified vertex.
+		 * @param vertex Vertex to check
+		 * @return true if any cycle contains the vertex
+		 */
+		bool cycle_contains(const int vertex) const;
 
 		/**
 		 * Check whether the cycles in the supplied CycleInfo instance are the same

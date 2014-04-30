@@ -2,7 +2,7 @@
  * cycle_info.cc
  */
 #include "cycle_info.h"
-
+#include <iostream>
 namespace cluster {
 	
 	CycleInfo::CycleInfo() : size_(), cycles_(), num_cycles_(), edges_() {}
@@ -15,6 +15,15 @@ namespace cluster {
 	{
 		comp_cycles(matrix);
 		find_double_edges(matrix);
+	}
+
+	bool CycleInfo::cycle_contains(const int vertex) const {
+		for(auto& cycle : cycles_) {
+			if(cycle.contains(vertex)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/*
@@ -159,11 +168,12 @@ namespace cluster {
 	 */
 	void CycleInfo::cycles_from(int vertex, std::vector<int>& cycle, int index,
 			const QuiverMatrix& matrix) {
-		if(index != 0 && vertex == cycle[0]) {
+		if(index != 0 && index != 2 && vertex == cycle[0]) {
 			/* Loop complete, so insert into set. Note that if the cycle has been
 			 * found before the suplicate will not be inserted, which is exactly the
 			 * behaviour we want. */
 			Cycle add(cycle, index);
+			std::cout << "Adding " << add << " index " << index<< std::endl;
 			num_cycles_[add.size() - 1]++;
 			cycles_.insert(std::move(add));
 			return;
@@ -179,7 +189,7 @@ namespace cluster {
 		index++;
 		std::vector<int> row = matrix.get_row(vertex);
 		for(std::size_t i = 0; i < row.size(); ++i) {
-			if(row[i] > 0) {
+			if(row[i] != 0) {
 				cycles_from(i, cycle, index, matrix);
 			}
 		}

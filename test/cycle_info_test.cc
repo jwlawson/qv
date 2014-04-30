@@ -46,12 +46,12 @@ namespace cluster {
 
 	TEST(CycleInfo, NoCycles) {
 		int v[] = {0, 1, 0, -1, 0, 1, 0, -1, 0};
-		int w[] = {0, 1, 0, 0, 0, 1,
+		int w[] = {0, 1, 0, 0, 0, 0,
 							 -1, 0, 1, 0, 0, 0,
 							 0, -1, 0, 1, 0, 0,
 							 0, 0, -1, 0, -1, 0,
 							 0, 0, 0, 1, 0, -1,
-							 -1, 0, 0, 0, 1, 0};
+							 0, 0, 0, 0, 1, 0};
 
 		QuiverMatrix m(3, 3, v);
 		QuiverMatrix n(6, 6, w);

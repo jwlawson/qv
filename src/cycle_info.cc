@@ -5,15 +5,48 @@
 
 namespace cluster {
 	
-	CycleInfo::CycleInfo() : cycles_(), edges_(), size_() {}
+	CycleInfo::CycleInfo() : size_(), cycles_(), num_cycles_(), edges_() {}
 
 	CycleInfo::CycleInfo(const QuiverMatrix& matrix)
-		:	cycles_(),
-			edges_(),
-			size_(std::min(matrix.num_rows(), matrix.num_cols())) {
+		:	size_(std::min(matrix.num_rows(), matrix.num_cols())),
+			cycles_(),
+			num_cycles_(size_, 0),
+			edges_()
+	{
 		comp_cycles(matrix);
 		find_double_edges(matrix);
 	}
+
+	/*
+	 * The hashcode needs to be the same for any permutation of the cycle info,
+	 * so cannot use any information regarding the vertices in the cycles.
+	 *
+	 * Here it just considers the number of cycles of each size and the number
+	 * of double edges.
+	 *
+	 * Iterate backward over the number of cycles, so that we can ignore any
+	 * zeros in the vector for larger cycles which might not appear in smaller
+	 * matrices.
+	 */
+	std::size_t CycleInfo::hash() const {
+		std::size_t hash = 1;
+		bool started = false;
+		for(auto iter = num_cycles_.end(); iter != num_cycles_.begin();) {
+			--iter;
+			if(*iter == 0 && !started) {
+				/* Ignore */
+				continue;
+			} else if(!started) {
+				started = true;
+			}
+			hash *= 31;
+			hash += *iter;
+		}
+		hash *= 47;
+		hash += edges_.size();
+		return hash;
+	}
+
 
 	bool CycleInfo::equals(const CycleInfo& rhs) const {
 		if(cycles_.size() != rhs.cycles_.size()){
@@ -24,6 +57,9 @@ namespace cluster {
 		}
 		if(cycles_ == rhs.cycles_ && edges_ == rhs.edges_) {
 			return true;
+		}
+		if(hash() != rhs.hash()){
+			return false;
 		}
 		std::vector<int> dedge_start;
 		std::vector<int> dedge_end;
@@ -100,7 +136,7 @@ namespace cluster {
 				DEdge dedge = std::make_pair(row, col);
 				for(auto& cycle : cycles_){
 					if(cycle.contains(dedge)) {
-						edges_.insert(dedge);
+						edges_.insert(std::move(dedge));
 						break;
 					}
 				}
@@ -128,6 +164,7 @@ namespace cluster {
 			 * found before the suplicate will not be inserted, which is exactly the
 			 * behaviour we want. */
 			Cycle add(cycle, index);
+			num_cycles_[add.size() - 1]++;
 			cycles_.insert(std::move(add));
 			return;
 		} else if(vector_contains(cycle, vertex, index)

@@ -62,6 +62,10 @@ namespace cluster {
 		return hash;
 	}
 
+	std::size_t Cycle::size() const {
+		return cycle_.size();
+	}
+
 	bool Cycle::contains(const int value) const {
 		using std::size_t;
 		for(size_t i = 0; i < cycle_.size(); ++i) {

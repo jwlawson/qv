@@ -59,6 +59,11 @@ namespace cluster {
 		std::size_t hash() const;
 
 		/**
+		 * Get the size of the cycle. That is the number of vertices in the cycle.
+		 */
+		std::size_t size() const;
+
+		/**
 		 * Check whether the cycle contains the specified vertex.
 		 * @param value Vertex index to check
 		 * @return true if vertex is in the cycle

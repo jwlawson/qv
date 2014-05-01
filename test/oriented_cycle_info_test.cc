@@ -126,5 +126,12 @@ namespace cluster {
 
 		EXPECT_FALSE(c1.equals(c2));
 	}
+
+	TEST(OrientedCycleInfo, CannotDestroy) {
+		std::string str = "{ {  0 -1  1  0  0  0  0 } {  1  0 -1  0  0  0  0 } { -1  1  0 -1  0  1 -1 } {  0  0  1  0  1 -1  0 } {  0  0  0 -1  0  1  0 } {  0  0 -1  1 -1  0  0 } {  0  0  1  0  0  0  0 } }";
+		QuiverMatrix m(str);
+		OrientedCycleInfo c(m);
+
+	}
 }
 

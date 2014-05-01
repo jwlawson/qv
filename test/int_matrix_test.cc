@@ -289,4 +289,17 @@ namespace cluster {
 		EXPECT_TRUE(exp.equals(res));
 	}
 	
+	TEST(IntMatrix, SubBug) {
+		std::string str = "{ { 0 1 -1 0 } { -1 0 1 0 } { 1 -1 0 1 } { 0 0 -1 0 } }";
+		IntMatrix a(str);
+
+		std::vector<int> map = {0, 1, 2};
+		IntMatrix res(3, 3);
+		a.submatrix(map, map, res);
+
+		std::string exp_str = "{ { 0 1 -1 } { -1 0 1 } { 1 -1 0 } }";
+		IntMatrix exp(exp_str);
+
+		EXPECT_TRUE(exp.equals(res));
+	}
 }

@@ -205,10 +205,11 @@ namespace cluster {
 
 	void IntMatrix::submatrix(std::vector<int> rows, std::vector<int> cols,
 			IntMatrix& result) const {
+		using std::size_t;
 		int row_ind = 0;
 		int col_ind = 0;
-		int rows_vec_ind = 0;
-		int cols_vec_ind = 0;
+		size_t rows_vec_ind = 0;
+		size_t cols_vec_ind = 0;
 		int this_index = 0;
 		int result_index = 0;
 		/* Sort the vectors and keep track of the current index to avoid searching
@@ -217,12 +218,12 @@ namespace cluster {
 		std::sort(cols.begin(), cols.end());
 		
 		while(row_ind < num_rows_) {
-			if(rows[rows_vec_ind] == row_ind) {
+			if(rows_vec_ind < rows.size() && rows[rows_vec_ind] == row_ind) {
 				rows_vec_ind++;
 				col_ind = 0;
 				cols_vec_ind = 0;
 				while(col_ind < num_cols_) {
-					if(cols[cols_vec_ind] == col_ind) {
+					if(cols_vec_ind < cols.size() && cols[cols_vec_ind] == col_ind) {
 						cols_vec_ind++;
 						result.data_[result_index++] = data_[this_index++];
 					} else {

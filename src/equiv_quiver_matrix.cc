@@ -11,7 +11,9 @@
 #include "array_utils.h"
 
 namespace cluster {
-	EquivQuiverMatrix::EquivQuiverMatrix() : QuiverMatrix() {}
+	EquivQuiverMatrix::EquivQuiverMatrix() : QuiverMatrix() {
+		checker_ = EquivalenceChecker::Get(0);
+	}
 
 	EquivQuiverMatrix::EquivQuiverMatrix(const int rows, const int cols)
 		: QuiverMatrix(rows, cols) {

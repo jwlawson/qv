@@ -1,7 +1,12 @@
+/*
+ * equivalence_checker.cc
+ */
 #include "equivalence_checker.h"
-#include "array_utils.h"
+
 #include <algorithm>
 #include <iostream>
+
+#include "array_utils.h"
 
 namespace cluster {
 	std::weak_ptr<EquivalenceChecker> EquivalenceChecker::instance_ = 
@@ -34,8 +39,17 @@ namespace cluster {
 
 	bool EquivalenceChecker::are_equivalent(const IntMatrix &a,
 	    const IntMatrix &b) {
+		if(size_ == 0) {
+			return true;
+		}
 		if (IntMatrix::are_equal(a, b)) {
 			return true;
+		}
+		if(a.num_rows() != b.num_rows() ) {
+			return false;
+		}
+		if(a.num_cols() != b.num_cols() ) {
+			return false;
 		}
 		
 		calc_sums(a, b);
@@ -55,12 +69,13 @@ namespace cluster {
 		if (!cols_match) {
 			return false;
 		}
+		using s_t  = std::size_t;
 		bool valid;
 		for(int i = 0; i < size_; ++i) {
 			valid = false;
-			for(uint j = 0; j < maps_.row_mappings[i].size() && !valid; ++j) {
+			for(s_t j = 0; j < maps_.row_mappings[i].size() && !valid; ++j) {
 				int val = maps_.row_mappings[i][j];
-				for(uint k = 0; k < maps_.col_mappings[val].size() && !valid; ++k) {
+				for(s_t k = 0; k < maps_.col_mappings[val].size() && !valid; ++k) {
 					if(maps_.col_mappings[val][k] == i) {
 						valid = true;
 					}
@@ -91,14 +106,14 @@ namespace cluster {
 			for (int j = 0; j < size_; j++) {
 				int aVal = a.get(i, j);
 				ai_.rows[i].first += aVal;
-				ai_.cols[j].first += aVal;
 				ai_.rows[i].second += abs(aVal);
+				ai_.cols[j].first += aVal;
 				ai_.cols[j].second += abs(aVal);
 
 				int bVal = b.get(i, j);
 				bi_.rows[i].first += bVal;
-				bi_.cols[j].first += bVal;
 				bi_.rows[i].second += abs(bVal);
+				bi_.cols[j].first += bVal;
 				bi_.cols[j].second += abs(bVal);
 			}
 		}
@@ -195,6 +210,9 @@ namespace cluster {
 		swap(f.ap_, s.ap_);
 		swap(f.pb_, s.pb_);
 		swap(f.size_, s.size_);
+		swap(f.ai_, s.ai_);
+		swap(f.bi_, s.bi_);
+		swap(f.maps_, s.maps_);
 	}
 }
 

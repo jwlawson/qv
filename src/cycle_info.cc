@@ -2,7 +2,7 @@
  * cycle_info.cc
  */
 #include "cycle_info.h"
-#include <iostream>
+
 namespace cluster {
 	
 	CycleInfo::CycleInfo() : size_(), cycles_(), num_cycles_(), edges_() {}
@@ -173,7 +173,6 @@ namespace cluster {
 			 * found before the suplicate will not be inserted, which is exactly the
 			 * behaviour we want. */
 			Cycle add(cycle, index);
-			std::cout << "Adding " << add << " index " << index<< std::endl;
 			num_cycles_[add.size() - 1]++;
 			cycles_.insert(std::move(add));
 			return;

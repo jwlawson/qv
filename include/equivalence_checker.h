@@ -58,6 +58,11 @@ namespace cluster {
 						cols[i].second = 0;
 					}
 				}
+				friend void swap(Info& a, Info& b){
+					using std::swap;
+					swap(a.rows, b.rows);
+					swap(a.cols, b.cols);
+				}
 				std::vector<std::pair<int, int>> rows;
 				std::vector<std::pair<int, int>> cols;
 		};
@@ -81,6 +86,11 @@ namespace cluster {
 				}
 				void update_column_mapping(const int a_index, const int b_index){
 					col_mappings[a_index].push_back(b_index);
+				}
+				friend void swap(Mapping& a, Mapping& b) {
+					using std::swap;
+					swap(a.row_mappings, b.row_mappings);
+					swap(a.col_mappings, b.col_mappings);
 				}
 
 				std::vector<std::vector<int>> row_mappings;

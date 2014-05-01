@@ -2,9 +2,11 @@
  * dynkin.h
  */
 #pragma once
-#include "quiver_matrix.h"
+
 #include <map>
 #include <string>
+
+#include "quiver_matrix.h"
 
 namespace cluster {
 	class dynkin {

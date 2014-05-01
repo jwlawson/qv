@@ -23,7 +23,7 @@ namespace cluster {
 				matrix_.num_cols() - 1);
 		matrix_.subquiver(count_, *result);
 		++count_;
-		return result;
+		return std::move(result);
 	}
 
 	template<class T>

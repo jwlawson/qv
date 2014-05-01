@@ -1,10 +1,10 @@
 /*
  * mutation_class.cc
  */
-
-#include "quiver_matrix.h"
-#include "equiv_quiver_matrix.h"
 #include "mutation_class.h"
+
+#include "equiv_quiver_matrix.h"
+#include "quiver_matrix.h"
 
 namespace cluster {
 

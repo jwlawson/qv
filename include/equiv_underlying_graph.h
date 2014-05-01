@@ -7,8 +7,8 @@
  * graph of a quiver. EquivUnderlyingGraph has the same equals behaviour as
  * EquivQuiverMatrix, so graphs identical up to permuting vertices are equal.
  */
-
 #pragma once
+
 #include "equiv_quiver_matrix.h"
 
 namespace cluster {

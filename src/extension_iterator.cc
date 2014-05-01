@@ -1,10 +1,10 @@
 /*
  * extension_iterator.cc
  */
-
 #include "extension_iterator.h"
-#include "quiver_matrix.h"
+
 #include "equiv_quiver_matrix.h"
+#include "quiver_matrix.h"
 
 namespace cluster {
 	template<class T>

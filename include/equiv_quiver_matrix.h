@@ -6,6 +6,7 @@
  * their rows and columns are considered equal.
  */
 #pragma once
+
 #include "quiver_matrix.h"
 #include "equivalence_checker.h"
 

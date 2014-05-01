@@ -1,13 +1,17 @@
 /*
  * equiv_mutation_class.h
  */
+#pragma once
 
 #include "mutation_class.h"
-#include "equiv_quiver_matrix.h"
+
 #include <unordered_set>
+
+#include "equiv_quiver_matrix.h"
 
 namespace cluster {
 	class EquivMutationClass : public MutationClass<EquivQuiverMatrix> {
+	private:
 		typedef EquivQuiverMatrix M;
 	public:
 		EquivMutationClass(const M& initial);

@@ -2,8 +2,9 @@
  * link_holder.h
  */
 #pragma once
-#include <vector>
+
 #include <memory>
+#include <vector>
 
 namespace cluster {
 	template<class T>

@@ -3,11 +3,11 @@
  *
  * Contains the UnderlyingGraph class.
  *
- * Underlying graph provides an easy way to construct the matrix oft he
+ * Underlying graph provides an easy way to construct the matrix of the
  * underlying graph from a quiver.
  */
-
 #pragma once
+
 #include "int_matrix.h"
 
 namespace cluster {

@@ -10,7 +10,7 @@
  */
 #pragma once
 #include "int_matrix.h"
-#include <cstdlib>
+#include <cstdlib> /* std::abs */
 
 namespace cluster {
 	class QuiverMatrix :

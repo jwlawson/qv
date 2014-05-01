@@ -1,7 +1,6 @@
 /*
  * equiv_underlying_graph.cc
  */
-
 #include "equiv_underlying_graph.h"
 #include <cstdlib>
 

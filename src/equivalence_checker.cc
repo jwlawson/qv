@@ -4,7 +4,6 @@
 #include "equivalence_checker.h"
 
 #include <algorithm>
-#include <iostream>
 
 #include "array_utils.h"
 

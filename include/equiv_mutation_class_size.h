@@ -4,6 +4,8 @@
  * Contains method to find the size of a matrix mutation class up to permuting
  * the rows and columns in the matrix.
  */
+#pragma once
+
 #include "equiv_mutation_class.h"
 #include "equiv_quiver_matrix.h"
 

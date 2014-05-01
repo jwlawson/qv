@@ -4,8 +4,6 @@
 
 #include "equiv_mutation_class_size.h"
 
-#include <iostream>
-
 namespace cluster {
 	namespace equivsize {
 

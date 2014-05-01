@@ -1,8 +1,8 @@
 /*
  * underlying_graph.cc
  */
-
 #include "underlying_graph.h"
+
 #include <cstdlib>
 
 namespace cluster {

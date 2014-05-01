@@ -3,10 +3,7 @@
  */
 #include "equiv_quiver_matrix.h"
 
-#include <cstdlib>
 #include <algorithm>
-#include <iostream>
-#include <utility>
 
 #include "array_utils.h"
 

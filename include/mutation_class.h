@@ -10,9 +10,10 @@
  */
 #pragma once
 
-#include <unordered_map>
 #include <deque>
 #include <memory>
+#include <unordered_map>
+
 #include "link_holder.h"
 
 namespace cluster {

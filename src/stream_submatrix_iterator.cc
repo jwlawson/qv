@@ -17,7 +17,7 @@ namespace cluster {
 			sub_iter_ = SubmatrixIterator<T>(*mat);
 		}
 		++removed_;
-		return sub_iter_.next();
+		return std::move(sub_iter_.next());
 	}
 
 	template<class T>
@@ -26,7 +26,7 @@ namespace cluster {
 		result.submatrix = next();
 		result.matrix = matrix_;
 		result.removed = removed_;
-		return result;
+		return std::move(result);
 	}
 
 	template<class T>

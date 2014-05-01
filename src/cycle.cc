@@ -3,8 +3,6 @@
  */
 #include "cycle.h"
 
-#include <algorithm>
-
 namespace cluster {
 
 	/* Default ctr does nothing really. */

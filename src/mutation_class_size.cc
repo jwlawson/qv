@@ -1,10 +1,8 @@
 /*
  * mutation_class_size.cc
  */
-
 #include "mutation_class_size.h"
 #include "mutation_class.h"
-#include <iostream>
 
 namespace cluster {
 	namespace classsize {

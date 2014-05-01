@@ -1,22 +1,42 @@
 /*
  * oriented_cycle_info.h
+ *
+ * Contains the OrientedCycleInfo class. This stores information about the
+ * cycles in a quiver and provides methods to check whether other instances are
+ * the same. The orientation of the arrows in the quiver are considered, but a
+ * cycle is any loop in the quiver disregarding the orientations.
+ *
+ * e.g. { { 0 1 -1 } { -1 0 -1 } { 1 1 0 } } would be considered to have a
+ * cycle, but that cycle is different to the cycle in
+ * { { 0 1 -1 } { -1 0 1 } { 1 -1 0 } }.
  */
 #pragma once
 
 #include "equiv_quiver_matrix.h"
 
 namespace cluster {
-
 	class OrientedCycleInfo {
 
 		public:
+			/**
+			 * Construct the cycle information about the specified matrix.
+			 * @param matrix Matrix to extract cycle information from
+			 */
 			OrientedCycleInfo(const QuiverMatrix& matrix);
-
+			/**
+			 * Check whether two instances are equal.
+			 * @param cycle Instance to check
+			 * @return true if cycle is the same (up to permutation) as this
+			 */
 			bool equals(const OrientedCycleInfo& cycle) const;
-
+			/**
+			 * Calculate the has of the cycle information.
+			 * @return Hashcode of this information
+			 */
 			std::size_t hash() const;
 
 		private:
+			/** Matrix containing only the cyclic part of the initial matrix. */
 			EquivQuiverMatrix matrix_;
 	};
 }

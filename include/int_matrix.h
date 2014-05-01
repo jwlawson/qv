@@ -8,11 +8,11 @@
  * and enlarging matrices.
  */
 #pragma once
-#include <cstddef>
+
 #include <memory>
-#include <vector>
 #include <ostream>
 #include <string>
+#include <vector>
 
 namespace cluster {
 	class IntMatrix {

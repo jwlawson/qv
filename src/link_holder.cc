@@ -1,11 +1,11 @@
 /*
  * link_holder.cc
  */
-
 #include "link_holder.h"
+
+#include "equiv_quiver_matrix.h"
 #include "int_matrix.h"
 #include "quiver_matrix.h"
-#include "equiv_quiver_matrix.h"
 
 namespace cluster {
 	template<class T>

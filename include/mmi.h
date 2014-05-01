@@ -3,6 +3,7 @@
  *
  * Contains method to check whether a matrix is minimally mutation infinite.
  */
+#pragma once
 
 #include "quiver_matrix.h"
 

@@ -1,7 +1,6 @@
 /*
  * class_ext_iterator.cc
  */
-
 #include "class_ext_iterator.h"
 
 namespace cluster {
@@ -10,9 +9,9 @@ namespace cluster {
 
 	QuiverMatrix EquivMutClassExtIterator::next() {
 		if(!iter_.has_next()) {
-		iter_ = ExtensionIterator<QuiverMatrix>(class_.next());
+			iter_ = ExtensionIterator<QuiverMatrix>(class_.next());
 		}
-		return iter_.next();
+		return std::move(iter_.next());
 	}
 
 	bool EquivMutClassExtIterator::has_next() {

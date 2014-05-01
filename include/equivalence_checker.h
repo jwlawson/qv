@@ -1,7 +1,15 @@
+/*
+ * equivalence_checker.h
+ *
+ * Contains the EquivalenceChecker class which checks whether two matrices are
+ * equivalent up to permuting their rows and columns.
+ */
 #pragma once
-#include "int_matrix.h"
+
 #include <vector>
 #include <utility>
+
+#include "int_matrix.h"
 
 namespace cluster {
 	class EquivalenceChecker {

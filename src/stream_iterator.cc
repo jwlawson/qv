@@ -20,7 +20,7 @@ namespace cluster {
 		do {
 			has_next_ = std::getline(input_, str_);
 		} while (has_next_ && str_[0] != '{');
-		return result;
+		return std::move(result);
 	}
 
 	template<class T>

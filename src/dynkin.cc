@@ -247,8 +247,18 @@ namespace cluster {
 	int v33[] = {0, 3, -1, 0};
 	const QuiverMatrix dynkin::G2(2, 2, v33);
 
-	const std::map<std::string, QuiverMatrix> dynkin::MAP = {{"A2", dynkin::A2}, {"A3", dynkin::A3},{"A4", dynkin::A4}
-	,	{"A5", dynkin::A5},{"A6", dynkin::A6},{"A7", dynkin::A7},{"A8", dynkin::A8},{"A9", dynkin::A9},{"B3", dynkin::B3},{"B4", dynkin::B4},{"B5", dynkin::B5}, {"B6", dynkin::B6},{"B7", dynkin::B7},{"B8", dynkin::B8},{"B9", dynkin::B9},{"C3", dynkin::C3},{"C4", dynkin::C4},{"C5", dynkin::C5},{"C6", dynkin::C6},{"C7", dynkin::C7},{"C8", dynkin::C8},{"C9", dynkin::C9},{"D4", dynkin::D4},{"D5", dynkin::D5},{"D6", dynkin::D6},{"D7", dynkin::D7},{"D8", dynkin::D8},{"D9", dynkin::D9},{"E6", dynkin::E6},{"E7", dynkin::E7},{"E8", dynkin::E8},{"G2", dynkin::G2}};
+	const std::map<std::string, QuiverMatrix> dynkin::MAP = {{"A2", dynkin::A2},
+		{"A3", dynkin::A3},{"A4", dynkin::A4},{"A5", dynkin::A5},
+		{"A6", dynkin::A6},{"A7", dynkin::A7},{"A8", dynkin::A8},
+		{"A9", dynkin::A9},{"B3", dynkin::B3},{"B4", dynkin::B4},
+		{"B5", dynkin::B5},{"B6", dynkin::B6},{"B7", dynkin::B7},
+		{"B8", dynkin::B8},{"B9", dynkin::B9},{"C3", dynkin::C3},
+		{"C4", dynkin::C4},{"C5", dynkin::C5},{"C6", dynkin::C6},
+		{"C7", dynkin::C7},{"C8", dynkin::C8},{"C9", dynkin::C9},
+		{"D4", dynkin::D4},{"D5", dynkin::D5},{"D6", dynkin::D6},
+		{"D7", dynkin::D7},{"D8", dynkin::D8},{"D9", dynkin::D9},
+		{"E6", dynkin::E6},{"E7", dynkin::E7},{"E8", dynkin::E8},
+		{"G2", dynkin::G2}};
 
 }
 

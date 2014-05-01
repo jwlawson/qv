@@ -1,12 +1,12 @@
 /*
  * mmi.cc
  */
-
 #include "mmi.h"
+
+#include "equiv_mutation_class_size.h"
+#include "equiv_quiver_matrix.h"
 #include "fast_infinite.h"
 #include "submatrix_iterator.h"
-#include "equiv_quiver_matrix.h"
-#include "equiv_mutation_class_size.h"
 
 namespace cluster {
 	namespace mmi {

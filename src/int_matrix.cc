@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <functional>
 #include <sstream>
-#include <iostream>
 
 namespace cluster {
 

@@ -11,6 +11,7 @@ namespace cluster {
 	class ExtensionIterator{
 
 		public:
+			ExtensionIterator();
 			/**
 			 * Create a new iterator with the specified seed matrix.
 			 * @param matrix Matrix to extend in all possible ways
@@ -27,9 +28,13 @@ namespace cluster {
 			bool has_next();
 
 		private:
+			/** Enlarged matrix copy of the original. */
 			T matrix_;
+			/** Size of the original matrix. */
 			int size_;
+			/** Index of the extension to return next. */
 			int index_;
+			/** Max value that index can take while the extensions are valid. */
 			int max_;
 		
 			/**

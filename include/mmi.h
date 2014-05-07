@@ -20,7 +20,7 @@ namespace cluster {
 		 * @param matrix Matrix to check
 		 * @return true if the matrix is probably minimally mutation infinite
 		 */
-		bool fast_mmi(QuiverMatrix matrix);
+		bool fast_mmi(const QuiverMatrix& matrix);
 
 		/**
 		 * Check whether the matrix is minimally mutation infinite.
@@ -36,7 +36,7 @@ namespace cluster {
 		 * @param matrix The matrix to check
 		 * @return true if the matrix is minimally mutation infinite
 		 */
-		bool slow_mmi(QuiverMatrix matrix);
+		bool slow_mmi(const QuiverMatrix& matrix);
 	}
 }
 

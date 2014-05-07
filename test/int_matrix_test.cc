@@ -1,6 +1,5 @@
 #include "gtest/gtest.h"
 #include "int_matrix.h"
-#include <iostream>
 #include <functional>
 #include <string>
 
@@ -302,4 +301,5 @@ namespace cluster {
 
 		EXPECT_TRUE(exp.equals(res));
 	}
+
 }

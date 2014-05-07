@@ -24,21 +24,22 @@ namespace cluster {
 		reset();
 	}
 
-	EquivQuiverMatrix::EquivQuiverMatrix(const QuiverMatrix& matrix)
-		: QuiverMatrix(static_cast<IntMatrix>(matrix)) {
+	EquivQuiverMatrix::EquivQuiverMatrix(const IntMatrix& matrix)
+		: QuiverMatrix(matrix) {
 		checker_ = EquivalenceChecker::Get(matrix.num_rows());
 		reset();
 	}
 
 	EquivQuiverMatrix::EquivQuiverMatrix(const EquivQuiverMatrix& mat)
 		: QuiverMatrix(static_cast<IntMatrix>(mat)) {
-			checker_ = mat.checker_;
-			reset();
+		checker_ = EquivalenceChecker::Get(mat.num_rows());
+		reset();
 	}
 
 	EquivQuiverMatrix::EquivQuiverMatrix(EquivQuiverMatrix&& mat) 
 		: QuiverMatrix(std::move(mat)) {
 			checker_ = EquivalenceChecker::Get(num_rows_);
+			reset();
 	}
 
 	EquivQuiverMatrix::EquivQuiverMatrix(std::string str) 

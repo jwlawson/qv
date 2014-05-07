@@ -42,6 +42,13 @@ namespace cluster {
 
 		EXPECT_EQ(-1, res);
 	}
+	TEST(EquivMutationClassSize, Twos) {
+		std::string str = "{ { 0 2 -2 } { -2 0 2 } { 2 -2 0 } }";
+		QuiverMatrix mat(str);
+
+		int res = equivsize::Size(mat);
+		EXPECT_EQ(1, res);
+	}
 
 	/**
 	 * This test was included after a strange bug appeared only in this mutation

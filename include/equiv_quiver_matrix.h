@@ -11,8 +11,7 @@
 #include "equivalence_checker.h"
 
 namespace cluster {
-	class EquivQuiverMatrix :
-		public QuiverMatrix {
+	class EquivQuiverMatrix : public QuiverMatrix {
 		public:
 			/** 
 			 * Create a default matrix of size 0.
@@ -44,7 +43,7 @@ namespace cluster {
 			 *
 			 * @param mat Matrix to copy
 			 */
-			EquivQuiverMatrix(const QuiverMatrix& mat);
+			EquivQuiverMatrix(const IntMatrix& mat);
 			/**
 			 * Copy constructor.
 			 * @param mat Matrix to copy

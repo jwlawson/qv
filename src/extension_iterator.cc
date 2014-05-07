@@ -8,6 +8,13 @@
 
 namespace cluster {
 	template<class T>
+	ExtensionIterator<T>::ExtensionIterator()
+		: matrix_(),
+			size_(0),
+			index_(0),
+			max_(0) {}
+
+	template<class T>
 	ExtensionIterator<T>::ExtensionIterator(const T& matrix) 
 			: matrix_(matrix.num_rows() + 1, matrix.num_cols() + 1),
 				size_(matrix.num_rows()),

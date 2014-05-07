@@ -11,10 +11,14 @@
 namespace cluster {
 	namespace mmi {
 
-		bool fast_mmi(QuiverMatrix matrix) {
+		bool fast_mmi(const QuiverMatrix& matrix) {
 
 			if(!fastinf::is_infinite(matrix)) {
-				return false;
+				EquivQuiverMatrix e(matrix);
+				if(equivsize::Size(e) > 0) {
+					/* Actually finite. */
+					return false;
+				}
 			} 
 			SubmatrixIterator<QuiverMatrix> iter(matrix);
 			typedef std::shared_ptr<QuiverMatrix> MatPtr;
@@ -27,7 +31,7 @@ namespace cluster {
 			return true;
 		}
 
-		bool slow_mmi(QuiverMatrix matrix) {
+		bool slow_mmi(const QuiverMatrix& matrix) {
 
 			if(!fastinf::is_infinite(matrix)) {
 				/* Matrix probably finite. */

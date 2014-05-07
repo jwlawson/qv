@@ -33,7 +33,6 @@ namespace cluster {
 			bool has_next();
 
 		private:
-			QuiverMatrix matrix_;
 			EquivMutationClass class_;
 			ExtensionIterator<QuiverMatrix> iter_;
 

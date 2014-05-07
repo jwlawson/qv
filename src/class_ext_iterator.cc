@@ -5,7 +5,8 @@
 
 namespace cluster {
 	EquivMutClassExtIterator::EquivMutClassExtIterator(const QuiverMatrix& mat)
-		: matrix_(mat), class_(mat), iter_(class_.next()) {}
+		: class_(mat),
+			iter_() {}
 
 	QuiverMatrix EquivMutClassExtIterator::next() {
 		if(!iter_.has_next()) {

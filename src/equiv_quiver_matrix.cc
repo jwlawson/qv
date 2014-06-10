@@ -17,48 +17,48 @@ namespace cluster {
 
 	EquivQuiverMatrix::EquivQuiverMatrix(const int rows, const int cols)
 		: QuiverMatrix(rows, cols),
-			rows_(rows),
-			cols_(cols) {
+			rows_(rows, std::make_pair(0,0)),
+			cols_(cols, std::make_pair(0,0)) {
 		checker_ = EquivalenceChecker::Get(rows);
 	}
 
 	EquivQuiverMatrix::EquivQuiverMatrix(const int rows, const int cols,
 	                                     const int values[])
 		: QuiverMatrix(rows, cols, values),
-			rows_(rows),
-			cols_(cols) {
+			rows_(rows, std::make_pair(0,0)),
+			cols_(cols, std::make_pair(0,0)) {
 		checker_ = EquivalenceChecker::Get(rows);
 		reset();
 	}
 
 	EquivQuiverMatrix::EquivQuiverMatrix(const IntMatrix& matrix)
 		: QuiverMatrix(matrix),
-			rows_(matrix.num_rows()),
-			cols_(matrix.num_cols()) {
+			rows_(matrix.num_rows(), std::make_pair(0,0)),
+			cols_(matrix.num_cols(), std::make_pair(0,0)) {
 		checker_ = EquivalenceChecker::Get(matrix.num_rows());
 		reset();
 	}
 
 	EquivQuiverMatrix::EquivQuiverMatrix(const EquivQuiverMatrix& mat)
 		: QuiverMatrix(static_cast<IntMatrix>(mat)),
-			rows_(mat.num_rows()),
-			cols_(mat.num_cols()) {
+			rows_(mat.num_rows(), std::make_pair(0,0)),
+			cols_(mat.num_cols(), std::make_pair(0,0)) {
 		checker_ = EquivalenceChecker::Get(mat.num_rows());
 		reset();
 	}
 
 	EquivQuiverMatrix::EquivQuiverMatrix(EquivQuiverMatrix&& mat) 
 		: QuiverMatrix(std::move(mat)),
-			rows_(mat.num_rows()),
-			cols_(mat.num_cols()) {
+			rows_(mat.num_rows(), std::make_pair(0,0)),
+			cols_(mat.num_cols(), std::make_pair(0,0)) {
 			checker_ = EquivalenceChecker::Get(num_rows_);
 			reset();
 	}
 
 	EquivQuiverMatrix::EquivQuiverMatrix(std::string str) 
 		: QuiverMatrix(str),
-			rows_(num_rows()),
-			cols_(num_cols())  {
+			rows_(num_rows(), std::make_pair(0,0)),
+			cols_(num_cols(), std::make_pair(0,0))  {
 			checker_ = EquivalenceChecker::Get(num_rows_);
 			reset();
 	}
@@ -68,21 +68,23 @@ namespace cluster {
 	}
 
 	void EquivQuiverMatrix::reset() {
-		for (int i = 0; i < num_rows(); i++) {
-			for (int j = 0; j < num_cols(); j++) {
-				rows_[i].first += get(i,j);
-				rows_[i].second += std::abs(get(i,j));
-				cols_[j].first += get(i,j);
-				cols_[j].second += std::abs(get(i,j));
+		int row_i = 0;
+		int col_i = 0;
+		int i = 0;
+		while(i < num_rows_ * num_cols_) {
+			rows_[row_i].first += data_[i];
+			rows_[row_i].second += std::abs(data_[i]);
+			cols_[col_i].first += data_[i];
+			cols_[col_i].second += std::abs(data_[i]);
+
+			i++;
+			col_i++;
+			if(col_i == num_cols_) {
+				col_i = 0;
+				row_i++;
 			}
 		}
 		IntMatrix::reset();
-	}
-
-	EquivQuiverMatrix &EquivQuiverMatrix::operator=(EquivQuiverMatrix mat) {
-		IntMatrix::operator=(mat);
-		checker_ = mat.checker_;
-		return *this;
 	}
 
 	/* Private methods */

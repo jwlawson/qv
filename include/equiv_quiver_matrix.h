@@ -11,6 +11,8 @@
 #include "equivalence_checker.h"
 
 namespace cluster {
+	class EquivalenceChecker;
+
 	class EquivQuiverMatrix : public QuiverMatrix {
 		public:
 			/** 
@@ -73,15 +75,17 @@ namespace cluster {
 			/**
 			 * Assignment operator.
 			 */
-			EquivQuiverMatrix &operator=(EquivQuiverMatrix mat);
+			EquivQuiverMatrix& operator=(const EquivQuiverMatrix& mat)=default;
 
+			/** Vector holding pairs of row sums and the abs row sums. */
+			std::vector<std::pair<int, int>> rows_;
+			/** Vector holding column sums and abs column sums. */
+			std::vector<std::pair<int, int>> cols_;
 		protected:
 			/** Overwritten hash function. */
 			virtual std::size_t compute_hash() const;
 
 		private:
-			std::vector<std::pair<int, int>> rows_;
-			std::vector<std::pair<int, int>> cols_;
 			/** Equivalence checker to check if matrices are equivalent. */
 			std::shared_ptr<EquivalenceChecker> checker_;
 

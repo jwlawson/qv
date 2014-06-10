@@ -9,10 +9,15 @@
 #include <vector>
 #include <utility>
 
-#include "int_matrix.h"
+#include "equiv_quiver_matrix.h"
 
 namespace cluster {
+	/* Forward declaration required. */
+	class EquivQuiverMatrix;
+
 	class EquivalenceChecker {
+		private:
+			typedef EquivQuiverMatrix M;
 	 public:
 		 /**
 			* Get the singleton instance of EquivalenceChecker.
@@ -35,7 +40,7 @@ namespace cluster {
 		 * @param rhs Second matrix
 		 * @return true if matrices are equivalent
 		 */
-		bool are_equivalent(const IntMatrix &lhs, const IntMatrix &rhs);
+		bool are_equivalent(const M &lhs, const M &rhs);
 		/**
 		 * Allocation operator.
 		 */
@@ -48,32 +53,6 @@ namespace cluster {
 	 private:
 		/** Cached singleton instance. */
 		static std::weak_ptr<EquivalenceChecker> instance_;
-
-		/**
-		 * Class to hold the row/column sums and absolute value versions. Provides
-		 * method to easily reset these.
-		 */
-		class Info {
-			public:
-				Info(int size)
-					: rows(size),
-						cols(size) {}
-				void reset() {
-					for(std::size_t i = 0; i < rows.size(); ++i) {
-						rows[i].first = 0;
-						rows[i].second = 0;
-						cols[i].first = 0;
-						cols[i].second = 0;
-					}
-				}
-				friend void swap(Info& a, Info& b){
-					using std::swap;
-					swap(a.rows, b.rows);
-					swap(a.cols, b.cols);
-				}
-				std::vector<std::pair<int, int>> rows;
-				std::vector<std::pair<int, int>> cols;
-		};
 
 		/**
 		 * Stores information about possible mappings between the matrices.
@@ -108,18 +87,14 @@ namespace cluster {
 		IntMatrix ap_;
 		IntMatrix pb_;
 		int size_;
-		Info ai_;
-		Info bi_;
 		Mapping maps_;
 
-		/** Fill the Info sums with the correct values for both a and b. */
-		void calc_sums(const IntMatrix &a, const IntMatrix &b);
 		/** Check whether the columns of the matrices match. */
-		bool do_columns_match(const IntMatrix& a, const IntMatrix& b);
+		bool do_columns_match(const M& a, const M& b);
 		/** Check whether the rows of the matrices match. */
-		bool do_rows_match(const IntMatrix& a, const IntMatrix& b);
+		bool do_rows_match(const M& a, const M& b);
 		/** Check whether the row/column sums match. */
-		bool sums_equivalent() const;
+		bool sums_equivalent(const M& a, const M& b) const;
 		/** 
 		 * Convenience method to check if two int vectors contain the same numbers
 		 * in different orders.
@@ -131,7 +106,7 @@ namespace cluster {
 		 * mappings calculated earlier. Uses recursion on the index.
 		 */
 		bool check_perm(std::vector<int>& row_map, int index, 
-				const IntMatrix& a, const IntMatrix& b);
+				const M& a, const M& b);
 
 	};
 }

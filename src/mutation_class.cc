@@ -7,7 +7,6 @@
 #include "equiv_quiver_matrix.h"
 #include "quiver_matrix.h"
 
-#include <iostream>
 namespace cluster {
 
 	MutationClass::MutationClass(const IntMatrix& initial)
@@ -17,9 +16,7 @@ namespace cluster {
 		EquivMutationClassLoader loader(mat);
 		while(loader.has_next()){
 			MPtr p = std::make_shared<M>(loader.next());
-			std::cout << *p << std::endl;
 			if((*p).equals(EquivMutationClassLoader::INFINITE)) {
-				std::cout << "Infinite!" << std::endl;
 				finite_ = false;
 				break;
 			}

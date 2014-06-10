@@ -69,6 +69,7 @@ namespace cluster {
 			 * @return true if equal up to permuting rows and columns
 			 */
 			virtual bool equals(const IntMatrix &mat) const;
+			virtual void reset();
 			/**
 			 * Assignment operator.
 			 */
@@ -79,6 +80,8 @@ namespace cluster {
 			virtual std::size_t compute_hash() const;
 
 		private:
+			std::vector<std::pair<int, int>> rows_;
+			std::vector<std::pair<int, int>> cols_;
 			/** Equivalence checker to check if matrices are equivalent. */
 			std::shared_ptr<EquivalenceChecker> checker_;
 

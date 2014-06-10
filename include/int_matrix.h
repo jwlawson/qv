@@ -115,7 +115,11 @@ namespace cluster {
 		 * @param value Value to set
 		 */
 		void set(const int row, const int col, const int value);
-		void reset();
+		/**
+		 * Reset any state associated to the matrix. Call this any time that the
+		 * data stored in the matrix may change.
+		 */
+		virtual void reset();
 		/**
 		 * Find the first row that is all zeros. The value returned will then be
 		 * the index of this row.

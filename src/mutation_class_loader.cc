@@ -35,6 +35,17 @@ namespace cluster {
 	}
 
 	template<class T>
+	std::shared_ptr<T> MutationClassLoader<T>::next_ptr() {
+		std::shared_ptr<T> result = queue_.front();
+		queue_.pop_front();
+		if (compute_mutations(result)) {
+			return result;
+		} else {
+			return std::make_shared<T>(INFINITE);
+		}
+	}
+
+	template<class T>
 	bool MutationClassLoader<T>::has_next() {
 		return !queue_.empty();
 	}

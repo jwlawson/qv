@@ -48,6 +48,13 @@ namespace cluster {
 		 */
 		T next();
 		/**
+		 * Get a pointer to the next unique matrix in the mutation class.
+		 *
+		 * This is the same as next(), but a pointer is returned rather than an
+		 * object.
+		 */
+		std::shared_ptr<T> next_ptr();
+		/**
 		 * Check whether the iterator has another matrix in the mutation class.
 		 * @return true if there is another matrix
 		 */

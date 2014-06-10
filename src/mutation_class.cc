@@ -15,7 +15,7 @@ namespace cluster {
 		EquivQuiverMatrix mat(initial);
 		EquivMutationClassLoader loader(mat);
 		while(loader.has_next()){
-			MPtr p = std::make_shared<M>(loader.next());
+			MPtr p = loader.next_ptr();
 			if((*p).equals(EquivMutationClassLoader::INFINITE)) {
 				finite_ = false;
 				break;
@@ -31,7 +31,7 @@ namespace cluster {
 			finite_(true) {
 		EquivMutationClassLoader loader(initial);
 		while(loader.has_next()){
-			MPtr p = std::make_shared<M>(loader.next());
+			MPtr p = loader.next_ptr();
 			if((*p).equals(EquivMutationClassLoader::INFINITE)) {
 				finite_ = false;
 				break;

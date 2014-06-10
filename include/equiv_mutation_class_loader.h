@@ -1,20 +1,20 @@
 /*
- * equiv_mutation_class.h
+ * equiv_mutation_class_loader.h
  */
 #pragma once
 
-#include "mutation_class.h"
+#include "mutation_class_loader.h"
 
 #include <unordered_set>
 
 #include "equiv_quiver_matrix.h"
 
 namespace cluster {
-	class EquivMutationClass : public MutationClass<EquivQuiverMatrix> {
+	class EquivMutationClassLoader : public MutationClassLoader<EquivQuiverMatrix> {
 	private:
 		typedef EquivQuiverMatrix M;
 	public:
-		EquivMutationClass(const M& initial);
+		EquivMutationClassLoader(const M& initial);
 	protected:
 		virtual void seen_matrix(std::shared_ptr<M> mat,
 														 std::shared_ptr<M> previous,

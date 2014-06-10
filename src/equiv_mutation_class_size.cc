@@ -8,11 +8,11 @@ namespace cluster {
 	namespace equivsize {
 
 		int Size(const EquivQuiverMatrix& matrix) {
-			EquivMutationClass c(matrix);
+			EquivMutationClassLoader c(matrix);
 			int result = 0;
 			while (c.has_next()) {
 				if(IntMatrix::are_equal(c.next(),
-							MutationClass<EquivQuiverMatrix>::INFINITE)) {
+							MutationClassLoader<EquivQuiverMatrix>::INFINITE)) {
 					return -1;
 				} else {
 					result++;

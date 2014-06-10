@@ -1,7 +1,7 @@
 /*
- * mutation_class.cc
+ * mutation_class_loader.cc
  */
-#include "mutation_class.h"
+#include "mutation_class_loader.h"
 
 #include "equiv_quiver_matrix.h"
 #include "quiver_matrix.h"
@@ -9,10 +9,10 @@
 namespace cluster {
 
 	template< class T>
-	const T MutationClass<T>::INFINITE;
+	const T MutationClassLoader<T>::INFINITE;
 
 	template<class T>
-	MutationClass<T>::MutationClass(const T& mat)
+	MutationClassLoader<T>::MutationClassLoader(const T& mat)
 		: size_(mat.num_rows()),
 		  map_(),
 		  should_calc_(true),
@@ -24,7 +24,7 @@ namespace cluster {
 	}
 
 	template<class T>
-	T MutationClass<T>::next() {
+	T MutationClassLoader<T>::next() {
 		std::shared_ptr<T> result = queue_.front();
 		queue_.pop_front();
 		if (compute_mutations(result)) {
@@ -35,17 +35,17 @@ namespace cluster {
 	}
 
 	template<class T>
-	bool MutationClass<T>::has_next() {
+	bool MutationClassLoader<T>::has_next() {
 		return !queue_.empty();
 	}
 
 	template<class T>
-	void MutationClass<T>::calc_more(const bool calc) {
+	void MutationClassLoader<T>::calc_more(const bool calc) {
 		should_calc_ = calc;
 	}
 
 	template<class T>
-	bool MutationClass<T>::compute_mutations(std::shared_ptr<T> mat) {
+	bool MutationClassLoader<T>::compute_mutations(std::shared_ptr<T> mat) {
 		for (int i = 0; i < size_ && should_calc_; i++) {
 			if (mutate_at(mat, i)) {
 				const std::shared_ptr<T> new_matrix =
@@ -69,22 +69,22 @@ namespace cluster {
 	}
 
 	template<class T>
-	bool MutationClass<T>::is_complete(std::shared_ptr<T> matrix) {
+	bool MutationClassLoader<T>::is_complete(std::shared_ptr<T> matrix) {
 		return map_[matrix].is_complete();
 	}
 
 	template<class T>
-	void MutationClass<T>::remove_handled(std::shared_ptr<T> matrix) {
+	void MutationClassLoader<T>::remove_handled(std::shared_ptr<T> matrix) {
 		map_.erase(matrix);
 	}
 
 	template<class T>
-	void MutationClass<T>::remove_complete(std::shared_ptr<T> matrix) {
+	void MutationClassLoader<T>::remove_complete(std::shared_ptr<T> matrix) {
 		map_.erase(matrix);
 	}
 
 	template<class T>
-	void MutationClass<T>::seen_matrix(std::shared_ptr<T> matrix,
+	void MutationClassLoader<T>::seen_matrix(std::shared_ptr<T> matrix,
 																		 std::shared_ptr<T> previous,
 	                                   const int vertex) {
 		map_[matrix].link(vertex);
@@ -92,7 +92,7 @@ namespace cluster {
 	}
 
 	template<class T>
-	void MutationClass<T>::unseen_matrix(std::shared_ptr<T> matrix,
+	void MutationClassLoader<T>::unseen_matrix(std::shared_ptr<T> matrix,
 																			 std::shared_ptr<T> previous,
 	                                     const int vertex) {
 		queue_.push_back(matrix);
@@ -103,16 +103,16 @@ namespace cluster {
 	}
 
 	template<class T>
-	bool MutationClass<T>::have_seen(std::shared_ptr<T> matrix) {
+	bool MutationClassLoader<T>::have_seen(std::shared_ptr<T> matrix) {
 		return map_.count(matrix) > 0;
 	}
 
 	template<class T>
-	bool MutationClass<T>::mutate_at(std::shared_ptr<T> matrix, const int i) {
+	bool MutationClassLoader<T>::mutate_at(std::shared_ptr<T> matrix, const int i) {
 		return map_.count(matrix) > 0 && !map_[matrix].has_link(i);
 	}
 
-	template class MutationClass<QuiverMatrix>;
-	template class MutationClass<EquivQuiverMatrix>;
+	template class MutationClassLoader<QuiverMatrix>;
+	template class MutationClassLoader<EquivQuiverMatrix>;
 }
 

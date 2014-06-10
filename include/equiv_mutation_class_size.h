@@ -6,7 +6,7 @@
  */
 #pragma once
 
-#include "equiv_mutation_class.h"
+#include "equiv_mutation_class_loader.h"
 #include "equiv_quiver_matrix.h"
 
 namespace cluster {

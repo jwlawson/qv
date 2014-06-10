@@ -5,19 +5,19 @@
 #include "gtest/gtest.h"
 #include "quiver_matrix.h"
 #include "dynkin.h"
-#include "mutation_class.h"
+#include "mutation_class_loader.h"
 
 namespace cluster {
 
-	TEST(MutationClass, Initial) {
+	TEST(MutationClassLoader, Initial) {
 		QuiverMatrix mat = dynkin::A3;
-		MutationClass<QuiverMatrix> c(mat);
+		MutationClassLoader<QuiverMatrix> c(mat);
 		EXPECT_TRUE(c.next().equals(mat));
 	}
 
-	TEST(MutationClass, Second) {
+	TEST(MutationClassLoader, Second) {
 		QuiverMatrix mat = dynkin::A4;
-		MutationClass<QuiverMatrix> c(mat);
+		MutationClassLoader<QuiverMatrix> c(mat);
 		/* Take the first one. */
 		QuiverMatrix f = c.next();
 		/* Test the second one. */

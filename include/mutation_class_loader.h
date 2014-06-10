@@ -1,12 +1,12 @@
 /**
- * mutation_class.h
+ * mutation_class_loader.h
  *
- * Contains the MutationClass class headers.
+ * Contains the MutationClassLoader class headers.
  *
- * MutationClass is an iterator over all elements in the mutation class of a
+ * MutationClassLoader is an iterator over all elements in the mutation class of a
  * seed matrix. If any matrix which is calculated is found to be infinite then
- * the special value MutationClass::INFINITE is returned by 
- * MutationClass::next() instead of the next matrix.
+ * the special value MutationClassLoader::INFINITE is returned by 
+ * MutationClassLoader::next() instead of the next matrix.
  */
 #pragma once
 
@@ -18,7 +18,7 @@
 
 namespace cluster {
 	template<class T>
-	class MutationClass {
+	class MutationClassLoader {
 
 	 public:
 		/**
@@ -27,13 +27,13 @@ namespace cluster {
 		const static T INFINITE;
 
 		/**
-		 * Create a new MutationClass starting from the specified inital matrix.
+		 * Create a new MutationClassLoader starting from the specified inital matrix.
 		 *
 		 * The class provides an iterator-like interface to go through all matrices
 		 * in the mutation class.
 		 * @param initial Matrix to seed the mutation class
 		 */
-		MutationClass(const T& initial);
+		MutationClassLoader(const T& initial);
 		/**
 		 * Get the next unique matrix in the mutation class.
 		 *

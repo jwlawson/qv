@@ -7,7 +7,7 @@
  */
 #pragma once
 
-#include "equiv_mutation_class.h"
+#include "equiv_mutation_class_loader.h"
 #include "extension_iterator.h"
 
 namespace cluster {
@@ -33,7 +33,7 @@ namespace cluster {
 			bool has_next();
 
 		private:
-			EquivMutationClass class_;
+			EquivMutationClassLoader class_;
 			ExtensionIterator<QuiverMatrix> iter_;
 
 	};

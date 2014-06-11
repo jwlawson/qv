@@ -53,5 +53,12 @@ namespace cluster {
 		EXPECT_TRUE(mmi::slow_mmi(a));
 	}
 
+	TEST(SlowMMI, IsMMI) {
+		std::string s = "{ { 0 1 0 -1 } { -1 0 -1 -1 } { 0 1 0 -1 } { 1 1 1 0 } }";
+		QuiverMatrix a(s);
+
+		EXPECT_TRUE(mmi::slow_mmi(a));
+	}
+
 }
 

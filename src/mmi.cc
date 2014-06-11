@@ -6,16 +6,19 @@
 #include "equiv_mutation_class_size.h"
 #include "equiv_quiver_matrix.h"
 #include "fast_infinite.h"
+#include "mass_finite_check.h"
 #include "submatrix_iterator.h"
 
 namespace cluster {
 	namespace mmi {
 
+		MassFiniteCheck chk;
+
 		bool fast_mmi(const QuiverMatrix& matrix) {
 
 			if(!fastinf::is_infinite(matrix)) {
 				EquivQuiverMatrix e(matrix);
-				if(equivsize::Size(e) > 0) {
+				if(chk.is_finite(e)) {
 					/* Actually finite. */
 					return false;
 				}
@@ -36,7 +39,7 @@ namespace cluster {
 			if(!fastinf::is_infinite(matrix)) {
 				/* Matrix probably finite. */
 				EquivQuiverMatrix e(matrix);
-				if(equivsize::Size(e) > 0) {
+				if(chk.is_finite(e)) {
 					/* Actually finite. */
 					return false;
 				}
@@ -51,7 +54,7 @@ namespace cluster {
 				}
 				/* Probably finite. */
 				EquivQuiverMatrix e(*n);
-				if(equivsize::Size(e) < 0) {
+				if(!chk.is_finite(e)) {
 					/* Actually infinite. */
 					return false;
 				}

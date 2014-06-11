@@ -13,6 +13,7 @@ namespace cluster {
 
 	bool MassFiniteCheck::is_finite(const M& matrix) {
 		MPtr p = std::make_shared<M>(matrix);
+		last_new_ = false;
 		if(set_contains(p)) {
 			return true;
 		}
@@ -21,11 +22,16 @@ namespace cluster {
 		}
 		MutationClass c(matrix);
 		if(c.is_finite()) {
+			last_new_ = true;
 			add_class(c);
 			return true;
 		} else {
 			return false;
 		}
+	}
+
+	bool MassFiniteCheck::last_new_class() const {
+		return last_new_;
 	}
 
 	std::shared_ptr<const MassFiniteCheck::MSet> MassFiniteCheck::set() const {

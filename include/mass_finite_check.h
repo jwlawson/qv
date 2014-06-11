@@ -27,12 +27,19 @@ namespace cluster {
 			 */
 			bool is_finite(const M& matrix);
 			/**
+			 * Checks whether the last matrix checked was from a previously calculated
+			 * mutation class or not.
+			 * @return true if the last matrix was from a new class
+			 */
+			bool last_new_class() const;
+			/**
 			 * Get the set containing all the finite matrices found.
 			 */
 			std::shared_ptr<const MSet> set() const;
 
 		private:
 			std::shared_ptr<MSet> set_;
+			bool last_new_;
 
 			/**
 			 * Check whether the matrix has been computed to be finite previously.

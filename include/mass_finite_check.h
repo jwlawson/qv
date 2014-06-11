@@ -26,9 +26,13 @@ namespace cluster {
 			 * @return true if finite
 			 */
 			bool is_finite(const M& matrix);
+			/**
+			 * Get the set containing all the finite matrices found.
+			 */
+			std::shared_ptr<const MSet> set() const;
 
 		private:
-			MSet set_;
+			std::shared_ptr<MSet> set_;
 
 			/**
 			 * Check whether the matrix has been computed to be finite previously.

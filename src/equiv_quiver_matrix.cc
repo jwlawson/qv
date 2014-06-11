@@ -64,7 +64,8 @@ namespace cluster {
 	}
 
 	bool EquivQuiverMatrix::equals(const IntMatrix &mat) const {
-		return checker_->are_equivalent(*this, mat);
+		return checker_->are_equivalent(*this, 
+				static_cast<EquivQuiverMatrix>(mat));
 	}
 
 	void EquivQuiverMatrix::reset() {

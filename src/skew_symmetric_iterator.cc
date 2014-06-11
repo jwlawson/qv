@@ -22,18 +22,25 @@ namespace cluster {
 		int row = -1;
 		int col = 0;
 		for(int i = 0; i < num_vars_; ++i) {
-			if(i % col_comp_ == 0) {
-				row++;
+			if(col % col_comp_ == 0) {
+				++row;
 				col = row + 1;
 			} else {
-				col++;
+				++col;
 			}
 			int val = (((int) (num / ipow(5, i))) % 5) - 2;
 			matrix_.set(row, col, val);
 			matrix_.set(col, row, -val);
 		}
 		++index_;
-		matrix_.reset();
+		if(matrix_.zero_row() != -1) {
+			/* 
+			 * This is fine, as the very last matrix will have 2 in all possible
+			 * positions, hence has no zero rows, so there is no chance of returning a
+			 * broken value.
+			 */
+			return next();
+		}
 		return std::make_shared<M>(matrix_);
 	}
 

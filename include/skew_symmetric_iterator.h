@@ -26,7 +26,7 @@ namespace cluster {
 			MPtr next();
 
 		private:
-			M matrix_;
+			IntMatrix matrix_;
 			int col_comp_;
 			int index_;
 			int num_vars_;

@@ -20,19 +20,38 @@ namespace cluster {
 			typedef typename std::shared_ptr<M> MPtr;
 
 		public:
+			/** 
+			 * Create a new iterator which provides all skew-symmetri matrices of the
+			 * specified size.
+			 * @param size Size of matrices to return
+			 */
 			SkewSymmetricIterator(const int size);
-
+			/**
+			 * Check whether there is a next matrix to take from the iterator.
+			 * @return true if next() will return a valid matrix
+			 */
 			bool has_next() const;
+			/**
+			 * Get the next matrix from the iterator.
+			 * @return next matrix
+			 */
 			MPtr next();
 
 		private:
+			/** Matrix holding the next to return. */
 			IntMatrix matrix_;
+			/** Index that the col index cannot exceed. */
 			int col_comp_;
+			/** Current index of which matrix will be returned next. */
 			int index_;
+			/** Number of variable entries in the matrix which need to be set. */
 			int num_vars_;
+			/** Max value that index_ can take. */
 			int max_;
 
+			/** Calculate x^p. */
 			int ipow(int x, int p) const;
+			/** Calculate the number of variables in the matrix. */
 			int num_vars(int size) const;
 
 	};

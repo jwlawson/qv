@@ -50,7 +50,7 @@ namespace cluster {
 			long max_;
 
 			/** Calculate x^p. */
-			long ipow(int x, int p) const;
+			long ipow(const int x, const int p) const;
 			/** Calculate the number of variables in the matrix. */
 			int num_vars(int size) const;
 

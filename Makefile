@@ -1,5 +1,5 @@
 #
-# 'make depend' uses makedepend to automatically generate dependencies 
+# 'make depend' uses makedepend to automatically generate dependencies
 #               (dependencies are added to end of Makefile)
 # 'make'        build executable file 'mycc'
 # 'make clean'  removes all .o and executable files
@@ -8,7 +8,7 @@
 # define any compile-time flags
 # Using cygwin -std=gnu++11 should be used rather than -std=c++11
 CXXFLAGS = -Wall -std=gnu++11 -march=native
-OPT = -O3
+OPT = -g -O3
 
 # Specify base directory
 BASE_DIR = .
@@ -22,18 +22,21 @@ TEST_DIR = $(BASE_DIR)/test
 # define the output directory for .o
 OBJ_DIR = $(BASE_DIR)/build
 
+# Install directory
+PREFIX = $(HOME)
+
 # define any directories containing header files other than /usr/include
-# -I/home/newhall/include 
-INCLUDES = -I$(BASE_DIR)/include -I$(BASE_DIR)/src -I$(BASE_DIR)/lib/include
+# -I/home/newhall/include
+INCLUDES = -I$(HOME)/include -I$(BASE_DIR)/include \
+           -I$(BASE_DIR)/lib/include
 
 # define library paths in addition to /usr/lib
 #   if I wanted to include libraries not in /usr/lib I'd specify
 #   their path using -Lpath, something like: -L/home/newhall/lib
-LFLAGS = -L$(BASE_DIR)/lib -L$(BASE_DIR)/lib
+LFLAGS = -L$(HOME)/lib -L$(BASE_DIR)/lib
 
 # define any libraries to link into executable:
-#   if I want to link in libraries (libx.so or libx.a) I use the -llibname 
-#   option, something like (this will link in libmylib.so and libm.so:
+#   if I want to link in libraries (libx.so or libx.a) use -lx
 LIBS =
 TEST_LIBS = -lgtest -lgtest_main -lpthread
 
@@ -56,12 +59,12 @@ _TEST_OBJS = $(TEST_SRCS:.cc=.o)
 OBJS = $(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%,$(_OBJS))
 TEST_OBJS = $(patsubst $(TEST_DIR)/%,$(OBJ_DIR)/%,$(_TEST_OBJS))
 
-# define the executable file 
+# define the executable file
 MAIN = qv
 TEST = testqv
 
 #
-# The following part of the makefile is generic; it can be used to 
+# The following part of the makefile is generic; it can be used to
 # build any executable just by changing the definitions above and by
 # deleting dependencies appended to the file from 'make depend'
 #
@@ -70,30 +73,39 @@ TEST = testqv
 
 all:    test
 
-$(MAIN): $(OBJS) 
+$(MAIN): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -o $(MAIN) $(OBJS) $(LFLAGS) $(LIBS)
 	
 testqv: $(OBJS) $(TEST_OBJS)
-	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -o $(TEST) $(TEST_OBJS) $(OBJS) $(LFLAGS) $(TEST_LIBS)
+	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -o $(TEST) $(TEST_OBJS) $(OBJS)\
+		$(LFLAGS) $(TEST_LIBS)
 
 test: $(OBJS) $(TEST_OBJS)
-	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -o $(TEST) $(TEST_OBJS) $(OBJS) $(LFLAGS) $(TEST_LIBS)
+	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -o $(TEST) $(TEST_OBJS) $(OBJS)\
+		$(LFLAGS) $(TEST_LIBS)
 	@echo Running tests
 	@./$(TEST)
 
 lib: $(OBJS)
 	$(AR) rcs libqv.a $(OBJS)
-	
+
+install:	$(lib)
+	cp libqv.a $(PREFIX)/lib
+	cp -ru include $(PREFIX)/include/qv
+
+uninstall:
+	rm $(PREFIX)/lib/libqv.a
+	rm -r $(PREFIX)/include/qv
 
 # this is a suffix replacement rule for building .o's from .c's
 # it uses automatic variables $<: the name of the prerequisite of
-# the rule(a .c file) and $@: the name of the target of the rule (a .o file) 
+# the rule(a .c file) and $@: the name of the target of the rule (a .o file)
 # (see the gnu make manual section about automatic variables)
-	
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc 
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc
 	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -c $<  -o $@
-	
-$(OBJ_DIR)/%.o: $(TEST_DIR)/%.cc 
+
+$(OBJ_DIR)/%.o: $(TEST_DIR)/%.cc
 	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -c $<  -o $@
 
 clean:

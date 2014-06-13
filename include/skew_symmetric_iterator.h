@@ -43,14 +43,14 @@ namespace cluster {
 			/** Index that the col index cannot exceed. */
 			int col_comp_;
 			/** Current index of which matrix will be returned next. */
-			int index_;
+			long index_;
 			/** Number of variable entries in the matrix which need to be set. */
 			int num_vars_;
 			/** Max value that index_ can take. */
-			int max_;
+			long max_;
 
 			/** Calculate x^p. */
-			int ipow(int x, int p) const;
+			long ipow(int x, int p) const;
 			/** Calculate the number of variables in the matrix. */
 			int num_vars(int size) const;
 

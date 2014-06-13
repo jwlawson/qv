@@ -27,4 +27,11 @@ namespace cluster {
 		EXPECT_TRUE(chk.is_finite(n));
 	}
 
+	TEST(MassFiniteCheck, A6) {
+		EquivQuiverMatrix m(dynkin::A6);
+		MassFiniteCheck chk;
+
+		EXPECT_TRUE(chk.is_finite(m));
+	}
+
 }

@@ -44,7 +44,7 @@ namespace cluster {
 		return std::make_shared<M>(matrix_);
 	}
 
-	long SkewSymmetricIterator::ipow(const int x, const int p) const {
+	long int SkewSymmetricIterator::ipow(const int x, const int p) const {
 		long i = 1;
 		for(int j = 1; j <= p; j++) i *= x;
 		return i;

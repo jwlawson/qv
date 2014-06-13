@@ -61,6 +61,7 @@ TEST_OBJS = $(patsubst $(TEST_DIR)/%,$(OBJ_DIR)/%,$(_TEST_OBJS))
 
 # define the executable file
 MAIN = qv
+LIB=lib$(MAIN).a
 TEST = testqv
 
 #
@@ -77,24 +78,21 @@ $(MAIN): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -o $(MAIN) $(OBJS) $(LFLAGS) $(LIBS)
 	
 testqv: $(OBJS) $(TEST_OBJS)
-	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -o $(TEST) $(TEST_OBJS) $(OBJS)\
-		$(LFLAGS) $(TEST_LIBS)
+	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -o $(TEST) $(TEST_OBJS) $(OBJS) $(LFLAGS) $(TEST_LIBS)
 
-test: $(OBJS) $(TEST_OBJS)
-	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -o $(TEST) $(TEST_OBJS) $(OBJS)\
-		$(LFLAGS) $(TEST_LIBS)
+test: testqv
 	@echo Running tests
 	@./$(TEST)
 
 lib: $(OBJS)
-	$(AR) rcs libqv.a $(OBJS)
+	$(AR) rcs $(LIB) $(OBJS)
 
-install:	$(lib)
-	cp libqv.a $(PREFIX)/lib
+install:	lib
+	cp $(LIB) $(PREFIX)/lib
 	cp -ru include $(PREFIX)/include/qv
 
 uninstall:
-	rm $(PREFIX)/lib/libqv.a
+	rm $(PREFIX)/lib/$(LIB)
 	rm -r $(PREFIX)/include/qv
 
 # this is a suffix replacement rule for building .o's from .c's
@@ -109,7 +107,7 @@ $(OBJ_DIR)/%.o: $(TEST_DIR)/%.cc
 	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -c $<  -o $@
 
 clean:
-	$(RM) *.o *~ $(MAIN) $(OBJ_DIR)/*.o
+	$(RM) *.o *~ $(MAIN) $(OBJ_DIR)/*.o $(LIB)
 
 depend: $(SRCS)
 	makedepend $(INCLUDES) $^

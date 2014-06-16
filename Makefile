@@ -7,8 +7,15 @@
 
 # define any compile-time flags
 # Using cygwin -std=gnu++11 should be used rather than -std=c++11
+ifeq ($(CXX),g++)
 CXXFLAGS = -Wall -std=gnu++11 -march=native
 OPT = -g -O3
+else
+CXXFLAGS = -std=c++11 -static-libgcc -static-libstdc++ -xHOST
+OPT = -fast
+B_OPT = -O3 -ipo #-no-prec-div
+AR = xiar
+endif
 
 # Specify base directory
 BASE_DIR = .
@@ -38,7 +45,7 @@ LFLAGS = -L$(HOME)/lib -L$(BASE_DIR)/lib
 # define any libraries to link into executable:
 #   if I want to link in libraries (libx.so or libx.a) use -lx
 LIBS =
-TEST_LIBS = -lgtest -lgtest_main -lpthread
+TEST_LIBS = -lgtest -lgtest_main -pthread
 
 # define the C source files
 SRCS = $(wildcard $(SRC_DIR)/*.cc)
@@ -60,7 +67,6 @@ OBJS = $(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%,$(_OBJS))
 TEST_OBJS = $(patsubst $(TEST_DIR)/%,$(OBJ_DIR)/%,$(_TEST_OBJS))
 
 # define the executable file
-MAIN = qv
 LIB=lib$(MAIN).a
 TEST = testqv
 
@@ -74,11 +80,8 @@ TEST = testqv
 
 all:    test
 
-$(MAIN): $(OBJS)
-	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -o $(MAIN) $(OBJS) $(LFLAGS) $(LIBS)
-	
 testqv: $(OBJS) $(TEST_OBJS)
-	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -o $(TEST) $(TEST_OBJS) $(OBJS) $(LFLAGS) $(TEST_LIBS)
+	$(CXX) $(CXXFLAGS) $(B_OPT) $(INCLUDES) -o $(TEST) $(TEST_OBJS) $(OBJS) $(LFLAGS) $(TEST_LIBS)
 
 test: testqv
 	@echo Running tests
@@ -87,7 +90,7 @@ test: testqv
 lib: $(OBJS)
 	$(AR) rcs $(LIB) $(OBJS)
 
-install:	lib
+install:	$(LIB)
 	cp $(LIB) $(PREFIX)/lib
 	cp -ru include $(PREFIX)/include/qv
 

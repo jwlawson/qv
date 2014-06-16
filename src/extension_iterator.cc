@@ -43,8 +43,8 @@ namespace cluster {
 	}
 
 	template<class T>
-	int ExtensionIterator<T>::ipow (int x, int p) {
-		int i = 1;
+	long ExtensionIterator<T>::ipow (int x, int p) {
+		long i = 1;
 		for (int j = 1; j <= p; j++)  i *= x;
 		return i;
 	}

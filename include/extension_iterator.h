@@ -33,14 +33,14 @@ namespace cluster {
 			/** Size of the original matrix. */
 			int size_;
 			/** Index of the extension to return next. */
-			int index_;
+			long index_;
 			/** Max value that index can take while the extensions are valid. */
-			int max_;
+			long max_;
 		
 			/**
 			 * Calculate x to the power p.
 			 */
-			static int ipow(int x, int p);
+			static long ipow(int x, int p);
 	};
 
 }

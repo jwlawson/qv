@@ -3,8 +3,7 @@
  */
 #pragma once
 
-// Need iostream for std::cin which is not in istream.
-#include <iostream>
+#include <istream>
 #include <memory>
 #include <string>
 
@@ -13,7 +12,8 @@ namespace cluster {
 	class StreamIterator{
 
 		public:
-			StreamIterator(std::istream& stream = std::cin);
+			StreamIterator();
+			StreamIterator(std::istream& stream);
 			std::shared_ptr<T> next();
 			bool has_next();
 

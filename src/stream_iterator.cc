@@ -3,11 +3,18 @@
  */
 #include "stream_iterator.h"
 
+#include <iostream>
+
 #include "equiv_quiver_matrix.h"
 #include "quiver_matrix.h"
 
 namespace cluster {
 	
+	template<class T>
+	StreamIterator<T>::StreamIterator() 
+		:	has_next_(false),
+			input_(std::cin){}
+
 	template<class T>
 	StreamIterator<T>::StreamIterator(std::istream& stream) 
 		: input_(stream) {

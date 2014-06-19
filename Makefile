@@ -11,9 +11,9 @@ ifeq ($(CXX),g++)
 CXXFLAGS = -Wall -std=gnu++11 -march=native
 OPT = -g -O3
 else
-CXXFLAGS = -std=c++11 -static-libgcc -static-libstdc++ -xHOST
-OPT = -fast
-B_OPT = -O3 -ipo #-no-prec-div
+CXXFLAGS = -Wall -std=c++11 -xHOST
+OPT = -O3 -ipo -no-prec-div
+B_OPT = $(OPT)
 AR = xiar
 endif
 
@@ -67,7 +67,7 @@ OBJS = $(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%,$(_OBJS))
 TEST_OBJS = $(patsubst $(TEST_DIR)/%,$(OBJ_DIR)/%,$(_TEST_OBJS))
 
 # define the executable file
-LIB=lib$(MAIN).a
+LIB=libqv.a
 TEST = testqv
 
 #
@@ -87,7 +87,9 @@ test: testqv
 	@echo Running tests
 	@./$(TEST)
 
-lib: $(OBJS)
+lib:	$(LIB)
+
+$(LIB): $(OBJS)
 	$(AR) rcs $(LIB) $(OBJS)
 
 install:	$(LIB)

@@ -34,4 +34,10 @@ namespace cluster {
 		EXPECT_TRUE(chk.is_finite(m));
 	}
 
+	TEST(MassFiniteCheck, Empty) {
+		EquivQuiverMatrix m;
+		MassFiniteCheck chk;
+
+		EXPECT_TRUE(chk.is_finite(m));
+	}
 }

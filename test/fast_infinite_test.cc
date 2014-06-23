@@ -32,4 +32,15 @@ namespace cluster {
 		QuiverMatrix mat(5, 5, v);
 		EXPECT_TRUE(fastinf::is_infinite(mat));
 	}
+
+	TEST(FastInfinite, Empty) {
+		QuiverMatrix empty;
+		EXPECT_FALSE(fastinf::is_infinite(empty));
+	}
+
+	TEST(FastInfinite, Small) {
+		int v[] = {0};
+		QuiverMatrix small(1, 1, v);
+		EXPECT_FALSE(fastinf::is_infinite(small));
+	}
 }

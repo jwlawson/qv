@@ -12,6 +12,9 @@ namespace cluster {
 	}
 
 	bool MassFiniteCheck::is_finite(const M& matrix) {
+		if(matrix.num_rows() < 2 && matrix.num_cols() < 2) {
+			return true;
+		}
 		MPtr p = std::make_shared<M>(matrix);
 		last_new_ = false;
 		if(set_contains(p)) {

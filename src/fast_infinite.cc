@@ -10,7 +10,7 @@ namespace cluster {
 		bool is_infinite(const QuiverMatrix& matrix) {
 
 			// All 2x2 matrices are mutation finite
-			if (matrix.num_rows() == 2 && matrix.num_cols() == 2) {
+			if (matrix.num_rows() <= 2 && matrix.num_cols() <= 2) {
 				return false;
 			}
 			std::vector<QuiverMatrix> mutated(2, QuiverMatrix(matrix.num_rows(), 

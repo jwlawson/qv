@@ -41,5 +41,12 @@ namespace cluster {
 
 		EXPECT_FALSE(mmi::fast_mmi(m));
 	}
+
+	TEST(FastMMI, EmptySubmatrices) {
+		int v[] = {0, 1, 1, 1, 1, 1, -1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0};
+		QuiverMatrix m(6, 6, v);
+
+		EXPECT_TRUE(mmi::fast_mmi(m));
+	}
 }
 

@@ -60,5 +60,11 @@ namespace cluster {
 		EXPECT_TRUE(mmi::slow_mmi(a));
 	}
 
+	TEST(SlowMMI, EmptySubmatrices) {
+		int v[] = {0, 1, 1, 1, 1, 1, -1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0};
+		QuiverMatrix m(6, 6, v);
+
+		EXPECT_TRUE(mmi::slow_mmi(m));
+	}
 }
 

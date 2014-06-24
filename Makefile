@@ -9,7 +9,7 @@
 # Using cygwin -std=gnu++11 should be used rather than -std=c++11
 ifeq ($(CXX),g++)
 CXXFLAGS = -Wall -std=gnu++11 -march=native
-OPT = -g -O3
+OPT = -O3
 else
 CXXFLAGS = -Wall -std=c++11 -xHOST
 OPT = -O3 -ipo -no-prec-div
@@ -106,10 +106,10 @@ uninstall:
 # (see the gnu make manual section about automatic variables)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc
-	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -c $<  -o $@
+	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -c $< -o $@
 
 $(OBJ_DIR)/%.o: $(TEST_DIR)/%.cc
-	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -c $<  -o $@
+	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -c $< -o $@
 
 clean:
 	$(RM) *.o *~ $(MAIN) $(OBJ_DIR)/*.o $(LIB)

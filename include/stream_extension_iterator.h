@@ -20,10 +20,12 @@ namespace cluster {
 
 			MatrixPtr next();
 			bool has_next();
+			void progress(bool prog);
 
 		private:
 			StreamIterator<T> stream_iter_;
 			ExtensionIterator<T> ext_iter_;
+			bool progress_;
 	};
 }
 

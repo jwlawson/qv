@@ -12,4 +12,5 @@ lib/
 callgrind.*
 core.*
 cachegrind.*
+*.so.*
 

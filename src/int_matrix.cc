@@ -124,8 +124,18 @@ namespace cluster {
 		return std::move(result);
 	}
 
-	void IntMatrix::set(IntMatrix mat) {
-		swap(*this, mat);
+	void IntMatrix::set(const IntMatrix& mat) {
+		if(mat.num_rows_ == num_rows_ && mat.num_cols_ == num_cols_) {
+			/* Don't need to allocate a new array */
+			for(int i = 0; i < num_rows_ * num_cols_; i++) {
+				data_[i] = mat.data_[i];
+			}
+		} else {
+			data_ = std::vector<int>(mat.data_);
+			num_rows_ = mat.num_rows_;
+			num_cols_ = mat.num_cols_;
+		}
+		reset();
 	}
 
 	void IntMatrix::set(const int row, const int col, const int value) {

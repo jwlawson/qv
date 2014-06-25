@@ -7,21 +7,27 @@
 
 namespace cluster {
 	namespace fastinf {
+
+		std::default_random_engine gen;
+		std::vector<QuiverMatrix> mutated(2, QuiverMatrix()); 
+		std::uniform_int_distribution<int> dist;
+
 		bool is_infinite(const QuiverMatrix& matrix) {
 
 			// All 2x2 matrices are mutation finite
 			if (matrix.num_rows() <= 2 && matrix.num_cols() <= 2) {
 				return false;
 			}
-			std::vector<QuiverMatrix> mutated(2, QuiverMatrix(matrix.num_rows(), 
-						matrix.num_cols()));
 			mutated[0].set(matrix);
-
+			if(mutated[1].num_rows() != matrix.num_rows()) {
+				mutated[1].set(matrix);
+			}
 			int lastMutation = -1;
 			int last_count;
 			int counter = 0;
-			std::default_random_engine gen;
-			std::uniform_int_distribution<int> dist(0, matrix.num_rows() - 1);
+			if(dist.max() != matrix.num_rows() - 1 || dist.min() != 0) {
+				dist = std::uniform_int_distribution<int>(0, matrix.num_rows() - 1);
+			}
 			auto random = std::bind(dist, gen);
 
 			while (counter < MAX_MUTATIONS) {

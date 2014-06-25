@@ -14,6 +14,10 @@ namespace cluster {
 
 		MassFiniteCheck chk;
 
+		void add_finite(const std::shared_ptr<EquivQuiverMatrix>& mat) {
+			chk.add_finite(mat);
+		}
+
 		bool fast_mmi(const QuiverMatrix& matrix) {
 
 			if(!fastinf::is_infinite(matrix)) {

@@ -41,6 +41,10 @@ namespace cluster {
 		return set_;
 	}
 
+	void MassFiniteCheck::add_finite(const MPtr& matrix) {
+		set_->insert(matrix);
+	}
+
 	bool MassFiniteCheck::set_contains(MPtr mat) const {
 		return set_->find(mat) != set_->end();
 	}

@@ -6,6 +6,7 @@
 #pragma once
 
 #include "quiver_matrix.h"
+#include "equiv_quiver_matrix.h"
 
 namespace cluster {
 	namespace mmi {
@@ -21,6 +22,12 @@ namespace cluster {
 		 * @return true if the matrix is probably minimally mutation infinite
 		 */
 		bool fast_mmi(const QuiverMatrix& matrix);
+
+		/**
+		 * Add matrices which are known to be finite to the finite checker.
+		 * @param mat Mutation finite matrix to add
+		 */
+		void add_finite(const std::shared_ptr<EquivQuiverMatrix>& mat);
 
 		/**
 		 * Check whether the matrix is minimally mutation infinite.

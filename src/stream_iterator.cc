@@ -13,19 +13,20 @@ namespace cluster {
 	template<class T>
 	StreamIterator<T>::StreamIterator() 
 		:	has_next_(false),
-			input_(std::cin){}
+			str_(),
+			input_(&std::cin, NullDeleter()) {}
 
 	template<class T>
-	StreamIterator<T>::StreamIterator(std::istream& stream) 
-		: input_(stream) {
-		has_next_ = std::getline(input_, str_);
+	StreamIterator<T>::StreamIterator(std::istream& stream)
+		: input_(&stream, NullDeleter()) {
+		has_next_ = std::getline(*input_, str_);
 	}
 
 	template<class T>
 	std::shared_ptr<T> StreamIterator<T>::next() {
 		std::shared_ptr<T> result = std::make_shared<T>(str_);
 		do {
-			has_next_ = std::getline(input_, str_);
+			has_next_ = std::getline(*input_, str_);
 		} while (has_next_ && str_[0] != '{');
 		return std::move(result);
 	}

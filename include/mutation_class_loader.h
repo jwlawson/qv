@@ -27,6 +27,10 @@ namespace cluster {
 		const static T INFINITE;
 
 		/**
+		 * Create an empty mutation class loader which returns nothing.
+		 */
+		MutationClassLoader();
+		/**
 		 * Create a new MutationClassLoader starting from the specified inital matrix.
 		 *
 		 * The class provides an iterator-like interface to go through all matrices

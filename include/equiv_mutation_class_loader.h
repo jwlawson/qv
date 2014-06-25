@@ -14,6 +14,7 @@ namespace cluster {
 	private:
 		typedef EquivQuiverMatrix M;
 	public:
+		EquivMutationClassLoader();
 		EquivMutationClassLoader(const M& initial);
 	protected:
 		virtual void seen_matrix(std::shared_ptr<M> mat,

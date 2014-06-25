@@ -7,6 +7,10 @@
 
 namespace cluster {
 
+	EquivMutationClassLoader::EquivMutationClassLoader()
+		: MutationClassLoader<EquivQuiverMatrix>(),
+			set_() {}
+
 	EquivMutationClassLoader::EquivMutationClassLoader(const EquivQuiverMatrix& matrix)
 		: MutationClassLoader<EquivQuiverMatrix>(matrix),
 		  set_() {

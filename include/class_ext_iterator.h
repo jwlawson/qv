@@ -7,13 +7,23 @@
  */
 #pragma once
 
+#include <memory>
+
 #include "equiv_mutation_class_loader.h"
 #include "extension_iterator.h"
 
 namespace cluster {
 	class EquivMutClassExtIterator {
 
+		private:
+			typedef EquivQuiverMatrix Matrix;
+			typedef std::shared_ptr<Matrix> MatrixPtr;
+
 		public:
+			/**
+			 * Default constructor. Does nothing much.
+			 */
+			EquivMutClassExtIterator();
 			/**
 			 * Create an iterator with the specified seed matrix. All extensions of
 			 * all members in the matrix mutation class will be returned by the
@@ -25,7 +35,7 @@ namespace cluster {
 			/**
 			 * Get the next matrix from the iterator.
 			 */
-			QuiverMatrix next();
+			MatrixPtr next();
 			/**
 			 * Check whether the iterator has another matrix to return.
 			 * @return true if next will return a valid matrix

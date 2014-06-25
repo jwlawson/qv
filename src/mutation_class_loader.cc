@@ -12,6 +12,13 @@ namespace cluster {
 	const T MutationClassLoader<T>::INFINITE;
 
 	template<class T>
+	MutationClassLoader<T>::MutationClassLoader()
+		: size_(0),
+			map_(),
+			should_calc_(false),
+			queue_() {}
+
+	template<class T>
 	MutationClassLoader<T>::MutationClassLoader(const T& mat)
 		: size_(mat.num_rows()),
 		  map_(),

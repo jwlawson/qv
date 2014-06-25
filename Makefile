@@ -1,14 +1,15 @@
-#
-# 'make depend' uses makedepend to automatically generate dependencies
-#               (dependencies are added to end of Makefile)
-# 'make'        build executable file 'mycc'
-# 'make clean'  removes all .o and executable files
-#
+NAME = qv
+MAJOR = 0
+MINOR = 1
+VERSION = $(MAJOR).$(MINOR)
 
-# define any compile-time flags
+LIB = lib$(NAME).so.$(VERSION)
+STATIC = lib$(NAME).a
+TEST = testqv
+
 # Using cygwin -std=gnu++11 should be used rather than -std=c++11
 ifeq ($(CXX),g++)
-CXXFLAGS = -Wall -std=gnu++11 -march=native
+CXXFLAGS = -fPIC -Wall -std=gnu++11 -march=native
 OPT = -O3
 else
 CXXFLAGS = -Wall -std=c++11 -xHOST
@@ -16,6 +17,8 @@ OPT = -O3 -ipo -no-prec-div
 B_OPT = $(OPT)
 AR = xiar
 endif
+
+LDFLAGS = -shared -Wl,-soname,$(LIB)
 
 # Specify base directory
 BASE_DIR = .
@@ -66,38 +69,37 @@ _TEST_OBJS = $(TEST_SRCS:.cc=.o)
 OBJS = $(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%,$(_OBJS))
 TEST_OBJS = $(patsubst $(TEST_DIR)/%,$(OBJ_DIR)/%,$(_TEST_OBJS))
 
-# define the executable file
-LIB=libqv.a
-TEST = testqv
 
-#
-# The following part of the makefile is generic; it can be used to
-# build any executable just by changing the definitions above and by
-# deleting dependencies appended to the file from 'make depend'
-#
 
 .PHONY: clean
 
-all:    test
+all:	$(LIB)
 
-testqv: $(OBJS) $(TEST_OBJS)
+$(TEST): $(OBJS) $(TEST_OBJS)
 	$(CXX) $(CXXFLAGS) $(B_OPT) $(INCLUDES) -o $(TEST) $(TEST_OBJS) $(OBJS) $(LFLAGS) $(TEST_LIBS)
 
-test: testqv
+test: $(TEST)
 	@echo Running tests
 	@./$(TEST)
 
 lib:	$(LIB)
+static:	$(STATIC)
 
-$(LIB): $(OBJS)
-	$(AR) rcs $(LIB) $(OBJS)
+$(LIB):	$(OBJS)
+	$(CXX) $(LDFLAGS) -o $@ $^
+
+$(STATIC): $(OBJS)
+	$(AR) rcs $(STATIC) $(OBJS)
 
 install:	$(LIB)
 	cp $(LIB) $(PREFIX)/lib
-	cp -ru include $(PREFIX)/include/qv
+	ldconfig -v -n $(PREFIX)/lib
+	ln -fs $(PREFIX)/lib/$(LIB) $(PREFIX)/lib/lib$(NAME).so
+	mkdir -p $(PREFIX)/include/qv
+	cp -ru include/* $(PREFIX)/include/qv/
 
 uninstall:
-	rm $(PREFIX)/lib/$(LIB)
+	rm $(PREFIX)/lib/lib$(NAME).*
 	rm -r $(PREFIX)/include/qv
 
 # this is a suffix replacement rule for building .o's from .c's
@@ -112,7 +114,7 @@ $(OBJ_DIR)/%.o: $(TEST_DIR)/%.cc
 	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -c $< -o $@
 
 clean:
-	$(RM) *.o *~ $(MAIN) $(OBJ_DIR)/*.o $(LIB)
+	$(RM) *.o *~ $(MAIN) $(OBJ_DIR)/*.o $(LIB) $(STATIC) $(TEST)
 
 depend: $(SRCS)
 	makedepend $(INCLUDES) $^

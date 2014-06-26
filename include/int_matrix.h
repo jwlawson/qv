@@ -105,7 +105,7 @@ namespace cluster {
 		 * Set this matrix to be a copy of the matrix provided.
 		 * @param mat Matrix to copy
 		 */
-		void set(const IntMatrix& mat);
+		virtual void set_matrix(const IntMatrix& mat);
 		/**
 		 * Set the value in the matrix at the specified position to be the value
 		 * provided.

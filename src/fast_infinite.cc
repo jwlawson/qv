@@ -18,9 +18,9 @@ namespace cluster {
 			if (matrix.num_rows() <= 2 && matrix.num_cols() <= 2) {
 				return false;
 			}
-			mutated[0].set(matrix);
+			mutated[0].set_matrix(matrix);
 			if(mutated[1].num_rows() != matrix.num_rows()) {
-				mutated[1].set(matrix);
+				mutated[1].set_matrix(matrix);
 			}
 			int lastMutation = -1;
 			int last_count;

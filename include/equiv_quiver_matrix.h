@@ -14,6 +14,9 @@ namespace cluster {
 	class EquivalenceChecker;
 
 	class EquivQuiverMatrix : public QuiverMatrix {
+		private:
+			typedef std::vector<std::pair<int, int>> PairVector;
+
 		public:
 			/** 
 			 * Create a default matrix of size 0.
@@ -64,6 +67,12 @@ namespace cluster {
 			 * @param str String containing matrix information
 			 */
 			EquivQuiverMatrix(std::string str);
+			/**
+			 * Overwrite the set method in IntMatrix to allow the PairVector objects
+			 * to be initialised to the correct size.
+			 * @param mat Matrix to set this one to
+			 */
+			virtual void set_matrix(const IntMatrix& mat);
 			/** Overwritten equals method which ensures that two matrices which are
 			 * the same up to permuting their rows and columns are considered equal.
 			 *
@@ -78,9 +87,9 @@ namespace cluster {
 			EquivQuiverMatrix& operator=(const EquivQuiverMatrix& mat)=default;
 
 			/** Vector holding pairs of row sums and the abs row sums. */
-			std::vector<std::pair<int, int>> rows_;
+			PairVector rows_;
 			/** Vector holding column sums and abs column sums. */
-			std::vector<std::pair<int, int>> cols_;
+			PairVector cols_;
 		protected:
 			/** Overwritten hash function. */
 			virtual std::size_t compute_hash() const;

@@ -124,7 +124,7 @@ namespace cluster {
 		return std::move(result);
 	}
 
-	void IntMatrix::set(const IntMatrix& mat) {
+	void IntMatrix::set_matrix(const IntMatrix& mat) {
 		if(mat.num_rows_ == num_rows_ && mat.num_cols_ == num_cols_) {
 			/* Don't need to allocate a new array */
 			for(int i = 0; i < num_rows_ * num_cols_; i++) {

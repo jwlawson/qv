@@ -63,6 +63,16 @@ namespace cluster {
 			reset();
 	}
 
+	void EquivQuiverMatrix::set_matrix(const IntMatrix& mat) {
+		if(mat.num_rows() != num_rows_) {
+			rows_ = PairVector(mat.num_rows(), std::make_pair(0,0));
+		}
+		if(mat.num_cols() != num_cols_) {
+			cols_ = PairVector(mat.num_cols(), std::make_pair(0,0));
+		}
+		IntMatrix::set_matrix(mat);
+	}
+
 	bool EquivQuiverMatrix::equals(const IntMatrix &mat) const {
 		return checker_->are_equivalent(*this, 
 				static_cast<EquivQuiverMatrix>(mat));

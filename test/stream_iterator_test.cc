@@ -3,6 +3,7 @@
  */
 #include "stream_iterator.h"
 
+#include <fstream>
 #include <sstream>
 
 #include "gtest/gtest.h"
@@ -24,5 +25,14 @@ namespace cluster {
 		EXPECT_FALSE(iter.has_next());
 	}
 
+	TEST(StreamIterator, Empty) {
+		std::ifstream file;
+		file.open("test/empty");
+		ASSERT_TRUE(file.is_open());
+
+		StreamIterator<QuiverMatrix> iter(file);
+
+		EXPECT_FALSE(iter.has_next());
+	}
 }
 

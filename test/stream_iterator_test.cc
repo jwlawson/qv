@@ -5,10 +5,12 @@
 
 #include <fstream>
 #include <sstream>
+#include <unordered_set>
 
 #include "gtest/gtest.h"
 
 #include "quiver_matrix.h"
+#include "equiv_quiver_matrix.h"
 
 namespace cluster {
 
@@ -34,5 +36,26 @@ namespace cluster {
 
 		EXPECT_FALSE(iter.has_next());
 	}
+
+	/*
+	 * Adding 30,000 matrices to the set takes 5 hours.
+	 *
+	TEST(StreamIterator, Huge) {
+		std::ifstream file;
+		file.open("/home/grads/njcz19/result/finite/9_fin");
+		ASSERT_TRUE(file.is_open());
+
+		StreamIterator<EquivQuiverMatrix> iter(file);
+		std::unordered_set<std::shared_ptr<EquivQuiverMatrix>> set;
+
+		EXPECT_TRUE(iter.has_next());
+		int count = 0;
+		while(iter.has_next()) {
+			set.insert(iter.next());
+			count++;
+		}
+		EXPECT_EQ(count, 30167);
+	}
+	*/
 }
 

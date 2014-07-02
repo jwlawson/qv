@@ -6,7 +6,6 @@
 #include <iostream>
 
 #include "equiv_quiver_matrix.h"
-#include "quiver_matrix.h"
 
 namespace cluster {
 	
@@ -36,6 +35,7 @@ namespace cluster {
 		return has_next_;
 	}
 
+	template class StreamIterator<IntMatrix>;
 	template class StreamIterator<QuiverMatrix>;
 	template class StreamIterator<EquivQuiverMatrix>;
 }

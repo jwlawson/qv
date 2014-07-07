@@ -2,9 +2,12 @@
 
 Library to handle quiver mutations and some cluster algebra related things.
 
-qv uses GoogleTest, available under its BSD license, to test the code.
+libqv uses googletest to test the code. To run the tests use `make test`, ensuring
+that the googletest libraries and headers are installed in places where the
+compiler will find them.
 
-Run with `make` to complile and run the tests.
+Run `make install` to install the library. By default it installs libqv.so to
+`~/lib` and the headers files to `~/include`.
 
 ### License
 ```

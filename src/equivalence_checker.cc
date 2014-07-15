@@ -33,17 +33,17 @@ namespace cluster {
 			maps_(size) {}
 
 	bool EquivalenceChecker::are_equivalent(const M& a, const M& b) {
-		if(size_ == 0) {
-			return true;
-		}
-		if (IntMatrix::are_equal(a, b)) {
-			return true;
-		}
 		if(a.num_rows() != b.num_rows() ) {
 			return false;
 		}
 		if(a.num_cols() != b.num_cols() ) {
 			return false;
+		}
+		if(size_ == 0) {
+			return true;
+		}
+		if (IntMatrix::are_equal(a, b)) {
+			return true;
 		}
 		
 		if (!sums_equivalent(a, b)) {

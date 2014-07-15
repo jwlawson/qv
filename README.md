@@ -1,17 +1,29 @@
-qv
-==
+## libqv
 
 Library to handle quiver mutations and some cluster algebra related things.
 
-Currently this is just a c++ port of the jCluster code I wrote earlier this year.
+libqv uses googletest to test the code. To run the tests use `make test`, ensuring
+that the googletest libraries and headers are installed in places where the
+compiler will find them.
 
-qv uses GoogleTest, available under its BSD license, to test the code.
+Run `make install` to install the library. By default it installs libqv.so to
+`~/lib` and the headers files to `~/include`.
 
-Run with `make` to complile and run the tests.
+### License
+```
+Copyright 2014 John Lawson
 
-License
--------
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-qv is made available under the Apache 2.0 License.
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
 
 

@@ -225,5 +225,15 @@ namespace cluster {
 		EXPECT_FALSE(a.equals(b));
 		EXPECT_FALSE(b.equals(a));
 	}
+
+	TEST(EquivMatrix, Empty) {
+		EquivQuiverMatrix empty;
+
+		std::string s1 = "{ { 0 0 -1 1 } { 0 0 2 -1 } { 1 -2 0 0 } { -1 1 0 0 } }";
+		EquivQuiverMatrix other(s1);
+
+		EXPECT_FALSE(other.equals(empty));
+		EXPECT_FALSE(empty.equals(other));
+	}
 }
 

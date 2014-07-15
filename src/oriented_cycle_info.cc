@@ -32,6 +32,11 @@ namespace cluster {
 	std::size_t OrientedCycleInfo::hash() const {
 		return matrix_.hash();
 	}
+
+	std::ostream& operator<<(std::ostream& os, const OrientedCycleInfo& cycle) {
+		os << cycle.matrix_;
+		return os;
+	}
 }
 
 

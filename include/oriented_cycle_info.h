@@ -34,6 +34,10 @@ namespace cluster {
 			 * @return Hashcode of this information
 			 */
 			std::size_t hash() const;
+			/**
+			 * Output the matrix which stores the cycle information.
+			 */
+			friend std::ostream& operator<<(std::ostream& os, const OrientedCycleInfo& cycle);
 
 		private:
 			/** Matrix containing only the cyclic part of the initial matrix. */

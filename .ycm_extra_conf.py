@@ -64,7 +64,8 @@ flags = [
 '-isystem',
 '/usr/local/include',
 '-I','./include',
-'-I','./lib/include'
+'-I','./lib/include',
+'-I','/home/grads/njcz19/include'
 ]
 
 

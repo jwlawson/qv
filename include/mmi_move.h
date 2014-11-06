@@ -14,14 +14,13 @@
  */
 #pragma once
 
-#include "int_matrix.h"
+#include "equiv_quiver_matrix.h"
 
 namespace cluster {
 
 	class MMIMove {
 
 		public:
-			MMIMove();
 			/**
 			 * Create an MMIMove which switches the submatrix mata with the submatrix
 			 * matb. These submatrices must be attached to the main quiver by only
@@ -44,9 +43,11 @@ namespace cluster {
 
 		private:
 			/** First submatrix in move. */
-			IntMatrix mata_;
+			EquivQuiverMatrix mata_;
 			/** Second submatrix in move. */
-			IntMatrix matb_;
+			EquivQuiverMatrix matb_;
+			/** Size of the move matrices. */
+			int size_;
 			/** 
 			 * List of rows of submatrices which connect to the main quiver.
 			 *
@@ -55,6 +56,9 @@ namespace cluster {
 			 * submatrix occur at the nodes in the list.
 			 */
 			std::vector<int> conn_;
+
+			/** Check whether the submatrix matches the required connections. */
+			bool check_connections(IntMatrix& matrix, std::vector<int> submatrix);
 			
 	};
 }

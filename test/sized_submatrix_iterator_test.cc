@@ -15,15 +15,25 @@ namespace cluster {
 		ASSERT_TRUE(i.has_next());
 
 		IntMatrix n;
-		int c = 0;
-		while(i.has_next()){
-			n = i.next();
-			EXPECT_EQ(n.num_rows(), 1);
-			EXPECT_EQ(n.num_cols(), 1);
-			EXPECT_EQ(n.get(0,0), c);
-			c++;
-		}
-		EXPECT_EQ(c, 4);
+		n = i.next();
+		EXPECT_EQ(n.num_rows(), 1);
+		EXPECT_EQ(n.num_cols(), 1);
+		EXPECT_EQ(n.get(0,0), 0);
+
+		std::vector<int> rows = i.get_rows();
+		ASSERT_EQ(rows.size(), 1);
+		EXPECT_EQ(rows[0], 0);
+
+		n = i.next();
+		EXPECT_EQ(n.num_rows(), 1);
+		EXPECT_EQ(n.num_cols(), 1);
+		EXPECT_EQ(n.get(0,0), 3);
+
+		rows = i.get_rows();
+		ASSERT_EQ(rows.size(), 1);
+		EXPECT_EQ(rows[0], 1);
+
+		EXPECT_FALSE(i.has_next());
 	}
 
 	TEST(SizedSubmatrixIter, TwosInThree) {
@@ -38,15 +48,28 @@ namespace cluster {
 		EXPECT_EQ(n.num_rows(), 2);
 		EXPECT_EQ(n.num_cols(), 2);
 		EXPECT_EQ(n.get(0,0), 0);
-		EXPECT_EQ(n.get(1,1), 1);
+		EXPECT_EQ(n.get(1,0), 3);
+		EXPECT_EQ(n.get(0,1), 1);
+		EXPECT_EQ(n.get(1,1), 4);
 
 		ASSERT_TRUE(i.has_next());
 
 		n = i.next();
 		EXPECT_EQ(n.num_rows(), 2);
 		EXPECT_EQ(n.num_cols(), 2);
+		EXPECT_EQ(n.get(0,0), 0);
+		EXPECT_EQ(n.get(0,1), 2);
+		EXPECT_EQ(n.get(1,0), 6);
+		EXPECT_EQ(n.get(1,1), 8);
+		ASSERT_TRUE(i.has_next());
+
+		n = i.next();
+		EXPECT_EQ(n.num_rows(), 2);
+		EXPECT_EQ(n.num_cols(), 2);
 		EXPECT_EQ(n.get(0,0), 4);
-		EXPECT_EQ(n.get(1,1), 5);
+		EXPECT_EQ(n.get(0,1), 5);
+		EXPECT_EQ(n.get(1,0), 7);
+		EXPECT_EQ(n.get(1,1), 8);
 
 		ASSERT_FALSE(i.has_next());
 	}

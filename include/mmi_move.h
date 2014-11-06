@@ -14,6 +14,8 @@
  */
 #pragma once
 
+#include "int_matrix.h"
+
 namespace cluster {
 
 	class MMIMove {
@@ -25,20 +27,20 @@ namespace cluster {
 			 * matb. These submatrices must be attached to the main quiver by only
 			 * thoses nodes contained in the vector connections.
 			 */
-			MMIMove(IntMatrix mata, IntMatrix matb, std::vector<int> connections);
+			MMIMove(IntMatrix& mata, IntMatrix& matb, std::vector<int> connections);
 			/**
 			 * Apply the move to the provided matrix.
 			 * The matrix must contain one of the move's submatrices, and the rows
 			 * which make up this submatrix must be given in the vector provided.
 			 */
-			void move(IntMatrix matrix, std::vector<int> submatrix);
+			void move(IntMatrix& matrix, std::vector<int> submatrix);
 			/**
 			 * Find all submatrices of the matrix to which this move can be applied.
 			 *
 			 * The submatrices are returned in a vector, each submatrix represented by
 			 * a vector of which rows in the initial matrix make up the submatrix.
 			 */
-			std::vector<std::vector<int>> applicable_submatrices(IntMatrix matrix);
+			std::vector<std::vector<int>> applicable_submatrices(IntMatrix& matrix);
 
 		private:
 			/** First submatrix in move. */

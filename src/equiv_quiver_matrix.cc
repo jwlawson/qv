@@ -97,6 +97,10 @@ namespace cluster {
 		}
 		IntMatrix::reset();
 	}
+	std::vector<int> EquivQuiverMatrix::get_permutation(const IntMatrix& mat) {
+		this->equals(mat);
+		return std::move(checker_->last_row_map());
+	}
 
 	/* Private methods */
 

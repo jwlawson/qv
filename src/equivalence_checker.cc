@@ -24,13 +24,15 @@ namespace cluster {
 		: ap_(0, 0), 
 			pb_(0, 0), 
 			size_(0),
-			maps_(0) {}
+			maps_(0),
+			last_row_map_(size_){}
 
 	EquivalenceChecker::EquivalenceChecker(const int size)
 		: ap_(size, size),
 		  pb_(size, size),
 			size_(size),
-			maps_(size) {}
+			maps_(size),
+			last_row_map_(size_){}
 
 	bool EquivalenceChecker::are_equivalent(const M& a, const M& b) {
 		if(a.num_rows() != b.num_rows() ) {
@@ -43,6 +45,9 @@ namespace cluster {
 			return true;
 		}
 		if (IntMatrix::are_equal(a, b)) {
+			for(size_t i = 0; i < last_row_map_.size(); i++) {
+				last_row_map_[i] = i;
+			}
 			return true;
 		}
 		
@@ -77,11 +82,8 @@ namespace cluster {
 				return false;
 			}
 		}
-
-		std::vector<int> vec;
-		vec.reserve(size_);
-		return check_perm(vec, 0, a, b);
-
+		bool result = check_perm(last_row_map_, 0, a, b);
+		return result;
 	}
 
 	EquivalenceChecker& EquivalenceChecker::operator=(EquivalenceChecker mat) {
@@ -148,7 +150,11 @@ namespace cluster {
 			const M& a, const M& b) {
 		bool result = false;
 		if(index == size_) {
-			/* Compute. */
+			/* Compute. Row_map contains a complete permutation, that is each index
+			 * represents a row, and the value at that index shows where to permute
+			 * that row.
+			 *
+			 * So actually perform the permutation and check for equality. */
 			std::vector<int> col_map(size_);
 			for(int i = 0; i < size_; i++) {
 				col_map[row_map[i]] = i;
@@ -158,15 +164,21 @@ namespace cluster {
 			result = ap_.equals(pb_);
 
 		} else {
-			for(std::size_t i = 0; i < maps_.row_mappings[index].size() && !result; ++i) {
+			/* Row_map is not a complete permutation. Recursively add another entry to
+			 * the vector.
+			 *
+			 * Want to check each possible permutation, so consider each possible
+			 * mapping, and for each fill in the remaining row_map entries. */
+			for(size_t i = 0; i < maps_.row_mappings[index].size() && !result;
+					++i) {
 				int val = maps_.row_mappings[index][i];
-				bool rec = true;
-				for(std::size_t j = 0; j < row_map.size(); ++j) {
+				bool not_already_used = true;
+				for(int j = 0; j < index; ++j) {
 					if(row_map[j] == val) {
-						rec = false;
+						not_already_used = false;
 					}
 				}
-				if(rec) {
+				if(not_already_used) {
 					row_map[index] = val;
 					result = check_perm(row_map, index + 1, a, b);
 				}

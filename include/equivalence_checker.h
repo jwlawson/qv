@@ -41,6 +41,8 @@ namespace cluster {
 		 * @return true if matrices are equivalent
 		 */
 		bool are_equivalent(const M &lhs, const M &rhs);
+		/** Get the mapping used in last equals check. */
+		std::vector<int> last_row_map() { return last_row_map_; }
 		/**
 		 * Allocation operator.
 		 */
@@ -64,8 +66,8 @@ namespace cluster {
 						col_mappings(size) {}
 				void reset() {
 					for(std::size_t i = 0; i < row_mappings.size(); ++i) {
-						row_mappings[i].clear();
-						col_mappings[i].clear();
+						row_mappings[i].resize(0);
+						col_mappings[i].resize(0);
 					}
 				}
 				void update_row_mapping(const int a_index, const int b_index){
@@ -84,10 +86,16 @@ namespace cluster {
 				std::vector<std::vector<int>> col_mappings;
 		};
 
+		/** Sotres permuted a matrix. */
 		IntMatrix ap_;
+		/** Stores permuted b matrix. */
 		IntMatrix pb_;
+		/** Size of matrices to check. */
 		int size_;
+		/** Info about the possible permutations between the specified matrices. */
 		Mapping maps_;
+		/** Mapping used in last equals check run. */
+		std::vector<int> last_row_map_;
 
 		/** Check whether the columns of the matrices match. */
 		bool do_columns_match(const M& a, const M& b);

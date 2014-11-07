@@ -235,5 +235,33 @@ namespace cluster {
 		EXPECT_FALSE(other.equals(empty));
 		EXPECT_FALSE(empty.equals(other));
 	}
+	TEST(EquivMatrix, GetIdPerm) {
+		int v[] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+		EquivQuiverMatrix m(3, 3, v);
+		EquivQuiverMatrix n(3, 3, v);
+
+		std::vector<int> perm = m.get_permutation(n);
+		ASSERT_FALSE(perm.empty());
+		ASSERT_EQ(perm.size(), 3);
+		for( size_t i = 0; i < perm.size(); i++) {
+			EXPECT_EQ(perm[i], i);
+		}
+	}
+	TEST(EquivMatrix, SwapPerm) {
+		int v[] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+		int w[] = {8, 7, 6, 5, 4, 3, 2, 1, 0};
+		EquivQuiverMatrix m(3, 3, v);
+		EquivQuiverMatrix n(3, 3, w);
+
+		ASSERT_TRUE(m.equals(n));
+
+		std::vector<int> perm = m.get_permutation(n);
+		ASSERT_FALSE(perm.empty());
+		ASSERT_EQ(perm.size(), 3);
+		EXPECT_EQ(perm[0], 2);
+		EXPECT_EQ(perm[1], 1);
+		EXPECT_EQ(perm[2], 0);
+	}
+
 }
 

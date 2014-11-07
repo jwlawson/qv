@@ -85,6 +85,10 @@ namespace cluster {
 			 * Assignment operator.
 			 */
 			EquivQuiverMatrix& operator=(const EquivQuiverMatrix& mat)=default;
+			/**
+			 * Get the permutation taking this matrix to the given equivalent matrix.
+			 */
+			std::vector<int> get_permutation(const IntMatrix& mat);
 
 			/** Vector holding pairs of row sums and the abs row sums. */
 			PairVector rows_;

@@ -25,6 +25,9 @@ namespace cluster {
 			 * Create an MMIMove which switches the submatrix mata with the submatrix
 			 * matb. These submatrices must be attached to the main quiver by only
 			 * thoses nodes contained in the vector connections.
+			 *
+			 * The matrices are assumed to be the same size. Problems could occur if
+			 * differently sized matrices are used.
 			 */
 			MMIMove(IntMatrix& mata, IntMatrix& matb, std::vector<int> connections);
 			/**

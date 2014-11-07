@@ -66,6 +66,38 @@ namespace cluster {
 		EXPECT_EQ(app[1][1], 2);
 		EXPECT_EQ(app[1][2], 3);
 	}
+	TEST(MMIMove, BigExample) {
+		int v[] = {	0, 0, 2, 0, 0, 1, 0, 0, 0, 0,
+								0, 0, 0, 0, -1, 0, 1, 0, 1, 0,
+								-2, 0, 0, 0, 0, -1, 0, 0, 0, 0,
+								0, 0, 0, 0, 0, -1, 1, 0, 0, 0,
+								0, 1, 0, 0, 0, 0, -1, 0, -1, 0,
+								-1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 
+								0, -1, 0, -1, 1, 0, 0, 0, 0, 0,
+								0, 0, 0, 0, 0, 0, 0, 0, -1, 1,
+								0, -1, 0, 0, 1, 0, 0, 1, 0, 1,
+								0, 0, 0, 0, 0, 0, 0, -1, -1, 0};
+		int w[] = {	0, 1, -1, 1,
+								-1, 0, 1, 0,
+								1, -1, 0, -1,
+								-1, 0, 1, 0};
+		IntMatrix check(10,10,v);
+		
+		std::vector<int> con(2);
+		IntMatrix mov(4, 4, w);
+		con[0] = 1;
+		con[1] = 3;
+		IntMatrix n;
+		MMIMove move(mov, n, con);
 
+		auto app = move.applicable_submatrices(check);
+
+		ASSERT_FALSE(app.empty());
+		EXPECT_EQ(app.size(), 1);
+		EXPECT_EQ(app[0][0], 1);
+		EXPECT_EQ(app[0][1], 4);
+		EXPECT_EQ(app[0][2], 6);
+		EXPECT_EQ(app[0][3], 8);
+	}
 }
 

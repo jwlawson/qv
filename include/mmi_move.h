@@ -29,20 +29,22 @@ namespace cluster {
 			 * The matrices are assumed to be the same size. Problems could occur if
 			 * differently sized matrices are used.
 			 */
-			MMIMove(IntMatrix& mata, IntMatrix& matb, std::vector<int> connections);
+			MMIMove(const IntMatrix& mata, const IntMatrix& matb, const
+					std::vector<int>& connections);
 			/**
 			 * Apply the move to the provided matrix.
 			 * The matrix must contain one of the move's submatrices, and the rows
 			 * which make up this submatrix must be given in the vector provided.
 			 */
-			void move(IntMatrix& matrix, std::vector<int> submatrix);
+			void move(const IntMatrix& matrix, const std::vector<int>& submatrix);
 			/**
 			 * Find all submatrices of the matrix to which this move can be applied.
 			 *
 			 * The submatrices are returned in a vector, each submatrix represented by
 			 * a vector of which rows in the initial matrix make up the submatrix.
 			 */
-			std::vector<std::vector<int>> applicable_submatrices(IntMatrix& matrix);
+			std::vector<std::vector<int>> applicable_submatrices(const IntMatrix&
+					matrix);
 
 		private:
 			/** First submatrix in move. */
@@ -61,7 +63,9 @@ namespace cluster {
 			std::vector<int> conn_;
 
 			/** Check whether the submatrix matches the required connections. */
-			bool check_connections(IntMatrix& matrix, std::vector<int> submatrix);
+			bool check_connections(const IntMatrix& matrix, const std::vector<int>&
+					submatrix, const std::vector<int>& perm);
+			
 			
 	};
 }

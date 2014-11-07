@@ -4,7 +4,7 @@
 #include "sized_submatrix_iterator.h"
 
 namespace cluster {
-	SizedSubmatrixIterator::SizedSubmatrixIterator(int size, IntMatrix& matrix)
+	SizedSubmatrixIterator::SizedSubmatrixIterator(int size, const IntMatrix& matrix)
 		: m_(matrix),
 			next_(size, size),
 			size_(size),

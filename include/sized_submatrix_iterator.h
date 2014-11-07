@@ -21,7 +21,7 @@ namespace cluster {
 		 * @param size Size of each submatrix.
 		 * @param matrix Initial matrix to take submatrices of.
 		 */
-		SizedSubmatrixIterator(int size, IntMatrix& matrix);
+		SizedSubmatrixIterator(int size, const IntMatrix& matrix);
 		/**
 		 * Check if the iterator will return a valid submatrix if next is called.
 		 * @return true if next() will return a valid submatrix.

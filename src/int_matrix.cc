@@ -40,7 +40,7 @@ namespace cluster {
 		std::stringstream ss;
 		ss << str;
 		std::string buf;
-		std::vector<int> data;
+		IntVector data;
 		data.reserve((str.size()/2) -4);
 		int row_size = 0;
 		int col_size = 0;
@@ -131,7 +131,7 @@ namespace cluster {
 				data_[i] = mat.data_[i];
 			}
 		} else {
-			data_ = std::vector<int>(mat.data_);
+			data_ = IntVector(mat.data_);
 			num_rows_ = mat.num_rows_;
 			num_cols_ = mat.num_cols_;
 		}

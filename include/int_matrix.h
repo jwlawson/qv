@@ -17,6 +17,7 @@
 namespace cluster {
 	class IntMatrix {
 	 public:
+		typedef std::vector<int> IntVector;
 		 /**
 			* Create a default IntMatrix. The default matrix is essentially empty and
 			* has size 0.
@@ -248,7 +249,7 @@ namespace cluster {
 		/** Number of columns in the matrix. */
 		int num_cols_;
 		/** The data in the matrix. */
-		std::vector<int> data_;
+		IntVector data_;
 		/** Compute the hash for this matrix. */
 		virtual std::size_t compute_hash() const;
 

@@ -73,6 +73,19 @@ namespace cluster {
 
 		ASSERT_FALSE(i.has_next());
 	}
+
+	TEST(SizedSubmatrixIter, FullSubmatrixReturnsSelf) {
+		int v[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+		IntMatrix m(3,3,v);
+
+		SizedSubmatrixIterator i(3, m);
+
+		ASSERT_TRUE(i.has_next());
+		IntMatrix n = i.next();
+		ASSERT_TRUE(m.equals(n));
+
+		ASSERT_FALSE(i.has_next());
+	}
 		
 }
 

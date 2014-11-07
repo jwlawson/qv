@@ -32,6 +32,8 @@ TEST_DIR = $(BASE_DIR)/test
 # define the output directory for .o
 OBJ_DIR = $(BASE_DIR)/build
 
+INC_DIR = $(BASE_DIR)/include
+
 # Install directory
 PREFIX = $(HOME)
 
@@ -107,7 +109,7 @@ uninstall:
 # the rule(a .c file) and $@: the name of the target of the rule (a .o file)
 # (see the gnu make manual section about automatic variables)
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc $(INC_DIR)/%.h
 	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -c $< -o $@
 
 $(OBJ_DIR)/%.o: $(TEST_DIR)/%.cc

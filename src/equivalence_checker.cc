@@ -3,7 +3,6 @@
  */
 #include "equivalence_checker.h"
 
-#include <iostream>
 #include <algorithm>
 
 #include "array_utils.h"

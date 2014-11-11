@@ -36,7 +36,8 @@ namespace cluster {
 				}
 				if(equal) {
 					std::vector<int> sub = iter.get_rows();
-					if(check_connections(matrix, sub, perm)) {
+					mmi_conn::Submatrix s(matrix, sub, perm);
+					if(check_connections(s)) {
 						result.push_back(sub);
 					}
 				}
@@ -44,23 +45,23 @@ namespace cluster {
 		}
 		return result;
 	}
-	bool MMIMove::check_connections(const IntMatrix& matrix, const
-			std::vector<int>& submatrix, const std::vector<int>& perm) {
+	bool MMIMove::check_connections(const mmi_conn::Submatrix& submatrix) {
 		bool valid = true;
 		/* i is the index of the row in the submatrix, s the index of the row in the
 		 * main matrix. */
 		for(int i = 0; i < size_ && valid; i++) {
-			int p = perm[i];
+			int p = submatrix.perm_[i];
 			if(std::find(conn_.begin(), conn_.end(), p) != conn_.end()) {
 				/* Row is one of the connections, so can be anything.*/
 				continue;
 			}
-			int s = submatrix[i];
-			auto row = matrix.get_row(s);
+			int s = submatrix.submatrix_[i];
+			auto row = submatrix.matrix_.get_row(s);
 			for(size_t j = 0; j < row.size(); j ++) {
 				/** Need to check whether each entry in the row is non-zero only when
 				 * it is inside the submatrix. */
-				if(std::find(submatrix.begin(), submatrix.end(), j) == submatrix.end()
+				if(std::find(submatrix.submatrix_.begin(),
+							submatrix.submatrix_.end(), j) == submatrix.submatrix_.end()
 						&& row[j] != 0) {
 					valid = false;
 					break;
@@ -69,4 +70,19 @@ namespace cluster {
 		}
 		return valid;
 	}
+
+namespace mmi_conn {
+	bool Unconnected::operator()(const Submatrix& sub, int connection) {
+		return false;
+	}
+	bool Line::operator()(const Submatrix& sub, int connection) {
+		return false;
+	}
+	bool ConnectedTo::operator()(const Submatrix& sub, int connection) {
+		return false;
+	}
+	bool LineTo::operator()(const Submatrix& sub, int connection) {
+		return false;
+	}
+}
 }

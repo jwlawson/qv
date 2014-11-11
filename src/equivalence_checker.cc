@@ -3,6 +3,7 @@
  */
 #include "equivalence_checker.h"
 
+#include <iostream>
 #include <algorithm>
 
 #include "array_utils.h"
@@ -62,27 +63,28 @@ namespace cluster {
 		if (!rows_match) {
 			return false;
 		}
-
+		/*
 		bool cols_match = do_columns_match(a, b);
 		if (!cols_match) {
 			return false;
 		}
-		using s_t  = std::size_t;
 		bool valid;
 		for(int i = 0; i < size_; ++i) {
 			valid = false;
-			for(s_t j = 0; j < maps_.row_mappings[i].size() && !valid; ++j) {
+			for(size_t j = 0; j < maps_.row_mappings[i].size() && !valid; ++j) {
 				int val = maps_.row_mappings[i][j];
-				for(s_t k = 0; k < maps_.col_mappings[val].size() && !valid; ++k) {
+				for(size_t k = 0; k < maps_.col_mappings[val].size() && !valid; ++k) {
 					if(maps_.col_mappings[val][k] == i) {
 						valid = true;
 					}
 				}
 			}
 			if(!valid) {
+				std::cout << "Found example: " << a << " and " << b << std::endl;
 				return false;
 			}
 		}
+		*/
 		bool result = check_perm(last_row_map_, 0, a, b);
 		return result;
 	}

@@ -86,25 +86,11 @@ namespace cluster {
 		hashcode_ = compute_hash();
 	}
 
-
 	/* Public methods */
-
 	IntMatrix &IntMatrix::operator= (IntMatrix mat) {
 		swap(*this, mat);
 		return *this;
 	}
-	int IntMatrix::num_rows() const {
-		return num_rows_;
-	}
-
-	int IntMatrix::num_cols() const {
-		return num_cols_;
-	}
-
-	int IntMatrix::get(const int row, const int col) const {
-		return data_[get_index(row, col)];
-	}
-
 	const std::vector<int> IntMatrix::get_row(const int row) const {
 		std::vector<int> result(num_cols_);
 		get_row(row, result);
@@ -128,7 +114,6 @@ namespace cluster {
 			count += num_cols_;
 		}
 	}
-
 	void IntMatrix::set_matrix(const IntMatrix& mat) {
 		if(mat.num_rows_ == num_rows_ && mat.num_cols_ == num_cols_) {
 			/* Don't need to allocate a new array */
@@ -142,15 +127,6 @@ namespace cluster {
 		}
 		reset();
 	}
-
-	void IntMatrix::set(const int row, const int col, const int value) {
-		data_[get_index(row, col)] = value;
-	}
-
-	void IntMatrix::reset() {
-		hashcode_ = compute_hash();
-	}
-
 	int IntMatrix::zero_row() const {
 		bool isZero = false;
 		int row = -1;
@@ -171,20 +147,6 @@ namespace cluster {
 		}
 		return -1;
 	}
-
-	const int* IntMatrix::data() const {
-		return data_.data();
-	}
-
-
-	bool IntMatrix::equals(const IntMatrix &rhs) const {
-		return hashcode_ == rhs.hashcode_ && data_ == rhs.data_;
-	}
-
-	std::size_t IntMatrix::hash() const {
-		return hashcode_;
-	}
-
 	/*
 	 * Cannot check hashcode here, as implementing classes can change the way the
 	 * hashcode is computed. This means that two matrices with the same entries

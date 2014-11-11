@@ -77,19 +77,25 @@ namespace cluster {
 		 * Get the number of rows in the matrix.
 		 * @return Number of rows
 		 */
-		int num_rows() const;
+		int num_rows() const {
+			return num_rows_;
+		}
 		/**
 		 * Get the number of columns in the matrix.
 		 * @return Number fo columns
 		 */
-		int num_cols() const;
+		int num_cols() const {
+			return num_cols_;
+		}
 		/**
 		 * Get the value stored in the matrix at a specific position.
 		 * @param row Row position
 		 * @param col Column position
 		 * @return Value at (row, col)
 		 */
-		int get(const int row, const int col) const;
+		int get(const int row, const int col) const {
+			return data_[get_index(row, col)];
+		}
 		/**
 		 * Get a vector containing all entries in the specified row.
 		 * @param row Row to return
@@ -133,12 +139,16 @@ namespace cluster {
 		 * @param col Column position
 		 * @param value Value to set
 		 */
-		void set(const int row, const int col, const int value);
+		void set(const int row, const int col, const int value) {
+			data_[get_index(row, col)] = value;
+		}
 		/**
 		 * Reset any state associated to the matrix. Call this any time that the
 		 * data stored in the matrix may change.
 		 */
-		virtual void reset();
+		virtual void reset() {
+			hashcode_ = compute_hash();
+		}
 		/**
 		 * Find the first row that is all zeros. The value returned will then be
 		 * the index of this row.
@@ -153,20 +163,26 @@ namespace cluster {
 		 * @param mat Matrix to check
 		 * @return true if the matries are equal
 		 */
-		virtual bool equals(const IntMatrix &mat) const;
+		virtual bool equals(const IntMatrix &mat) const {
+			return hashcode_ == mat.hashcode_ && data_ == mat.data_;
+		}
 		/**
 		 * Get a pointer to the underlying array.
 		 *
 		 * Only use this if you are sure you know what you are doing.
 		 * @return Pointer to the array that the matrix data is stored in
 		 */
-		const int* data() const;
+		const int* data() const {
+			return data_.data();
+		}
 		/**
 		 * Compute the hash of the matrix.
 		 *
 		 * @return Hash of the matrix
 		 */
-		std::size_t hash() const;
+		size_t hash() const {
+			return hashcode_;
+		}
 		/**
 		 * Static method to check whether two matrices are equal.
 		 *

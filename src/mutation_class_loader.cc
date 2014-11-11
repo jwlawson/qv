@@ -67,7 +67,7 @@ namespace cluster {
 		for (int i = 0; i < size_ && should_calc_; i++) {
 			if (mutate_at(mat, i)) {
 				const std::shared_ptr<T> new_matrix =
-					std::make_shared<T>(mat->num_rows(), mat->num_cols());
+					std::make_shared<T>(size_, size_);
 				mat->mutate(i, *new_matrix);
 				if (have_seen(new_matrix)) {
 					seen_matrix(new_matrix, mat, i);

@@ -80,9 +80,11 @@ namespace cluster {
 		void mutate(const int k, T &result) const {
 			
 			int index = 0;
-			std::vector<int> k_row(std::move(get_row(k)));
-			std::vector<int> k_col(std::move(get_col(k)));
-			for (int i = 0; i < num_rows(); i++) {
+			k_row_.reserve(num_cols_);
+			get_row(k, k_row_);
+			k_col_.reserve(num_rows_);
+			get_col(k, k_col_);
+			for (int i = 0; i < num_rows_; i++) {
 				if(i == k) {
 					for(int j = 0; j < num_cols_; ++j) {
 						result.data_[index] = -1 * data_[index];
@@ -93,8 +95,8 @@ namespace cluster {
 						if(j==k) {
 							result.data_[index] = -1 * data_[index];
 						} else {
-							result.data_[index] = data_[index] + (std::abs(k_col[i]) * k_row[j] 
-									+ k_col[i] * std::abs(k_row[j])) / 2;
+							result.data_[index] = data_[index] + (std::abs(k_col_[i]) * k_row_[j] 
+									+ k_col_[i] * std::abs(k_row_[j])) / 2;
 						}
 						++index;
 					}
@@ -125,6 +127,8 @@ namespace cluster {
 		}
 
 	 private:
+		static std::vector<int> k_row_;
+		static std::vector<int> k_col_;
 	};
 }
 

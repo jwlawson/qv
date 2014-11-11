@@ -30,6 +30,8 @@ namespace cluster {
 		IntMatrix::operator=(mat);
 		return *this;
 	}
+	std::vector<int> QuiverMatrix::k_row_;
+	std::vector<int> QuiverMatrix::k_col_;
 
 	bool QuiverMatrix::is_infinite() const {
 		for (int i = 0; i < num_rows_ * num_cols_; i++) {

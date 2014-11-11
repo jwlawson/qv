@@ -10,7 +10,7 @@ namespace cluster {
 			MutationClassLoader<QuiverMatrix> c(matrix);
 			int result = 0;
 			while (c.has_next()) {
-				if (c.next().equals(MutationClassLoader<QuiverMatrix>::INFINITE)) {
+				if (c.next_ptr()->equals(MutationClassLoader<QuiverMatrix>::INFINITE)) {
 					return -1;
 				}
 				result++;

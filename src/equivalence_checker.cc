@@ -32,7 +32,8 @@ namespace cluster {
 		  pb_(size, size),
 			size_(size),
 			maps_(size),
-			last_row_map_(size_){}
+			last_row_map_(size_),
+			last_col_map_(size_){}
 
 	bool EquivalenceChecker::are_equivalent(const M& a, const M& b) {
 		if(a.num_rows() != b.num_rows() ) {
@@ -155,12 +156,11 @@ namespace cluster {
 			 * that row.
 			 *
 			 * So actually perform the permutation and check for equality. */
-			std::vector<int> col_map(size_);
 			for(int i = 0; i < size_; i++) {
-				col_map[row_map[i]] = i;
+				last_col_map_[row_map[i]] = i;
 			}
 			a.permute_rows(row_map, ap_);
-			b.permute_columns(col_map, pb_);
+			b.permute_columns(last_col_map_, pb_);
 			result = ap_.equals(pb_);
 
 		} else {

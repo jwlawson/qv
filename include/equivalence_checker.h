@@ -96,6 +96,7 @@ namespace cluster {
 		Mapping maps_;
 		/** Mapping used in last equals check run. */
 		std::vector<int> last_row_map_;
+		std::vector<int> last_col_map_;
 
 		/** Check whether the columns of the matrices match. */
 		bool do_columns_match(const M& a, const M& b);

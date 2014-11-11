@@ -62,28 +62,21 @@ namespace cluster {
 		class Mapping {
 			public:
 				Mapping(int size)
-					: row_mappings(size),
-						col_mappings(size) {}
+					: row_mappings(size) {}
 				void reset() {
 					for(std::size_t i = 0; i < row_mappings.size(); ++i) {
 						row_mappings[i].resize(0);
-						col_mappings[i].resize(0);
 					}
 				}
 				void update_row_mapping(const int a_index, const int b_index){
 					row_mappings[a_index].push_back(b_index);
 				}
-				void update_column_mapping(const int a_index, const int b_index){
-					col_mappings[a_index].push_back(b_index);
-				}
 				friend void swap(Mapping& a, Mapping& b) {
 					using std::swap;
 					swap(a.row_mappings, b.row_mappings);
-					swap(a.col_mappings, b.col_mappings);
 				}
 
 				std::vector<std::vector<int>> row_mappings;
-				std::vector<std::vector<int>> col_mappings;
 		};
 
 		/** Sotres permuted a matrix. */
@@ -97,9 +90,9 @@ namespace cluster {
 		/** Mapping used in last equals check run. */
 		std::vector<int> last_row_map_;
 		std::vector<int> last_col_map_;
+		std::vector<int> a_row_vals_;
+		std::vector<int> b_row_vals_;
 
-		/** Check whether the columns of the matrices match. */
-		bool do_columns_match(const M& a, const M& b);
 		/** Check whether the rows of the matrices match. */
 		bool do_rows_match(const M& a, const M& b);
 		/** Check whether the row/column sums match. */

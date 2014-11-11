@@ -96,12 +96,30 @@ namespace cluster {
 		 * @return Vector of entries in the row
 		 */
 		const std::vector<int> get_row(const int row) const;
+		/**
+		 * Get a vector containing all entries in the specified row.
+		 *
+		 * The supplied vector must be the right size to hold the row. No bounds
+		 * checking is perfomed.
+		 * @param row Row to return
+		 * @param result Vector to put entries in the row
+		 */
+		void get_row(const int row, std::vector<int>& result) const;
 		/** 
 		 * Get a vector containing all entries in the specified column.
 		 * @param col Column to return
 		 * @return Vector of entries in the column
 		 */
 		const std::vector<int> get_col(const int col) const;
+		/**
+		 * Get a vector containing all entries in the specified column.
+		 *
+		 * The supplied vector must be the right size to hold the column, no bounds
+		 * checking is done.
+		 * @param col Column to return
+		 * @param result Vector to hold entries in the column
+		 */
+		void get_col(const int col, std::vector<int>& result) const;
 		/**
 		 * Set this matrix to be a copy of the matrix provided.
 		 * @param mat Matrix to copy

@@ -107,21 +107,26 @@ namespace cluster {
 
 	const std::vector<int> IntMatrix::get_row(const int row) const {
 		std::vector<int> result(num_cols_);
+		get_row(row, result);
+		return std::move(result);
+	}
+	void IntMatrix::get_row(const int row, std::vector<int>& result) const {
 		int count = row * num_cols_;
 		for (int j = 0; j < num_cols_; j++) {
 			result[j] = data_[count++];
 		}
-		return std::move(result);
 	}
-
 	const std::vector<int> IntMatrix::get_col(const int col) const {
 		std::vector<int> result(num_rows_);
+		get_col(col, result);
+		return std::move(result);
+	}
+	void IntMatrix::get_col(const int col, std::vector<int>& result) const{
 		int count = col;
 		for (int j = 0; j < num_rows_; j++) {
 			result[j] = data_[count];
 			count += num_cols_;
 		}
-		return std::move(result);
 	}
 
 	void IntMatrix::set_matrix(const IntMatrix& mat) {

@@ -14,6 +14,8 @@
  */
 #pragma once
 
+#include <map>
+
 #include "equiv_quiver_matrix.h"
 
 namespace cluster {
@@ -55,6 +57,8 @@ namespace mmi_conn {
 class MMIMove {
 
 	public:
+		typedef std::function<bool(const mmi_conn::Submatrix&, int)> ConnReq;
+		typedef std::map<int, ConnReq> Connections;
 		/**
 		 * Create an MMIMove which switches the submatrix mata with the submatrix
 		 * matb. These submatrices must be attached to the main quiver by only
@@ -62,9 +66,26 @@ class MMIMove {
 		 *
 		 * The matrices are assumed to be the same size. Problems could occur if
 		 * differently sized matrices are used.
+		 *
+		 * The default connection requirement is Unconnected, that is each subquiver
+		 * at the connection is not connected to any other connection.
 		 */
-		MMIMove(const IntMatrix& mata, const IntMatrix& matb, const
-				std::vector<int>& connections);
+		MMIMove(const IntMatrix& mata, const IntMatrix& matb,
+				const std::vector<int>& connections);
+		/**
+		 * Create an MMIMove which switches the submatrix mata with the submatrix
+		 * matb. These submatrices must be attached to the main quiver by only
+		 * thoses nodes contained in the vector connections.
+		 *
+		 * The matrices are assumed to be the same size. Problems could occur if
+		 * differently sized matrices are used.
+		 *
+		 * The connections between the submatrix and the main quiver are given in
+		 * the vector of ints, and the requirements for the shape of the quiver at
+		 * that connection in the other vector.
+		 */
+		MMIMove(const IntMatrix& mata, const IntMatrix& matb,
+				const std::vector<int>& conn, const std::vector<ConnReq>& req);
 		/**
 		 * Apply the move to the provided matrix.
 		 * The matrix must contain one of the move's submatrices, and the rows
@@ -77,8 +98,8 @@ class MMIMove {
 		 * The submatrices are returned in a vector, each submatrix represented by
 		 * a vector of which rows in the initial matrix make up the submatrix.
 		 */
-		std::vector<std::vector<int>> applicable_submatrices(const IntMatrix&
-				matrix);
+		std::vector<std::vector<int>> applicable_submatrices(
+				const IntMatrix& matrix);
 
 	private:
 		/** First submatrix in move. */
@@ -94,7 +115,7 @@ class MMIMove {
 		 * in the matrix, and the only connections between the quiver and the
 		 * submatrix occur at the nodes in the list.
 		 */
-		std::vector<int> conn_;
+		Connections conn_;
 
 		/** Check whether the submatrix matches the required connections. */
 		bool check_connections(const mmi_conn::Submatrix& submatrix);

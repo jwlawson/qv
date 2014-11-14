@@ -13,7 +13,18 @@ namespace cluster {
 		:	mata_(mata),
 			matb_(matb),
 			size_(mata.num_rows()),
-			conn_(connections){}
+			conn_(){
+		for(auto i = connections.begin(); i != connections.end(); ++i) {
+			conn_.insert(std::make_pair(*i, mmi_conn::Unconnected()));
+		}
+	}
+	MMIMove::MMIMove(const IntMatrix& mata, const IntMatrix& matb,
+			const std::vector<int>& conn, const std::vector<ConnReq>& req)
+		: mata_(mata), matb_(matb), size_(mata.num_rows()), conn_() {
+		for(size_t i = 0; i < conn.size(); ++i) {
+			conn_.insert(std::make_pair(i, req[i]));
+		}
+	}
 	void MMIMove::move(const IntMatrix& matrix, const std::vector<int>&
 			submatrix){
 
@@ -51,8 +62,11 @@ namespace cluster {
 		 * main matrix. */
 		for(int i = 0; i < size_ && valid; i++) {
 			int p = submatrix.perm_[i];
-			if(std::find(conn_.begin(), conn_.end(), p) != conn_.end()) {
-				/* Row is one of the connections, so can be anything.*/
+			if(conn_.find(p) != conn_.end()) {
+				/* Row is one of the connections.
+				 * Check that the connection requirements for this connection are
+				 * satisfied. */
+				valid = conn_[p](submatrix, i);
 				continue;
 			}
 			int s = submatrix.submatrix_[i];
@@ -73,7 +87,7 @@ namespace cluster {
 
 namespace mmi_conn {
 	bool Unconnected::operator()(const Submatrix& sub, int connection) {
-		return false;
+		return true;
 	}
 	bool Line::operator()(const Submatrix& sub, int connection) {
 		return false;

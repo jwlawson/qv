@@ -99,5 +99,48 @@ namespace cluster {
 		EXPECT_EQ(app[0][2], 6);
 		EXPECT_EQ(app[0][3], 8);
 	}
+	TEST(MMIMove, LineReqTrueForSmallValid) {
+		int v[] = { 0, 1,-1, 1,
+							 -1, 0, 1, 0,
+							  1,-1, 0, 0,
+							 -1, 0, 0, 0};
+		IntMatrix check(4, 4, v);
+
+		std::vector<MMIMove::ConnReq> req(1);
+		req[0] = mmi_conn::Line();
+
+		std::vector<int> sub(3);
+		for(int i = 0; i < 3; ++i) {
+			sub[i] = i;
+		}
+		mmi_conn::Submatrix s(check, sub, sub);
+		EXPECT_TRUE(req[0](s, 0));
+		EXPECT_FALSE(req[0](s, 1));
+		EXPECT_FALSE(req[0](s, 2));
+	}
+	TEST(MMIMove, LineReqInMove) {
+		int v[] = { 0, 1,-1, 1,
+							 -1, 0, 1, 0,
+							  1,-1, 0, 0,
+							 -1, 0, 0, 0};
+		IntMatrix check(4, 4, v);
+
+		int w[] = { 0, 1, -1, -1, 0, 1, 1, -1, 0};
+		IntMatrix m(3, 3, w);
+		IntMatrix n;
+		std::vector<int> conn(1);
+		conn[0] = 0;
+
+		std::vector<MMIMove::ConnReq> req(1);
+		req[0] = mmi_conn::Line();
+
+		MMIMove move(m, n, conn, req);
+		auto app = move.applicable_submatrices(check);
+		ASSERT_EQ(app.size(), 1);
+		EXPECT_EQ(app[0][0], 0);
+		EXPECT_EQ(app[0][1], 1);
+		EXPECT_EQ(app[0][2], 2);
+	}
+
 }
 

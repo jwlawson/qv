@@ -114,8 +114,8 @@ namespace cluster {
 		}
 		mmi_conn::Submatrix s(check, sub, sub);
 		EXPECT_TRUE(req(s, 0));
-		EXPECT_FALSE(req(s, 1));
-		EXPECT_FALSE(req(s, 2));
+		EXPECT_TRUE(req(s, 1));
+		EXPECT_TRUE(req(s, 2));
 	}
 	TEST(MMIMove, LineReqFalseForSmallNotValid) {
 		/* 6 */
@@ -134,10 +134,10 @@ namespace cluster {
 			sub[i] = i;
 		}
 		mmi_conn::Submatrix s(check, sub, sub);
-		EXPECT_FALSE(req(s, 0));
+		EXPECT_TRUE(req(s, 0));
 		EXPECT_FALSE(req(s, 1));
-		EXPECT_FALSE(req(s, 2));
-		EXPECT_FALSE(req(s, 3));
+		EXPECT_TRUE(req(s, 2));
+		EXPECT_TRUE(req(s, 3));
 	}
 	TEST(MMIMove, LineReqTrueForNoExtension) {
 		int v[] = { 0, 1,-1, 1,
@@ -171,10 +171,10 @@ namespace cluster {
 		}
 		MMIMove::ConnReq req = mmi_conn::Line();
 		mmi_conn::Submatrix s(check, sub, sub);
-		EXPECT_FALSE(req(s, 0));
+		EXPECT_TRUE(req(s, 0));
 		EXPECT_FALSE(req(s, 1));
 		EXPECT_FALSE(req(s, 2));
-		EXPECT_FALSE(req(s, 3));
+		EXPECT_TRUE(req(s, 3));
 	}
 	TEST(MMIMove, LineReqInMove) {
 		int v[] = { 0, 1,-1, 1,

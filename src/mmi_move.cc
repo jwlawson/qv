@@ -89,8 +89,46 @@ namespace mmi_conn {
 	bool Unconnected::operator()(const Submatrix& sub, int connection) {
 		return true;
 	}
-	bool Line::operator()(const Submatrix& sub, int connection) {
-		return false;
+	bool Line::operator()(const Submatrix& sub, int connection) const {
+		int next = -1;
+		for(int i = 0; i < sub.matrix_.num_cols(); i++) {
+			if(std::find(sub.submatrix_.begin(), sub.submatrix_.end(), i)
+					!= sub.submatrix_.end()) {
+				/* i is inside the submatrix. */
+				continue;
+			}
+			if(sub.matrix_.get(connection, i) != 0) {
+				if(next != -1) {
+					/* Have two arrows outside the submatrix, so not line. */
+					return false;
+				}
+				next = i;
+			}
+		}
+		if(next == -1) {
+			/* No arrows out of connection. */
+			return true;
+		}
+		return isLine(sub, next, connection);
+	}
+	bool Line::isLine(const Submatrix& sub, int next, int prev) const {
+		int n = -1;
+		for(int i = 0; i < sub.matrix_.num_cols(); i++) {
+			if(i == prev) {
+				continue;
+			}
+			int val = sub.matrix_.get(next, i);
+			if(val != 0) {
+				if(n != -1) {
+					return false;
+				}
+				n = i;
+			}
+		}
+		if(n == -1) {
+			return true;
+		}
+		return isLine(sub, n, next);
 	}
 	bool ConnectedTo::operator()(const Submatrix& sub, int connection) {
 		return false;

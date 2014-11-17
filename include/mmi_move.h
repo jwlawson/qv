@@ -35,7 +35,9 @@ namespace mmi_conn {
 		bool operator()(const Submatrix& sub, int connection);
 	};
 	struct Line {
-		bool operator()(const Submatrix& sub, int connection);
+		bool operator()(const Submatrix& sub, int connection) const;
+		private:
+		bool isLine(const Submatrix& sub, int next, int prev) const;
 	};
 	struct ConnectedTo {
 		ConnectedTo(int conn) { conn_.push_back(conn); }

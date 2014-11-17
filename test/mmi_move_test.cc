@@ -118,6 +118,28 @@ namespace cluster {
 		EXPECT_FALSE(req[0](s, 1));
 		EXPECT_FALSE(req[0](s, 2));
 	}
+	TEST(MMIMove, LineReqFalseForSmallNotValid) {
+		int v[] = { 0, 1,-1, 1, 0, 0,
+							 -1, 0, 1, 0, 1,-1,
+							  1,-1, 0, 0, 0, 0,
+							 -1, 0, 0, 0, 0, 0,
+							  0,-1, 0, 0, 0, 1,
+								0, 1, 0, 0,-1, 0};
+		IntMatrix check(6, 6, v);
+
+		std::vector<MMIMove::ConnReq> req(1);
+		req[0] = mmi_conn::Line();
+
+		std::vector<int> sub(4);
+		for(int i = 0; i < 4; ++i) {
+			sub[i] = i;
+		}
+		mmi_conn::Submatrix s(check, sub, sub);
+		EXPECT_FALSE(req[0](s, 0));
+		EXPECT_FALSE(req[0](s, 1));
+		EXPECT_FALSE(req[0](s, 2));
+		EXPECT_FALSE(req[0](s, 3));
+	}
 	TEST(MMIMove, LineReqInMove) {
 		int v[] = { 0, 1,-1, 1,
 							 -1, 0, 1, 0,

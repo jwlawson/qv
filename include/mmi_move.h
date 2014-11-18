@@ -32,7 +32,11 @@ namespace mmi_conn {
 		const std::vector<int>& perm_;
 	};
 	struct Unconnected {
+		Unconnected() : seen_() {}
 		bool operator()(const Submatrix& sub, int connection);
+		private:
+		std::vector<int> seen_;
+		bool isUnconnected(const Submatrix& sub, int depth, int next);
 	};
 	struct Line {
 		bool operator()(const Submatrix& sub, int connection) const;

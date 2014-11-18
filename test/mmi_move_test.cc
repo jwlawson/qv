@@ -3,6 +3,8 @@
  */
 #include "gtest/gtest.h"
 
+#include <algorithm>
+
 #include "mmi_move.h"
 
 namespace cluster {
@@ -380,6 +382,99 @@ namespace cluster {
 		EXPECT_FALSE(req(s, 1));
 		EXPECT_FALSE(req(s, 2));
 		EXPECT_FALSE(req(s, 3));
+	}
+	TEST(MMIMove, UnConnectedFalseForLineTo) {
+		/* Quiver 2 */
+		int v[] = { 0, 1,-1, 1, 0, 0,
+							 -1, 0, 1, 0, 1, 0,
+							  1,-1, 0,-1, 0,-1,
+							 -1, 0, 1, 0, 0, 0,
+							  0,-1, 0, 0, 0, 1,
+								0, 0, 1, 0,-1, 0};
+		IntMatrix check(6, 6, v);
+		std::vector<int> sub(4);
+		for(int i = 0; i < 4; i++) {
+			sub[i] = i;
+		}
+		MMIMove::ConnReq req = mmi_conn::Unconnected();
+		mmi_conn::Submatrix s(check, sub, sub);
+		EXPECT_TRUE(req(s, 0));
+		EXPECT_FALSE(req(s, 1));
+		EXPECT_FALSE(req(s, 2));
+		EXPECT_TRUE(req(s, 3));
+	}
+	TEST(MMIMove, UnConnectedTrueForNoExtension) {
+		int v[] = { 0, 1,-1, 1,
+							 -1, 0, 1, 0,
+							  1,-1, 0, 0,
+							 -1, 0, 0, 0};
+		IntMatrix check(4, 4, v);
+		std::vector<int> sub(4);
+		for(int i = 0; i < 4; i++) {
+			sub[i] = i;
+		}
+		MMIMove::ConnReq req = mmi_conn::Unconnected();
+		mmi_conn::Submatrix s(check, sub, sub);
+		EXPECT_TRUE(req(s, 0));
+		EXPECT_TRUE(req(s, 1));
+		EXPECT_TRUE(req(s, 2));
+		EXPECT_TRUE(req(s, 3));
+	}
+	TEST(MMIMove, UnConnectedTrueForValid) {
+		/* 6 */
+		int v[] = { 0, 1,-1, 1, 0, 0,
+							 -1, 0, 1, 0, 1,-1,
+							  1,-1, 0, 0, 0, 0,
+							 -1, 0, 0, 0, 0, 0,
+							  0,-1, 0, 0, 0, 1,
+								0, 1, 0, 0,-1, 0};
+		IntMatrix check(6, 6, v);
+
+		MMIMove::ConnReq req = mmi_conn::Unconnected();
+
+		std::vector<int> sub(4);
+		for(int i = 0; i < 4; ++i) {
+			sub[i] = i;
+		}
+		mmi_conn::Submatrix s(check, sub, sub);
+		EXPECT_TRUE(req(s, 0));
+		EXPECT_TRUE(req(s, 1));
+		EXPECT_TRUE(req(s, 2));
+		EXPECT_TRUE(req(s, 3));
+	}
+	TEST(MMIMove, UnConnectedTrueForMultipleLines) {
+		int v[] = { 0, 1,-1, 1, 0, 0, 0,
+							 -1, 0, 1, 0, 1, 0, 0,
+							  1,-1, 0,-1, 0, 1, 1,
+							 -1, 0, 1, 0, 0, 0, 0,
+							  0,-1, 0, 0, 0, 0, 0,
+								0, 0,-1, 0, 0, 0, 0,
+								0, 0,-1, 0, 0, 0, 0};
+		IntMatrix check(4, 4, v);
+		std::vector<int> sub(4);
+		for(int i = 0; i < 4; i++) {
+			sub[i] = i;
+		}
+		MMIMove::ConnReq req = mmi_conn::Unconnected();
+		mmi_conn::Submatrix s(check, sub, sub);
+		EXPECT_TRUE(req(s, 0));
+		EXPECT_TRUE(req(s, 1));
+		EXPECT_TRUE(req(s, 2));
+		EXPECT_TRUE(req(s, 3));
+	}		
+	TEST(ZZZZ, IterTest) {
+		std::vector<int> a(5);
+		for(int i = 0; i < 5; i++) {
+			a[i] = i;
+		}
+		EXPECT_EQ(a.begin() + 0, a.begin());
+		EXPECT_EQ(a.begin() + a.size(), a.end());
+		EXPECT_EQ(a.begin() + 5, a.end());
+		auto i = a.begin();
+		i += 3;
+		EXPECT_EQ(*i, 3);
+		EXPECT_TRUE(std::find(a.begin(), a.begin() + 4, 3) == a.begin() + 3);
+		EXPECT_TRUE(std::find(a.begin(), a.begin() + 3, 5) == a.begin() + 3);
 	}
 }
 

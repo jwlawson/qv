@@ -4,6 +4,7 @@
 #include "mmi_move.h"
 
 #include <algorithm>
+#include <iostream>
 
 #include "sized_submatrix_iterator.h"
 
@@ -66,7 +67,7 @@ namespace cluster {
 				/* Row is one of the connections.
 				 * Check that the connection requirements for this connection are
 				 * satisfied. */
-				valid = conn_[p](submatrix, i);
+				valid = conn_[p](submatrix, submatrix.submatrix_[i]);
 				continue;
 			}
 			int s = submatrix.submatrix_[i];
@@ -87,7 +88,43 @@ namespace cluster {
 
 namespace mmi_conn {
 	bool Unconnected::operator()(const Submatrix& sub, int connection) {
-		return true;
+		bool result = true;
+		seen_.resize(sub.matrix_.num_cols());
+		seen_[0] = connection;
+		for(int i = 0; i < sub.matrix_.num_cols() && result; i++) {
+			if(std::find(sub.submatrix_.begin(), sub.submatrix_.end(), i)
+					!= sub.submatrix_.end()) {
+				/* i is in submatrix */
+				continue;
+			}
+			if(sub.matrix_.get(connection, i) != 0) {
+				seen_[1] = i;
+				result = isUnconnected(sub, 2, i);
+			}
+		}
+		return result;
+	}
+	bool Unconnected::isUnconnected(const Submatrix& sub, int size, int next) {
+		bool result = true;
+		for(int i = 0; i < sub.matrix_.num_cols() && result; i++) {
+			if(std::find(seen_.begin(), seen_.begin() + size, i) != seen_.begin() + size) {
+				/* i has been considered before */
+				continue;
+			}
+			if(std::find(sub.submatrix_.begin(), sub.submatrix_.end(), i)
+					!= sub.submatrix_.end()) {
+				/* i is in submatrix */
+				if(sub.matrix_.get(next, i) != 0) {
+					result = false;
+				}
+				continue;
+			}
+			if(sub.matrix_.get(next, i) != 0) {
+				seen_[size] = i;
+				result = isUnconnected(sub, size + 1, i);
+			}
+		}
+		return result;
 	}
 	bool Line::operator()(const Submatrix& sub, int connection) const {
 		int next = -1;

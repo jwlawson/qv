@@ -21,15 +21,19 @@
 namespace cluster {
 namespace mmi_conn {
 
+	namespace {
+		typedef std::shared_ptr<std::vector<int>> VectorPtr;
+		typedef std::shared_ptr<IntMatrix> MatrixPtr;
+	}
 	struct Submatrix {
 		Submatrix(const IntMatrix& mat, const std::vector<int>& sub,
-				const std::vector<int>& perm) :
-			matrix_(mat),
-			submatrix_(sub),
-			perm_(perm) {}
-		const IntMatrix& matrix_;
-		const std::vector<int>& submatrix_;
-		const std::vector<int>& perm_;
+				const std::vector<int>& perm) : 
+			matrix_(std::make_shared<IntMatrix>(mat)),
+			submatrix_(std::make_shared<std::vector<int>>(sub)),
+			perm_(std::make_shared<std::vector<int>>(perm)){}
+		const MatrixPtr matrix_;
+		const VectorPtr submatrix_;
+		const VectorPtr perm_;
 	};
 	struct Unconnected {
 		bool operator()(const Submatrix& sub, int connection);
@@ -67,6 +71,19 @@ class MMIMove {
 	public:
 		typedef std::function<bool(const mmi_conn::Submatrix&, int)> ConnReq;
 		typedef std::map<int, ConnReq> Connections;
+		typedef std::shared_ptr<std::vector<int>> VectorPtr;
+		typedef std::shared_ptr<IntMatrix> MatrixPtr;
+		struct Applicable {
+			Applicable(const mmi_conn::Submatrix& sub, const IntMatrix& match)
+				: matrix_(sub.matrix_),
+					submatrix_(sub.submatrix_),
+					perm_(sub.perm_),
+					match_(std::make_shared<IntMatrix>(match)) {}
+			const MatrixPtr matrix_;
+			const VectorPtr submatrix_;
+			const VectorPtr perm_;
+			const MatrixPtr match_;
+		};
 		/**
 		 * Create an MMIMove which switches the submatrix mata with the submatrix
 		 * matb. These submatrices must be attached to the main quiver by only
@@ -99,15 +116,14 @@ class MMIMove {
 		 * The matrix must contain one of the move's submatrices, and the rows
 		 * which make up this submatrix must be given in the vector provided.
 		 */
-		void move(const IntMatrix& matrix, const std::vector<int>& submatrix);
+		void move(const Applicable& app, IntMatrix& result);
 		/**
 		 * Find all submatrices of the matrix to which this move can be applied.
 		 *
 		 * The submatrices are returned in a vector, each submatrix represented by
 		 * a vector of which rows in the initial matrix make up the submatrix.
 		 */
-		std::vector<std::vector<int>> applicable_submatrices(
-				const IntMatrix& matrix);
+		std::vector<Applicable> applicable_submatrices(const IntMatrix& matrix);
 
 	private:
 		/** First submatrix in move. */

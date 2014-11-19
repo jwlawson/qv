@@ -172,6 +172,9 @@ namespace cluster {
 		 * Only use this if you are sure you know what you are doing.
 		 * @return Pointer to the array that the matrix data is stored in
 		 */
+		int* data() {
+			return data_.data();
+		}
 		const int* data() const {
 			return data_.data();
 		}

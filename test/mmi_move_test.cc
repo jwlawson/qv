@@ -3,11 +3,13 @@
  */
 #include "gtest/gtest.h"
 
-#include <algorithm>
-
 #include "mmi_move.h"
 
 namespace cluster {
+
+	namespace {
+		typedef std::vector<MMIMove::Applicable> AVec;
+	}
 
 	TEST(MMIMove, MoveAppliesToItself) {
 		int v[] = {0,1,0,-1,0,1,0,-1,0};
@@ -18,14 +20,14 @@ namespace cluster {
 		IntMatrix n;
 		MMIMove move(m, n, con);
 
-		std::vector<std::vector<int>> app = move.applicable_submatrices(m);
+		AVec app = move.applicable_submatrices(m);
 
 		ASSERT_FALSE(app.empty());
 		EXPECT_EQ(app.size(), 1);
-		ASSERT_EQ(app[0].size(), 3);
-		EXPECT_EQ(app[0][0], 0);
-		EXPECT_EQ(app[0][1], 1);
-		EXPECT_EQ(app[0][2], 2);
+		ASSERT_EQ(app[0].submatrix_->size(), 3);
+		EXPECT_EQ((*app[0].submatrix_)[0], 0);
+		EXPECT_EQ((*app[0].submatrix_)[1], 1);
+		EXPECT_EQ((*app[0].submatrix_)[2], 2);
 	}
 
 	TEST(MMIMove, NotAppMove) {
@@ -40,7 +42,7 @@ namespace cluster {
 		int w[] = {0, 1, 0, 0, -1, 0, 1, 1, 0, -1, 0, 0, 0, -1, 0, 0};
 		IntMatrix check(4, 4, w);
 
-		auto app = move.applicable_submatrices(check);
+		AVec app = move.applicable_submatrices(check);
 
 		ASSERT_TRUE(app.empty());
 	}
@@ -57,16 +59,16 @@ namespace cluster {
 		int w[] = {0,1,0,0, -1,0,1,0, 0,-1,0,1, 0,0,-1,0};
 		IntMatrix check(4,4,w);
 
-		auto app = move.applicable_submatrices(check);
+		AVec app = move.applicable_submatrices(check);
 
 		ASSERT_FALSE(app.empty());
 		ASSERT_EQ(app.size(), 2);
-		EXPECT_EQ(app[0][0], 0);
-		EXPECT_EQ(app[0][1], 1);
-		EXPECT_EQ(app[0][2], 2);
-		EXPECT_EQ(app[1][0], 1);
-		EXPECT_EQ(app[1][1], 2);
-		EXPECT_EQ(app[1][2], 3);
+		EXPECT_EQ((*app[0].submatrix_)[0], 0);
+		EXPECT_EQ((*app[0].submatrix_)[1], 1);
+		EXPECT_EQ((*app[0].submatrix_)[2], 2);
+		EXPECT_EQ((*app[1].submatrix_)[0], 1);
+		EXPECT_EQ((*app[1].submatrix_)[1], 2);
+		EXPECT_EQ((*app[1].submatrix_)[2], 3);
 	}
 	TEST(MMIMove, BigExample) {
 		int v[] = {	0, 0, 2, 0, 0, 1, 0, 0, 0, 0,
@@ -92,14 +94,37 @@ namespace cluster {
 		IntMatrix n;
 		MMIMove move(mov, n, con);
 
-		auto app = move.applicable_submatrices(check);
+		AVec app = move.applicable_submatrices(check);
 
 		ASSERT_FALSE(app.empty());
 		EXPECT_EQ(app.size(), 1);
-		EXPECT_EQ(app[0][0], 1);
-		EXPECT_EQ(app[0][1], 4);
-		EXPECT_EQ(app[0][2], 6);
-		EXPECT_EQ(app[0][3], 8);
+		EXPECT_EQ((*app[0].submatrix_)[0], 1);
+		EXPECT_EQ((*app[0].submatrix_)[1], 4);
+		EXPECT_EQ((*app[0].submatrix_)[2], 6);
+		EXPECT_EQ((*app[0].submatrix_)[3], 8);
+	}
+	TEST(MMIMove, NoMoveForSmallerMatrices) {
+		int v[] = { 0, 1,-1, 1, 0, 0,
+							 -1, 0, 1, 0, 1,-1,
+							  1,-1, 0, 0, 0, 0,
+							 -1, 0, 0, 0, 0, 0,
+							  0,-1, 0, 0, 0, 1,
+								0, 1, 0, 0,-1, 0};
+		int w[] = {	0, 1, -1, 1,
+								-1, 0, 1, 0,
+								1, -1, 0, -1,
+								-1, 0, 1, 0};
+		IntMatrix ma(6, 6, v);
+		IntMatrix mb;
+		IntMatrix c(4, 4, w);
+		std::vector<int> con(2);
+		con[0] = 1;
+		con[1] = 3;
+
+		MMIMove move(ma, mb, con);
+
+		AVec app = move.applicable_submatrices(c);
+		ASSERT_TRUE(app.empty());
 	}
 	TEST(MMIMove, LineReqTrueForSmallValid) {
 		int v[] = { 0, 1,-1, 1,
@@ -195,11 +220,11 @@ namespace cluster {
 		req[0] = mmi_conn::Line();
 
 		MMIMove move(m, n, conn, req);
-		auto app = move.applicable_submatrices(check);
+		AVec app = move.applicable_submatrices(check);
 		ASSERT_EQ(app.size(), 1);
-		EXPECT_EQ(app[0][0], 0);
-		EXPECT_EQ(app[0][1], 1);
-		EXPECT_EQ(app[0][2], 2);
+		EXPECT_EQ((*app[0].submatrix_)[0], 0);
+		EXPECT_EQ((*app[0].submatrix_)[1], 1);
+		EXPECT_EQ((*app[0].submatrix_)[2], 2);
 	}
 	TEST(MMIMove, LineToReqFalseForNoExtension) {
 		int v[] = { 0, 1,-1, 1,
@@ -462,5 +487,42 @@ namespace cluster {
 		EXPECT_TRUE(req(s, 2));
 		EXPECT_TRUE(req(s, 3));
 	}		
+	TEST(MMIMove, MoveGivesRightMatrix) {
+		int v[] = { 0, 1,-1, 1, 0, 0,
+							 -1, 0, 1, 0, 1,-1,
+							  1,-1, 0, 0, 0, 0,
+							 -1, 0, 0, 0, 0, 0,
+							  0,-1, 0, 0, 0, 1,
+								0, 1, 0, 0,-1, 0};
+		IntMatrix check(6, 6, v);
+		int w[] = { 0, 1,-1, 1,
+							 -1, 0, 1, 0,
+							  1,-1, 0, 0,
+							 -1, 0, 0, 0};
+		int u[] = { 0, 2, 2, 2,
+							 -2, 0, 2, 2,
+							 -2,-2, 0, 2,
+							 -2,-2,-2, 0};
+		IntMatrix m(4, 4, w);
+		std::vector<int> con(2);
+		con[0] = 1;
+		con[1] = 2;
+		IntMatrix n(4, 4, u);
+		MMIMove move(m, n, con);
+
+		AVec app = move.applicable_submatrices(check);
+		ASSERT_FALSE(app.empty());
+		IntMatrix res(6, 6);
+		move.move(app[0], res);
+
+		int a[] = { 0, 2, 2, 2, 0, 0,
+							 -2, 0, 2, 2, 1,-1,
+							 -2,-2, 0, 2, 0, 0,
+							 -2,-2,-2, 0, 0, 0,
+							  0,-1, 0, 0, 0, 1,
+								0, 1, 0, 0,-1, 0};
+		IntMatrix exp(6, 6, a);
+		EXPECT_TRUE(exp.equals(res));
+	}
 }
 

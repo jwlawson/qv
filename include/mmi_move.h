@@ -32,7 +32,6 @@ namespace mmi_conn {
 		const std::vector<int>& perm_;
 	};
 	struct Unconnected {
-		Unconnected() : seen_() {}
 		bool operator()(const Submatrix& sub, int connection);
 		private:
 		std::vector<int> seen_;
@@ -52,12 +51,15 @@ namespace mmi_conn {
 		bool operator()(const Submatrix& sub, int connection);
 		private:
 		std::vector<int> conn_;
+		std::vector<int> seen_;
+		bool isConnected(const Submatrix& sub, int depth, int next);
 	};
 	struct LineTo {
 		LineTo(int conn) { conn_ = conn; }
-		bool operator()(const Submatrix& sub, int connection);
+		bool operator()(const Submatrix& sub, int connection) const;
 		private:
 		int conn_;
+		bool isLine(const Submatrix& sub, int next, int prev) const;
 	};
 }
 class MMIMove {

@@ -168,10 +168,91 @@ namespace mmi_conn {
 		return isLine(sub, n, next);
 	}
 	bool ConnectedTo::operator()(const Submatrix& sub, int connection) {
-		return false;
+		bool result = true;
+		seen_.resize(sub.matrix_.num_cols());
+		seen_[0] = connection;
+		for(int i = 0; i < sub.matrix_.num_cols() && result; i++) {
+			if(std::find(sub.submatrix_.begin(), sub.submatrix_.end(), i)
+					!= sub.submatrix_.end()) {
+				/* i is in submatrix */
+				continue;
+			}
+			if(sub.matrix_.get(connection, i) != 0) {
+				seen_[1] = i;
+				result = isConnected(sub, 2, i);
+			}
+		}
+		return result;
 	}
-	bool LineTo::operator()(const Submatrix& sub, int connection) {
-		return false;
+	bool ConnectedTo::isConnected(const Submatrix& sub, int size, int next) {
+		bool result = true;
+		for(int i = 0; i < sub.matrix_.num_cols() && result; i++) {
+			if(std::find(seen_.begin(), seen_.begin() + size, i) != seen_.begin() + size) {
+				/* i has been considered before */
+				continue;
+			}
+			if(std::find(sub.submatrix_.begin(), sub.submatrix_.end(), i)
+					!= sub.submatrix_.end()) {
+				/* i is in submatrix */
+				if(sub.matrix_.get(next, i) != 0 &&
+						std::find(conn_.begin(), conn_.end(), i) == conn_.end()) {
+					/* Comes back to submatrix in not allowed connection. */
+					result = false;
+				}
+				continue;
+			}
+			if(sub.matrix_.get(next, i) != 0) {
+				seen_[size] = i;
+				result = isConnected(sub, size + 1, i);
+			}
+		}
+		return result;
+	}
+	bool LineTo::operator()(const Submatrix& sub, int connection) const {
+		int next = -1;
+		for(int i = 0; i < sub.matrix_.num_cols(); i++) {
+			if(std::find(sub.submatrix_.begin(), sub.submatrix_.end(), i)
+					!= sub.submatrix_.end()) {
+				/* i is inside the submatrix. */
+				continue;
+			}
+			if(sub.matrix_.get(connection, i) != 0) {
+				if(next != -1) {
+					/* Have two arrows outside the submatrix, so not line. */
+					return false;
+				}
+				next = i;
+			}
+		}
+		if(next == -1) {
+			/* No arrows out of connection. */
+			return false;
+		}
+		/* Don't need to check whether (next == conn_) as conn_ will be in the
+		 * submatrix, so would be skipped. */
+		return isLine(sub, next, connection);
+	}
+	bool LineTo::isLine(const Submatrix& sub, int next, int prev) const {
+		int n = -1;
+		for(int i = 0; i < sub.matrix_.num_cols(); i++) {
+			if(i == prev) {
+				continue;
+			}
+			if(sub.matrix_.get(next, i) != 0) {
+				if(n != -1) {
+					return false;
+				}
+				n = i;
+			}
+		}
+		if(n == -1) {
+			return false;
+		}
+		if(n == conn_) {
+			/* Line connected back to required vertex. */
+			return true;
+		}
+		return isLine(sub, n, next);
 	}
 }
 }

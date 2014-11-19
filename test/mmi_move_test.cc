@@ -218,7 +218,7 @@ namespace cluster {
 		EXPECT_FALSE(req(s, 2));
 		EXPECT_FALSE(req(s, 3));
 	}
-	TEST(MMIMove, LineToReqTrueForValidSubamtrix) {
+	TEST(MMIMove, LineToReqTrueForValidSubmatrix) {
 		/* Quiver 2 */
 		int v[] = { 0, 1,-1, 1, 0, 0,
 							 -1, 0, 1, 0, 1, 0,
@@ -317,10 +317,10 @@ namespace cluster {
 		}
 		MMIMove::ConnReq req = mmi_conn::ConnectedTo(2);
 		mmi_conn::Submatrix s(check, sub, sub);
-		EXPECT_FALSE(req(s, 0));
+		EXPECT_TRUE(req(s, 0));
 		EXPECT_TRUE(req(s, 1));
 		EXPECT_FALSE(req(s, 2));
-		EXPECT_FALSE(req(s, 3));
+		EXPECT_TRUE(req(s, 3));
 	}
 	TEST(MMIMove, ConnectedToTrueForLineTo) {
 		/* Quiver 2 */
@@ -337,12 +337,12 @@ namespace cluster {
 		}
 		MMIMove::ConnReq req = mmi_conn::ConnectedTo(2);
 		mmi_conn::Submatrix s(check, sub, sub);
-		EXPECT_FALSE(req(s, 0));
+		EXPECT_TRUE(req(s, 0));
 		EXPECT_TRUE(req(s, 1));
 		EXPECT_FALSE(req(s, 2));
-		EXPECT_FALSE(req(s, 3));
+		EXPECT_TRUE(req(s, 3));
 	}
-	TEST(MMIMove, ConnectedToFalseForUnConnected) {
+	TEST(MMIMove, ConnectedToTrueForUnConnected) {
 		int v[] = { 0, 1,-1, 1, 1, 0, 0,
 							 -1, 0, 1, 0, 0, 1, 0,
 							  1,-1, 0,-1, 0, 0, 1,
@@ -357,10 +357,10 @@ namespace cluster {
 		}
 		MMIMove::ConnReq req = mmi_conn::ConnectedTo(1);
 		mmi_conn::Submatrix s(check, sub, sub);
-		EXPECT_FALSE(req(s, 0));
-		EXPECT_FALSE(req(s, 1));
-		EXPECT_FALSE(req(s, 2));
-		EXPECT_FALSE(req(s, 3));
+		EXPECT_TRUE(req(s, 0));
+		EXPECT_TRUE(req(s, 1));
+		EXPECT_TRUE(req(s, 2));
+		EXPECT_TRUE(req(s, 3));
 	}
 	TEST(MMIMove, ConnectedToFalseForConnectionThroughSubmatrix) {
 		int v[] = { 0, 1,-1, 1, 0, 0, 0, 0,
@@ -378,7 +378,7 @@ namespace cluster {
 		}
 		MMIMove::ConnReq req = mmi_conn::ConnectedTo(1);
 		mmi_conn::Submatrix s(check, sub, sub);
-		EXPECT_FALSE(req(s, 0));
+		EXPECT_TRUE(req(s, 0));
 		EXPECT_FALSE(req(s, 1));
 		EXPECT_FALSE(req(s, 2));
 		EXPECT_FALSE(req(s, 3));
@@ -462,19 +462,5 @@ namespace cluster {
 		EXPECT_TRUE(req(s, 2));
 		EXPECT_TRUE(req(s, 3));
 	}		
-	TEST(ZZZZ, IterTest) {
-		std::vector<int> a(5);
-		for(int i = 0; i < 5; i++) {
-			a[i] = i;
-		}
-		EXPECT_EQ(a.begin() + 0, a.begin());
-		EXPECT_EQ(a.begin() + a.size(), a.end());
-		EXPECT_EQ(a.begin() + 5, a.end());
-		auto i = a.begin();
-		i += 3;
-		EXPECT_EQ(*i, 3);
-		EXPECT_TRUE(std::find(a.begin(), a.begin() + 4, 3) == a.begin() + 3);
-		EXPECT_TRUE(std::find(a.begin(), a.begin() + 3, 5) == a.begin() + 3);
-	}
 }
 

@@ -3,7 +3,7 @@
  */
 #include "stream_extension_iterator.h"
 
-#include <iostream>
+#include <iostream> /* Need iostream for std::cerr */
 
 #include "equiv_quiver_matrix.h"
 #include "quiver_matrix.h"

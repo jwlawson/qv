@@ -3,10 +3,11 @@
  */
 #include "sized_submatrix_iterator.h"
 
+#include "equiv_quiver_matrix.h"
+
 namespace cluster {
 	SizedSubmatrixIterator::SizedSubmatrixIterator(int size, const IntMatrix& matrix)
 		: m_(matrix),
-			next_(size, size),
 			size_(size),
 			max_val_(std::min(matrix.num_rows(), matrix.num_cols()) - 1),
 			last_rows_(size),
@@ -19,11 +20,10 @@ namespace cluster {
 	bool SizedSubmatrixIterator::has_next(){
 		return has_next_;
 	}
-	IntMatrix SizedSubmatrixIterator::next() {
-		m_.submatrix(rows_, rows_, next_);
+	void SizedSubmatrixIterator::next(IntMatrix& result) {
+		m_.submatrix(rows_, rows_, result);
 		last_rows_.assign(rows_.begin(), rows_.end());
 		check_add_index(0);
-		return next_;
 	}
 	std::vector<int> SizedSubmatrixIterator::get_rows() {
 		return last_rows_;
@@ -40,6 +40,5 @@ namespace cluster {
 			rows_[ind] += 1;
 		}
 	}
-		
 }
 

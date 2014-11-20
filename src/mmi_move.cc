@@ -78,17 +78,20 @@ namespace cluster {
 		std::vector<Applicable> result;
 		if(matrix.num_cols() >= size_ && matrix.num_rows() >= size_) {
 			SizedSubmatrixIterator iter(size_, matrix);
+			EquivQuiverMatrix m(size_, size_);
 			while(iter.has_next()) {
-				EquivQuiverMatrix m(iter.next());
+				iter.next(m);
 				bool equal = false;
 				bool a = false;
 				std::vector<int> perm;
-				if(m.equals(mata_)) {
-					perm = m.get_permutation(mata_);
+				// TODO Track down why mata_.equals(m) works, but m.equals(mata_)
+				// doesn't - might be problem with hashcode in IntMatrix::submatrix
+				if(mata_.equals(m)) {
+					perm = mata_.get_permutation(m);
 					a = true;
 					equal = true;
-				} else if(m.equals(matb_)) {
-					perm = m.get_permutation(matb_);
+				} else if(matb_.equals(m)) {
+					perm = matb_.get_permutation(m);
 					equal = true;
 				}
 				if(equal) {

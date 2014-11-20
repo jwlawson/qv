@@ -9,6 +9,8 @@
  */
 #pragma once
 
+#include <memory>
+
 #include "int_matrix.h"
 
 namespace cluster {
@@ -28,17 +30,17 @@ namespace cluster {
 		 */
 		bool has_next();
 		/**
-		 * Get the next submatrix.
+		 * Get the next submatrix without allocations.
+		 * The matrix will be stored in the provided matrix. No bounds or size
+		 * checks are carried out, so ensure that the matrix is the correct size.
 		 */
-		IntMatrix next();
+		void next(IntMatrix& result);
 		/** Get the rows which make up the previously returned submatrix. */
 		std::vector<int> get_rows();
 
 		private:
 		/** Initial matrix to take submatrices of. */
-		IntMatrix m_;
-		/** Next matrix to return from iterator. */
-		IntMatrix next_;
+		const IntMatrix& m_;
 		/** Size of all submatrices to return. */
 		size_t size_;
 		/** Size of smallest dimension of m_ */

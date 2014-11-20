@@ -3,7 +3,7 @@
  */
 #include "stream_iterator.h"
 
-#include <iostream>
+#include <iostream> /* Need iostream for std::cin. */
 
 #include "equiv_quiver_matrix.h"
 

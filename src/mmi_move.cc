@@ -3,6 +3,7 @@
  */
 #include "mmi_move.h"
 
+#include <iostream>
 #include <algorithm>
 
 #include "sized_submatrix_iterator.h"
@@ -87,10 +88,12 @@ namespace cluster {
 				// TODO Track down why mata_.equals(m) works, but m.equals(mata_)
 				// doesn't - might be problem with hashcode in IntMatrix::submatrix
 				if(mata_.equals(m)) {
+					std::cout << m << mata_ << std::endl;
 					perm = mata_.get_permutation(m);
 					a = true;
 					equal = true;
 				} else if(matb_.equals(m)) {
+					std::cout << m << matb_ << std::endl;
 					perm = matb_.get_permutation(m);
 					equal = true;
 				}

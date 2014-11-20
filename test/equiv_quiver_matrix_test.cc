@@ -262,6 +262,7 @@ namespace cluster {
 		EXPECT_EQ(perm[1], 1);
 		EXPECT_EQ(perm[2], 0);
 	}
-
+	TEST(EquivMatrix, SubMatrixAffectsEquals) {
+	}
 }
 

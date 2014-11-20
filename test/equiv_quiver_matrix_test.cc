@@ -263,6 +263,32 @@ namespace cluster {
 		EXPECT_EQ(perm[2], 0);
 	}
 	TEST(EquivMatrix, SubMatrixAffectsEquals) {
+		EquivQuiverMatrix m("{ { 0 -1 1 1 } { 1 0 -1 -1 } { -1 1 0 0 } { -1 1 0 0 } }");
+		EquivQuiverMatrix n("{ { 0 1 -1 1 } { -1 0 1 0 } { 1 -1 0 -1 } { -1 0 1 0 } }");
+
+		EXPECT_TRUE(m.equals(n));
+		EXPECT_TRUE(n.equals(m));
+
+		EquivQuiverMatrix o("{ { 0 -1 1 1 1 } { 1 0 -1 -1 -1 } { -1 1 0 0 1 } { -1 1 0 0 0 } { -1 1 -1 0 0 } }");
+		EquivQuiverMatrix k(4, 4);
+		std::vector<int> rows(4);
+		rows[0] = 0;
+		rows[1] = 1;
+		rows[2] = 2;
+		rows[3] = 3;
+
+		o.submatrix(rows, rows, k);
+		EXPECT_TRUE(k.equals(m));
+		EXPECT_TRUE(m.equals(k));
+		EXPECT_TRUE(k.equals(n));
+		EXPECT_TRUE(n.equals(k));
+
+		o.submatrix(rows, rows, m);
+		// EXPECT_TRUE(m.equals(n)); // TODO This fails
+		EXPECT_TRUE(n.equals(m));
+		m.reset();
+		// EXPECT_TRUE(m.equals(n)); // TODO This fails
+		EXPECT_TRUE(n.equals(m));
 	}
 }
 

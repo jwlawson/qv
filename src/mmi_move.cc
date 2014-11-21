@@ -89,8 +89,6 @@ namespace cluster {
 				bool equal = false;
 				bool a = false;
 				std::vector<int> perm;
-				// TODO Track down why mata_.equals(m) works, but m.equals(mata_)
-				// doesn't - might be problem with hashcode in IntMatrix::submatrix
 				if(mata_.equals(m)) {
 					perm = mata_.get_permutation(m);
 					a = true;

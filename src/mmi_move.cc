@@ -57,7 +57,7 @@ namespace cluster {
 				}
 				if(inCol) {
 					/* In submatrix */
-					r[ind] = app.match_->get((*app.perm_)[subRow], (*app.perm_)[subCol]);
+					r[ind] = app.match_.get((*app.perm_)[subRow], (*app.perm_)[subCol]);
 				} else {
 					r[ind] = m[ind];
 				}
@@ -73,11 +73,16 @@ namespace cluster {
 		}
 		result.reset();
 	}
-	std::vector<MMIMove::Applicable> MMIMove::applicable_submatrices(const IntMatrix&
-			matrix){
+	std::vector<MMIMove::Applicable> MMIMove::applicable_submatrices(
+			const IntMatrix& matrix){
+		MatrixPtr mp = std::make_shared<IntMatrix>(matrix);
+		return applicable_submatrices(mp);
+	}
+	std::vector<MMIMove::Applicable> MMIMove::applicable_submatrices(
+			const MatrixPtr matrix){
 		std::vector<Applicable> result;
-		if(matrix.num_cols() >= size_ && matrix.num_rows() >= size_) {
-			SizedSubmatrixIterator iter(size_, matrix);
+		if(matrix->num_cols() >= size_ && matrix->num_rows() >= size_) {
+			SizedSubmatrixIterator iter(size_, *matrix);
 			EquivQuiverMatrix m(size_, size_);
 			while(iter.has_next()) {
 				iter.next(m);
@@ -96,7 +101,7 @@ namespace cluster {
 				}
 				if(equal) {
 					std::vector<int> sub = iter.get_rows();
-					mmi_conn::Submatrix s(matrix, sub, perm);
+					mmi_conn::Submatrix s(matrix, std::move(sub), std::move(perm));
 					if(check_connections(s)) {
 						if(a) {
 							result.emplace_back(s, matb_);
@@ -109,7 +114,7 @@ namespace cluster {
 		}
 		return std::move(result);
 	}
-	bool MMIMove::check_connections(const mmi_conn::Submatrix& submatrix) {
+	bool MMIMove::check_connections(const mmi_conn::Submatrix& submatrix) const {
 		bool valid = true;
 		/* i is the index of the row in the submatrix, s the index of the row in the
 		 * main matrix. */
@@ -119,7 +124,7 @@ namespace cluster {
 				/* Row is one of the connections.
 				 * Check that the connection requirements for this connection are
 				 * satisfied. */
-				valid = conn_[p](submatrix, (*submatrix.submatrix_)[i]);
+				valid = conn_.at(p)(submatrix, (*submatrix.submatrix_)[i]);
 				continue;
 			}
 			int s = (*submatrix.submatrix_)[i];

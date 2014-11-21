@@ -131,7 +131,7 @@ namespace cluster {
 							 -1, 0, 1, 0,
 							  1,-1, 0, 0,
 							 -1, 0, 0, 0};
-		IntMatrix check(4, 4, v);
+		std::shared_ptr<IntMatrix> check=std::make_shared<IntMatrix>(4, 4, v);
 
 		MMIMove::ConnReq req = mmi_conn::Line();
 
@@ -139,7 +139,11 @@ namespace cluster {
 		for(int i = 0; i < 3; ++i) {
 			sub[i] = i;
 		}
-		mmi_conn::Submatrix s(check, sub, sub);
+		std::vector<int> perm(3);
+		for(int i = 0; i < 3; ++i) {
+			perm[i] = i;
+		}
+		mmi_conn::Submatrix s(check, std::move(sub), std::move(perm));
 		EXPECT_TRUE(req(s, 0));
 		EXPECT_TRUE(req(s, 1));
 		EXPECT_TRUE(req(s, 2));
@@ -152,7 +156,7 @@ namespace cluster {
 							 -1, 0, 0, 0, 0, 0,
 							  0,-1, 0, 0, 0, 1,
 								0, 1, 0, 0,-1, 0};
-		IntMatrix check(6, 6, v);
+		std::shared_ptr<IntMatrix> check = std::make_shared<IntMatrix>(6, 6, v);
 
 		MMIMove::ConnReq req = mmi_conn::Line();
 
@@ -160,7 +164,11 @@ namespace cluster {
 		for(int i = 0; i < 4; ++i) {
 			sub[i] = i;
 		}
-		mmi_conn::Submatrix s(check, sub, sub);
+		std::vector<int> perm(3);
+		for(int i = 0; i < 3; ++i) {
+			perm[i] = i;
+		}
+		mmi_conn::Submatrix s(check, std::move(sub), std::move(perm));
 		EXPECT_TRUE(req(s, 0));
 		EXPECT_FALSE(req(s, 1));
 		EXPECT_TRUE(req(s, 2));
@@ -171,13 +179,17 @@ namespace cluster {
 							 -1, 0, 1, 0,
 							  1,-1, 0, 0,
 							 -1, 0, 0, 0};
-		IntMatrix check(4, 4, v);
+		std::shared_ptr<IntMatrix> check = std::make_shared<IntMatrix>(4, 4, v);
 		std::vector<int> sub(4);
 		for(int i = 0; i < 4; i++) {
 			sub[i] = i;
 		}
+		std::vector<int> perm(3);
+		for(int i = 0; i < 3; ++i) {
+			perm[i] = i;
+		}
+		mmi_conn::Submatrix s(check, std::move(sub), std::move(perm));
 		MMIMove::ConnReq req = mmi_conn::Line();
-		mmi_conn::Submatrix s(check, sub, sub);
 		EXPECT_TRUE(req(s, 0));
 		EXPECT_TRUE(req(s, 1));
 		EXPECT_TRUE(req(s, 2));
@@ -191,13 +203,17 @@ namespace cluster {
 							 -1, 0, 1, 0, 0, 0,
 							  0,-1, 0, 0, 0, 1,
 								0, 0, 1, 0,-1, 0};
-		IntMatrix check(6, 6, v);
+		std::shared_ptr<IntMatrix> check = std::make_shared<IntMatrix>(6, 6, v);
 		std::vector<int> sub(4);
 		for(int i = 0; i < 4; i++) {
 			sub[i] = i;
 		}
+		std::vector<int> perm(3);
+		for(int i = 0; i < 3; ++i) {
+			perm[i] = i;
+		}
+		mmi_conn::Submatrix s(check, std::move(sub), std::move(perm));
 		MMIMove::ConnReq req = mmi_conn::Line();
-		mmi_conn::Submatrix s(check, sub, sub);
 		EXPECT_TRUE(req(s, 0));
 		EXPECT_FALSE(req(s, 1));
 		EXPECT_FALSE(req(s, 2));
@@ -208,7 +224,7 @@ namespace cluster {
 							 -1, 0, 1, 0,
 							  1,-1, 0, 0,
 							 -1, 0, 0, 0};
-		IntMatrix check(4, 4, v);
+		std::shared_ptr<IntMatrix> check = std::make_shared<IntMatrix>(4, 4, v);
 
 		int w[] = { 0, 1, -1, -1, 0, 1, 1, -1, 0};
 		IntMatrix m(3, 3, w);
@@ -231,13 +247,17 @@ namespace cluster {
 							 -1, 0, 1, 0,
 							  1,-1, 0, 0,
 							 -1, 0, 0, 0};
-		IntMatrix check(4, 4, v);
+		std::shared_ptr<IntMatrix> check = std::make_shared<IntMatrix>(4, 4, v);
 		std::vector<int> sub(4);
 		for(int i = 0; i < 4; i++) {
 			sub[i] = i;
 		}
+		std::vector<int> perm(4);
+		for(int i = 0; i < 4; ++i) {
+			perm[i] = i;
+		}
+		mmi_conn::Submatrix s(check, std::move(sub), std::move(perm));
 		MMIMove::ConnReq req = mmi_conn::LineTo(1);
-		mmi_conn::Submatrix s(check, sub, sub);
 		EXPECT_FALSE(req(s, 0));
 		EXPECT_FALSE(req(s, 1));
 		EXPECT_FALSE(req(s, 2));
@@ -251,13 +271,17 @@ namespace cluster {
 							 -1, 0, 1, 0, 0, 0,
 							  0,-1, 0, 0, 0, 1,
 								0, 0, 1, 0,-1, 0};
-		IntMatrix check(6, 6, v);
+		std::shared_ptr<IntMatrix> check = std::make_shared<IntMatrix>(6, 6, v);
 		std::vector<int> sub(4);
 		for(int i = 0; i < 4; i++) {
 			sub[i] = i;
 		}
+		std::vector<int> perm(4);
+		for(int i = 0; i < 4; ++i) {
+			perm[i] = i;
+		}
+		mmi_conn::Submatrix s(check, std::move(sub), std::move(perm));
 		MMIMove::ConnReq req = mmi_conn::LineTo(2);
-		mmi_conn::Submatrix s(check, sub, sub);
 		EXPECT_FALSE(req(s, 0));
 		EXPECT_TRUE(req(s, 1));
 		EXPECT_FALSE(req(s, 2));
@@ -271,13 +295,17 @@ namespace cluster {
 							 -1, 0, 1, 0, 0, 0,
 							  0,-1, 0, 0, 0, 1,
 								0, 0, 0, 0,-1, 0};
-		IntMatrix check(6, 6, v);
+		std::shared_ptr<IntMatrix> check = std::make_shared<IntMatrix>(6, 6, v);
 		std::vector<int> sub(4);
 		for(int i = 0; i < 4; i++) {
 			sub[i] = i;
 		}
+		std::vector<int> perm(4);
+		for(int i = 0; i < 4; ++i) {
+			perm[i] = i;
+		}
+		mmi_conn::Submatrix s(check, std::move(sub), std::move(perm));
 		MMIMove::ConnReq req = mmi_conn::LineTo(3);
-		mmi_conn::Submatrix s(check, sub, sub);
 		EXPECT_FALSE(req(s, 0));
 		EXPECT_FALSE(req(s, 1));
 		EXPECT_FALSE(req(s, 2));
@@ -292,13 +320,17 @@ namespace cluster {
 							  0,-1, 0, 0, 0, 1,-1,
 								0, 0, 0, 0,-1, 0, 1,
 								0, 0,-1, 0, 1, 1, 0};
-		IntMatrix check(7, 7, v);
+		std::shared_ptr<IntMatrix> check = std::make_shared<IntMatrix>(7, 7, v);
 		std::vector<int> sub(4);
 		for(int i = 0; i < 4; i++) {
 			sub[i] = i;
 		}
+		std::vector<int> perm(4);
+		for(int i = 0; i < 4; ++i) {
+			perm[i] = i;
+		}
+		mmi_conn::Submatrix s(check, std::move(sub), std::move(perm));
 		MMIMove::ConnReq req = mmi_conn::LineTo(2);
-		mmi_conn::Submatrix s(check, sub, sub);
 		EXPECT_FALSE(req(s, 0));
 		EXPECT_FALSE(req(s, 1));
 		EXPECT_FALSE(req(s, 2));
@@ -312,7 +344,7 @@ namespace cluster {
 							 -1, 0, 0, 0, 0, 0,
 							  0,-1, 0, 0, 0, 1,
 								0, 1, 0, 0,-1, 0};
-		IntMatrix check(6, 6, v);
+		std::shared_ptr<IntMatrix> check = std::make_shared<IntMatrix>(6, 6, v);
 
 		MMIMove::ConnReq req = mmi_conn::LineTo(1);
 
@@ -320,7 +352,11 @@ namespace cluster {
 		for(int i = 0; i < 4; ++i) {
 			sub[i] = i;
 		}
-		mmi_conn::Submatrix s(check, sub, sub);
+		std::vector<int> perm(4);
+		for(int i = 0; i < 4; ++i) {
+			perm[i] = i;
+		}
+		mmi_conn::Submatrix s(check, std::move(sub), std::move(perm));
 		EXPECT_FALSE(req(s, 0));
 		EXPECT_FALSE(req(s, 1));
 		EXPECT_FALSE(req(s, 2));
@@ -335,13 +371,17 @@ namespace cluster {
 							  0,-1, 0, 0, 0, 1,-1,
 								0, 0, 0, 0,-1, 0, 1,
 								0, 0,-1, 0, 1, 1, 0};
-		IntMatrix check(7, 7, v);
+		std::shared_ptr<IntMatrix> check = std::make_shared<IntMatrix>(7, 7, v);
 		std::vector<int> sub(4);
 		for(int i = 0; i < 4; i++) {
 			sub[i] = i;
 		}
+		std::vector<int> perm(4);
+		for(int i = 0; i < 4; ++i) {
+			perm[i] = i;
+		}
+		mmi_conn::Submatrix s(check, std::move(sub), std::move(perm));
 		MMIMove::ConnReq req = mmi_conn::ConnectedTo(2);
-		mmi_conn::Submatrix s(check, sub, sub);
 		EXPECT_TRUE(req(s, 0));
 		EXPECT_TRUE(req(s, 1));
 		EXPECT_FALSE(req(s, 2));
@@ -355,13 +395,17 @@ namespace cluster {
 							 -1, 0, 1, 0, 0, 0,
 							  0,-1, 0, 0, 0, 1,
 								0, 0, 1, 0,-1, 0};
-		IntMatrix check(6, 6, v);
+		std::shared_ptr<IntMatrix> check = std::make_shared<IntMatrix>(6, 6, v);
 		std::vector<int> sub(4);
 		for(int i = 0; i < 4; i++) {
 			sub[i] = i;
 		}
+		std::vector<int> perm(4);
+		for(int i = 0; i < 4; ++i) {
+			perm[i] = i;
+		}
+		mmi_conn::Submatrix s(check, std::move(sub), std::move(perm));
 		MMIMove::ConnReq req = mmi_conn::ConnectedTo(2);
-		mmi_conn::Submatrix s(check, sub, sub);
 		EXPECT_TRUE(req(s, 0));
 		EXPECT_TRUE(req(s, 1));
 		EXPECT_FALSE(req(s, 2));
@@ -375,13 +419,17 @@ namespace cluster {
 							 -1, 0, 0, 0, 0, 0, 0,
 								0,-1, 0, 0, 0, 0, 0,
 								0, 0,-1, 0, 0, 0, 0};
-		IntMatrix check(7, 7, v);
+		std::shared_ptr<IntMatrix> check = std::make_shared<IntMatrix>(7, 7, v);
 		std::vector<int> sub(4);
 		for(int i = 0; i < 4; i++) {
 			sub[i] = i;
 		}
+		std::vector<int> perm(4);
+		for(int i = 0; i < 4; ++i) {
+			perm[i] = i;
+		}
+		mmi_conn::Submatrix s(check, std::move(sub), std::move(perm));
 		MMIMove::ConnReq req = mmi_conn::ConnectedTo(1);
-		mmi_conn::Submatrix s(check, sub, sub);
 		EXPECT_TRUE(req(s, 0));
 		EXPECT_TRUE(req(s, 1));
 		EXPECT_TRUE(req(s, 2));
@@ -396,13 +444,17 @@ namespace cluster {
 								0, 0, 1, 0,-1, 0, 0, 0,
 								0, 0,-1, 0, 0, 0, 0, 1,
 								0, 0, 0, 1, 0, 0,-1, 0};
-		IntMatrix check(8, 8, v);
+		std::shared_ptr<IntMatrix> check = std::make_shared<IntMatrix>(8, 8, v);
 		std::vector<int> sub(4);
 		for(int i = 0; i < 4; i++) {
 			sub[i] = i;
 		}
+		std::vector<int> perm(4);
+		for(int i = 0; i < 4; ++i) {
+			perm[i] = i;
+		}
+		mmi_conn::Submatrix s(check, std::move(sub), std::move(perm));
 		MMIMove::ConnReq req = mmi_conn::ConnectedTo(1);
-		mmi_conn::Submatrix s(check, sub, sub);
 		EXPECT_TRUE(req(s, 0));
 		EXPECT_FALSE(req(s, 1));
 		EXPECT_FALSE(req(s, 2));
@@ -416,13 +468,17 @@ namespace cluster {
 							 -1, 0, 1, 0, 0, 0,
 							  0,-1, 0, 0, 0, 1,
 								0, 0, 1, 0,-1, 0};
-		IntMatrix check(6, 6, v);
+		std::shared_ptr<IntMatrix> check = std::make_shared<IntMatrix>(6, 6, v);
 		std::vector<int> sub(4);
 		for(int i = 0; i < 4; i++) {
 			sub[i] = i;
 		}
+		std::vector<int> perm(4);
+		for(int i = 0; i < 4; ++i) {
+			perm[i] = i;
+		}
+		mmi_conn::Submatrix s(check, std::move(sub), std::move(perm));
 		MMIMove::ConnReq req = mmi_conn::Unconnected();
-		mmi_conn::Submatrix s(check, sub, sub);
 		EXPECT_TRUE(req(s, 0));
 		EXPECT_FALSE(req(s, 1));
 		EXPECT_FALSE(req(s, 2));
@@ -433,13 +489,17 @@ namespace cluster {
 							 -1, 0, 1, 0,
 							  1,-1, 0, 0,
 							 -1, 0, 0, 0};
-		IntMatrix check(4, 4, v);
+		std::shared_ptr<IntMatrix> check = std::make_shared<IntMatrix>(4, 4, v);
 		std::vector<int> sub(4);
 		for(int i = 0; i < 4; i++) {
 			sub[i] = i;
 		}
+		std::vector<int> perm(4);
+		for(int i = 0; i < 4; ++i) {
+			perm[i] = i;
+		}
+		mmi_conn::Submatrix s(check, std::move(sub), std::move(perm));
 		MMIMove::ConnReq req = mmi_conn::Unconnected();
-		mmi_conn::Submatrix s(check, sub, sub);
 		EXPECT_TRUE(req(s, 0));
 		EXPECT_TRUE(req(s, 1));
 		EXPECT_TRUE(req(s, 2));
@@ -453,7 +513,7 @@ namespace cluster {
 							 -1, 0, 0, 0, 0, 0,
 							  0,-1, 0, 0, 0, 1,
 								0, 1, 0, 0,-1, 0};
-		IntMatrix check(6, 6, v);
+		std::shared_ptr<IntMatrix> check = std::make_shared<IntMatrix>(6, 6, v);
 
 		MMIMove::ConnReq req = mmi_conn::Unconnected();
 
@@ -461,7 +521,11 @@ namespace cluster {
 		for(int i = 0; i < 4; ++i) {
 			sub[i] = i;
 		}
-		mmi_conn::Submatrix s(check, sub, sub);
+		std::vector<int> perm(4);
+		for(int i = 0; i < 4; ++i) {
+			perm[i] = i;
+		}
+		mmi_conn::Submatrix s(check, std::move(sub), std::move(perm));
 		EXPECT_TRUE(req(s, 0));
 		EXPECT_TRUE(req(s, 1));
 		EXPECT_TRUE(req(s, 2));
@@ -475,13 +539,17 @@ namespace cluster {
 							  0,-1, 0, 0, 0, 0, 0,
 								0, 0,-1, 0, 0, 0, 0,
 								0, 0,-1, 0, 0, 0, 0};
-		IntMatrix check(4, 4, v);
+		std::shared_ptr<IntMatrix> check = std::make_shared<IntMatrix>(4, 4, v);
 		std::vector<int> sub(4);
 		for(int i = 0; i < 4; i++) {
 			sub[i] = i;
 		}
+		std::vector<int> perm(4);
+		for(int i = 0; i < 4; ++i) {
+			perm[i] = i;
+		}
+		mmi_conn::Submatrix s(check, std::move(sub), std::move(perm));
 		MMIMove::ConnReq req = mmi_conn::Unconnected();
-		mmi_conn::Submatrix s(check, sub, sub);
 		EXPECT_TRUE(req(s, 0));
 		EXPECT_TRUE(req(s, 1));
 		EXPECT_TRUE(req(s, 2));
@@ -494,7 +562,7 @@ namespace cluster {
 							 -1, 0, 0, 0, 0, 0,
 							  0,-1, 0, 0, 0, 1,
 								0, 1, 0, 0,-1, 0};
-		IntMatrix check(6, 6, v);
+		std::shared_ptr<IntMatrix> check = std::make_shared<IntMatrix>(6, 6, v);
 		int w[] = { 0, 1,-1, 1,
 							 -1, 0, 1, 0,
 							  1,-1, 0, 0,

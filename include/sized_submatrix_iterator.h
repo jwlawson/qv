@@ -9,8 +9,6 @@
  */
 #pragma once
 
-#include <memory>
-
 #include "int_matrix.h"
 
 namespace cluster {

@@ -88,7 +88,7 @@ namespace cluster {
 			/**
 			 * Get the permutation taking this matrix to the given equivalent matrix.
 			 */
-			std::vector<int> get_permutation(const IntMatrix& mat);
+			std::vector<int> get_permutation(const IntMatrix& mat) const;
 
 			/** Vector holding pairs of row sums and the abs row sums. */
 			PairVector rows_;

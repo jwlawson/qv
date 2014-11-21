@@ -26,9 +26,9 @@ namespace mmi_conn {
 		typedef std::shared_ptr<IntMatrix> MatrixPtr;
 	}
 	struct Submatrix {
-		Submatrix(const IntMatrix& mat, const std::vector<int>& sub,
-				const std::vector<int>& perm) : 
-			matrix_(std::make_shared<IntMatrix>(mat)),
+		Submatrix(const MatrixPtr mat, const std::vector<int>&& sub,
+				const std::vector<int>&& perm) : 
+			matrix_(mat),
 			submatrix_(std::make_shared<std::vector<int>>(sub)),
 			perm_(std::make_shared<std::vector<int>>(perm)){}
 		const MatrixPtr matrix_;
@@ -78,11 +78,11 @@ class MMIMove {
 				: matrix_(sub.matrix_),
 					submatrix_(sub.submatrix_),
 					perm_(sub.perm_),
-					match_(std::make_shared<IntMatrix>(match)) {}
+					match_(match) {}
 			const MatrixPtr matrix_;
 			const VectorPtr submatrix_;
 			const VectorPtr perm_;
-			const MatrixPtr match_;
+			const IntMatrix& match_;
 		};
 		/**
 		 * Create an MMIMove which switches the submatrix mata with the submatrix
@@ -124,14 +124,15 @@ class MMIMove {
 		 * a vector of which rows in the initial matrix make up the submatrix.
 		 */
 		std::vector<Applicable> applicable_submatrices(const IntMatrix& matrix);
+		std::vector<Applicable> applicable_submatrices(const MatrixPtr matrix);
 
 	private:
 		/** First submatrix in move. */
-		EquivQuiverMatrix mata_;
+		const EquivQuiverMatrix mata_;
 		/** Second submatrix in move. */
-		EquivQuiverMatrix matb_;
+		const EquivQuiverMatrix matb_;
 		/** Size of the move matrices. */
-		int size_;
+		const int size_;
 		/** 
 		 * List of rows of submatrices which connect to the main quiver.
 		 *
@@ -142,7 +143,7 @@ class MMIMove {
 		Connections conn_;
 
 		/** Check whether the submatrix matches the required connections. */
-		bool check_connections(const mmi_conn::Submatrix& submatrix);
+		bool check_connections(const mmi_conn::Submatrix& submatrix) const;
 };
 }
 

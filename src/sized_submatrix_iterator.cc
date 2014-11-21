@@ -3,8 +3,6 @@
  */
 #include "sized_submatrix_iterator.h"
 
-#include "equiv_quiver_matrix.h"
-
 namespace cluster {
 	SizedSubmatrixIterator::SizedSubmatrixIterator(int size, const IntMatrix& matrix)
 		: m_(matrix),

@@ -41,7 +41,7 @@ namespace cluster {
 		/**
 		 * Get the next unique matrix in the mutation class.
 		 *
-		 * The method will first compute the other matrices which are muitations
+		 * The method will first compute the other matrices which are mutations
 		 * of the next matrix, and so fill the queue. This means that the method
 		 * will not be instant.
 		 *
@@ -82,7 +82,7 @@ namespace cluster {
 		int size_;
 		/**
 		 * Map used to store the matrices in the mutation class which have not 
-		 * yet been handled. TEach matrix is a key to the LinkHolder which stores
+		 * yet been handled. Each matrix is a key to the LinkHolder which stores
 		 * information about which mutations of the matrix have been seen.
 		 */
 		std::unordered_map<std::shared_ptr<T>, LinkHolder<T>> map_;
@@ -120,7 +120,7 @@ namespace cluster {
 
 	 private:
 		/**
-		 * True if more matrixces should be calculated each time a new matrix is
+		 * True if more matrices should be calculated each time a new matrix is
 		 * taken from the iterator.
 		 */
 		bool should_calc_;

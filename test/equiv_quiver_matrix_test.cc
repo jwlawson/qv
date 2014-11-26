@@ -284,10 +284,10 @@ namespace cluster {
 		EXPECT_TRUE(n.equals(k));
 
 		o.submatrix(rows, rows, m);
-		// EXPECT_TRUE(m.equals(n)); // TODO This fails
+		EXPECT_TRUE(m.equals(n));
 		EXPECT_TRUE(n.equals(m));
 		m.reset();
-		// EXPECT_TRUE(m.equals(n)); // TODO This fails
+		EXPECT_TRUE(m.equals(n));
 		EXPECT_TRUE(n.equals(m));
 	}
 }

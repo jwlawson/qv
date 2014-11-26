@@ -80,6 +80,10 @@ namespace cluster {
 			 * @return true if equal up to permuting rows and columns
 			 */
 			virtual bool equals(const IntMatrix &mat) const;
+			/** Want a specialised equals for EquivQuiverMatrix to ensure that the
+			 * copy in static_cast used in the IntMatrix equals method is not used.
+			 */
+			bool equals(const EquivQuiverMatrix &mat) const;
 			virtual void reset();
 			/**
 			 * Assignment operator.

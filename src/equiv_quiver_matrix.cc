@@ -40,7 +40,7 @@ namespace cluster {
 	}
 
 	EquivQuiverMatrix::EquivQuiverMatrix(const EquivQuiverMatrix& mat)
-		: QuiverMatrix(static_cast<IntMatrix>(mat)),
+		: QuiverMatrix(reinterpret_cast<const IntMatrix&>(mat)),
 			rows_(mat.num_rows(), std::make_pair(0,0)),
 			cols_(mat.num_cols(), std::make_pair(0,0)) {
 		checker_ = EquivalenceChecker::Get(mat.num_rows());
@@ -73,12 +73,24 @@ namespace cluster {
 		IntMatrix::set_matrix(mat);
 	}
 
+	/* Note that the static_cast will create a copy of mat */
 	bool EquivQuiverMatrix::equals(const IntMatrix &mat) const {
 		return checker_->are_equivalent(*this, 
 				static_cast<EquivQuiverMatrix>(mat));
 	}
+	bool EquivQuiverMatrix::equals(const EquivQuiverMatrix &mat) const {
+		return checker_->are_equivalent(*this, mat);
+	}
 
 	void EquivQuiverMatrix::reset() {
+		for(size_t i = 0; i < rows_.size(); ++i) {
+			rows_[i].first = 0;
+			rows_[i].second = 0;
+		}
+		for(size_t i = 0; i < cols_.size(); ++i) {
+			cols_[i].first = 0;
+			cols_[i].second = 0;
+		}
 		int row_i = 0;
 		int col_i = 0;
 		int i = 0;

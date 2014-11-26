@@ -592,5 +592,228 @@ namespace cluster {
 		IntMatrix exp(6, 6, a);
 		EXPECT_TRUE(exp.equals(res));
 	}
+	TEST(MMIMove, ApplicableTwice) {
+		int v[] = {0, 1,-1, 0, 0, 0,
+							-1, 0, 1,-1, 1,-1,
+							 1,-1, 0, 1, 0, 0,
+							 0, 1,-1, 0,-1, 0,
+							 0,-1, 0, 1, 0, 1,
+							 0, 1, 0, 0,-1, 0};
+		std::shared_ptr<IntMatrix> init = std::make_shared<IntMatrix>(6, 6, v);
+
+		int ma[] = {0,-1, 1,-1,
+								1, 0,-1, 0,
+							 -1, 1, 0, 1,
+							  1, 0,-1, 0};
+		IntMatrix m(4, 4, ma);
+		int na[] = {0, 1, 0,-1,
+							 -1, 0, 1, 0,
+							  0,-1, 0, 1,
+								1, 0,-1, 0};
+		IntMatrix n(4, 4, na);
+		std::vector<int> conn(2);
+		conn[0] = 0;
+		conn[1] = 3;
+		std::vector<MMIMove::ConnReq> req(2);
+		req[0] = mmi_conn::ConnectedTo(3);
+		req[1] = mmi_conn::ConnectedTo(0);
+
+		MMIMove move(m, n, conn, req);
+		AVec app = move.applicable_submatrices(*init);
+		ASSERT_FALSE(app.empty());
+	}
+	TEST(MMIMove, ConnectedToTrueForComplicated) {
+		int v[] = {0, 1,-1, 0, 0, 0,
+							-1, 0, 1,-1, 1,-1,
+							 1,-1, 0, 1, 0, 0,
+							 0, 1,-1, 0,-1, 0,
+							 0,-1, 0, 1, 0, 1,
+							 0, 1, 0, 0,-1, 0};
+		std::shared_ptr<IntMatrix> check = std::make_shared<IntMatrix>(6, 6, v);
+		std::vector<int> sub(4);
+		for(int i = 0; i < 4; i++) {
+			sub[i] = i;
+		}
+		std::vector<int> perm(4);
+		for(int i = 0; i < 4; ++i) {
+			perm[i] = i;
+		}
+		mmi_conn::Submatrix s(check, std::move(sub), std::move(perm));
+		MMIMove::ConnReq req = mmi_conn::ConnectedTo(3);
+		EXPECT_TRUE(req(s, 0));
+		EXPECT_TRUE(req(s, 1));
+		EXPECT_TRUE(req(s, 2));
+		EXPECT_FALSE(req(s, 3));
+
+		std::vector<int> sub1(4);
+		for(int i = 0; i < 4; i++) {
+			sub1[i] = i;
+		}
+		std::vector<int> perm1(4);
+		perm1[0] = 1;
+		perm1[1] = 0;
+		perm1[2] = 2;
+		perm1[3] = 3;
+
+		mmi_conn::Submatrix s1(check, std::move(sub1), std::move(perm1));
+		MMIMove::ConnReq req1 = mmi_conn::ConnectedTo(3);
+		EXPECT_TRUE(req1(s1, 0));
+		EXPECT_TRUE(req1(s1, 1));
+		EXPECT_TRUE(req1(s1, 2));
+		EXPECT_FALSE(req1(s1, 3));
+	}
+	TEST(MMIMove, MoveWorksWithPermutation) {
+		int v[] = { 0, 1,-1, 0,
+							 -1, 0, 1,-1,
+							  1,-1, 0, 1,
+								0, 1,-1, 0};
+		std::shared_ptr<IntMatrix> init = std::make_shared<IntMatrix>(4, 4, v);
+		int w[] = { 0,-1, 0, 1,
+								1, 0, 1,-1,
+								0,-1, 0, 1,
+							 -1, 1,-1, 0};
+		std::shared_ptr<IntMatrix> mova = std::make_shared<IntMatrix>(4, 4, w);
+		int x[] = { 0, 2,-1, 0,
+							 -2, 0, 1,-2,
+							  1,-2, 0, 1,
+								0, 2,-1, 0};
+		std::shared_ptr<IntMatrix> exp = std::make_shared<IntMatrix>(4, 4, x);
+		int y[] = { 0,-1, 0, 2,
+								1, 0, 1,-2,
+								0,-1, 0, 2,
+							 -2, 1,-2, 0};
+		std::shared_ptr<IntMatrix> movb = std::make_shared<IntMatrix>(4, 4, y);
+
+		MMIMove move(*mova, *movb, std::vector<int>(0));
+		AVec app = move.applicable_submatrices(init);
+		ASSERT_FALSE(app.empty());
+		std::shared_ptr<IntMatrix> res = std::make_shared<IntMatrix>(4, 4);
+		move.move(app[0], *res);
+		std::cout << *res << std::endl;
+		EXPECT_TRUE(res->equals(*exp));
+		EXPECT_TRUE(exp->equals(*res));
+	}
+	TEST(MMIMove, CheckPermutedMoveWithLineToRequirement) {
+		int v[] = { 0, 0,-1,-1, 1, 0,
+							  0, 0, 0,-1, 0,-1,
+								1, 0, 0, 0,-1, 1,
+								1, 1, 0, 0,-1, 0,
+							 -1, 0, 1, 1, 0, 0,
+							  0, 1,-1, 0, 0, 0};
+		std::shared_ptr<IntMatrix> init = std::make_shared<IntMatrix>(6, 6, v);
+		int ma[] = { 0, 0,-1, 1,
+								 0, 0,-1, 1,
+								 1, 1, 0,-1,
+								-1,-1, 1, 0 };
+		IntMatrix m(4, 4, ma);
+		int na[] = { 0, 0,-2, 2,
+								 0, 0,-2, 2,
+								 2, 2, 0,-1,
+								-2,-2, 1, 0 };
+		IntMatrix n(4, 4, na);
+
+		std::vector<int> con(2);
+		con[0] = 0;
+		con[1] = 1;
+		std::vector<MMIMove::ConnReq> req(2);
+		req[0] = mmi_conn::LineTo(1);
+		req[1] = mmi_conn::LineTo(0);
+
+		MMIMove move(m, n, con, req);
+
+		AVec app = move.applicable_submatrices(init);
+		ASSERT_FALSE(app.empty());
+		IntMatrix res(6, 6);
+		move.move(app[0], res);
+
+		int w[] = { 0, 0,-2,-2, 1, 0,
+							  0, 0, 0,-1, 0,-1,
+								2, 0, 0, 0,-2, 1,
+								2, 1, 0, 0,-2, 0,
+							 -1, 0, 2, 2, 0, 0,
+							  0, 1,-1, 0, 0, 0};
+		IntMatrix exp(6, 6, w);
+
+		EXPECT_TRUE(exp.equals(res));
+		EXPECT_TRUE(res.equals(exp));
+	}
+	TEST(MMIMove, CheckNoMoveForInvalidPermutedLineTo) {
+		int v[] = { 0, 0,-1,-1, 1, 0, 0,
+							  0, 0, 0,-1, 0,-1,-1,
+								1, 0, 0, 0,-1, 1, 0,
+								1, 1, 0, 0,-1, 0, 0,
+							 -1, 0, 1, 1, 0, 0, 0,
+							  0, 1,-1, 0, 0, 0, 1,
+								0, 1, 0, 0, 0,-1, 0};
+		std::shared_ptr<IntMatrix> init = std::make_shared<IntMatrix>(7, 7, v);
+		int ma[] = { 0, 0,-1, 1,
+								 0, 0,-1, 1,
+								 1, 1, 0,-1,
+								-1,-1, 1, 0 };
+		IntMatrix m(4, 4, ma);
+		int na[] = { 0, 0,-2, 2,
+								 0, 0,-2, 2,
+								 2, 2, 0,-1,
+								-2,-2, 1, 0 };
+		IntMatrix n(4, 4, na);
+
+		std::vector<int> con(2);
+		con[0] = 0;
+		con[1] = 1;
+		std::vector<MMIMove::ConnReq> req(2);
+		req[0] = mmi_conn::LineTo(1);
+		req[1] = mmi_conn::LineTo(0);
+
+		MMIMove move(m, n, con, req);
+
+		AVec app = move.applicable_submatrices(init);
+		ASSERT_TRUE(app.empty());
+	}
+	TEST(MMIMove, CheckPermutedMoveWithConnectedToRequirement) {
+		int v[] = { 0, 0,-1,-1, 1, 0, 0,
+							  0, 0, 0,-1, 0,-1,-1,
+								1, 0, 0, 0,-1, 1, 0,
+								1, 1, 0, 0,-1, 0, 0,
+							 -1, 0, 1, 1, 0, 0, 0,
+							  0, 1,-1, 0, 0, 0, 1,
+								0, 1, 0, 0, 0,-1, 0};
+		std::shared_ptr<IntMatrix> init = std::make_shared<IntMatrix>(7, 7, v);
+		int ma[] = { 0, 0,-1, 1,
+								 0, 0,-1, 1,
+								 1, 1, 0,-1,
+								-1,-1, 1, 0 };
+		IntMatrix m(4, 4, ma);
+		int na[] = { 0, 0,-2, 2,
+								 0, 0,-2, 2,
+								 2, 2, 0,-1,
+								-2,-2, 1, 0 };
+		IntMatrix n(4, 4, na);
+
+		std::vector<int> con(2);
+		con[0] = 0;
+		con[1] = 1;
+		std::vector<MMIMove::ConnReq> req(2);
+		req[0] = mmi_conn::ConnectedTo(1);
+		req[1] = mmi_conn::ConnectedTo(0);
+
+		MMIMove move(m, n, con, req);
+
+		AVec app = move.applicable_submatrices(init);
+		ASSERT_FALSE(app.empty());
+		IntMatrix res(7, 7);
+		move.move(app[0], res);
+
+		int w[] = { 0, 0,-2,-2, 1, 0, 0,
+							  0, 0, 0,-1, 0,-1,-1,
+								2, 0, 0, 0,-2, 1, 0,
+								2, 1, 0, 0,-2, 0, 0,
+							 -1, 0, 2, 2, 0, 0, 0,
+							  0, 1,-1, 0, 0, 0, 1,
+								0, 1, 0, 0, 0,-1, 0};
+		IntMatrix exp(7, 7, w);
+
+		EXPECT_TRUE(exp.equals(res));
+		EXPECT_TRUE(res.equals(exp));
+	}
 }
 

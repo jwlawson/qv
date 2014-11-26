@@ -47,22 +47,24 @@ namespace mmi_conn {
 		bool isLine(const Submatrix& sub, int next, int prev) const;
 	};
 	struct ConnectedTo {
-		ConnectedTo(int conn) { conn_.push_back(conn); }
-		ConnectedTo(int conn1, int conn2) {
+		ConnectedTo(int conn) : conn_(), sub_conn_(1) { conn_.push_back(conn); }
+		ConnectedTo(int conn1, int conn2) : conn_(), sub_conn_(2) {
 			conn_.push_back(conn1);
 			conn_.push_back(conn2);
 		}
 		bool operator()(const Submatrix& sub, int connection);
 		private:
 		std::vector<int> conn_;
+		std::vector<int> sub_conn_;
 		std::vector<int> seen_;
 		bool isConnected(const Submatrix& sub, int depth, int next);
 	};
 	struct LineTo {
-		LineTo(int conn) { conn_ = conn; }
-		bool operator()(const Submatrix& sub, int connection) const;
+		LineTo(int conn) : conn_(conn) {}
+		bool operator()(const Submatrix& sub, int connection);
 		private:
-		int conn_;
+		const int conn_;
+		int sub_conn_;
 		bool isLine(const Submatrix& sub, int next, int prev) const;
 	};
 }

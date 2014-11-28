@@ -3,7 +3,6 @@
  */
 #include "mmi_move.h"
 
-#include <iostream>
 #include <algorithm>
 
 #include "sized_submatrix_iterator.h"
@@ -29,7 +28,6 @@ namespace cluster {
 	void MMIMove::move(const Applicable& app, IntMatrix& result){
 		const int* m = app.matrix_->data();
 		int* r = result.data();
-		const std::vector<int>& perm(*app.perm_);
 
 		int ind = 0;
 		int row = 0;
@@ -59,7 +57,7 @@ namespace cluster {
 				}
 				if(inCol) {
 					/* In submatrix */
-					r[ind] = app.match_.get(perm[subRow], perm[subCol]);
+					r[ind] = app.match_.get((*app.perm_)[subRow], (*app.perm_)[subCol]);
 				} else {
 					r[ind] = m[ind];
 				}
@@ -93,10 +91,6 @@ namespace cluster {
 				std::vector<int> perm;
 				if(mata_.equals(m)) {
 					perm = m.get_permutation(mata_);
-					std::cout << m << std::endl;
-					std::cout << "Perm: ";
-					for(size_t i = 0; i < perm.size(); i++) std::cout << i << "->" << perm[i] << "  ";
-					std::cout << std::endl;
 					a = true;
 					equal = true;
 				} else if(matb_.equals(m)) {
@@ -105,13 +99,8 @@ namespace cluster {
 				}
 				if(equal) {
 					std::vector<int> sub = iter.get_rows();
-					std::cout << "Sub: ";
-					for(size_t i = 0; i < sub.size(); i++) std::cout << i << "->" << sub[i] << "  ";
-					std::cout << std::endl;
 					mmi_conn::Submatrix s(matrix, std::move(sub), std::move(perm));
-					std::cout << "Checking connections" << std::endl;
 					if(check_connections(s)) {
-						std::cout << "Connections match" << std::endl;
 						if(a) {
 							result.emplace_back(s, matb_);
 						} else {
@@ -128,13 +117,11 @@ namespace cluster {
 		/* i is the index of the row in the submatrix, s the index of the row in the
 		 * main matrix. */
 		for(int i = 0; i < size_ && valid; i++) {
-			std::cout << i << std::endl;
 			int p = (*submatrix.perm_)[i];
 			if(conn_.find(p) != conn_.end()) {
 				/* Row is one of the connections.
 				 * Check that the connection requirements for this connection are
 				 * satisfied. */
-				std::cout << "Checking conn at " << p << " with connection " << (*submatrix.submatrix_)[i] << std::endl;
 				valid = conn_.at(p)(submatrix, (*submatrix.submatrix_)[i]);
 				continue;
 			}
@@ -292,7 +279,6 @@ namespace mmi_conn {
 				break;
 			}
 		}
-		std::cout << "Checking lineto "<< conn_ << "->" << sub_conn_ << " at " << connection<< std::endl;
 		for(int i = 0; i < sub.matrix_->num_cols(); i++) {
 			if(std::find(sub.submatrix_->begin(), sub.submatrix_->end(), i)
 					!= sub.submatrix_->end()) {
@@ -302,7 +288,6 @@ namespace mmi_conn {
 			if(sub.matrix_->get(connection, i) != 0) {
 				if(next != -1) {
 					/* Have two arrows outside the submatrix, so not line. */
-					std::cout << "Two arrows: " << next << " and "<< i << std::endl;
 					return false;
 				}
 				next = i;
@@ -310,7 +295,6 @@ namespace mmi_conn {
 		}
 		if(next == -1) {
 			/* No arrows out of connection. */
-			std::cout << "No arrows" << std::endl;
 			return false;
 		}
 		/* Don't need to check whether (next == conn_) as conn_ will be in the
@@ -318,7 +302,6 @@ namespace mmi_conn {
 		return isLine(sub, next, connection);
 	}
 	bool LineTo::isLine(const Submatrix& sub, int next, int prev) const {
-		std::cout << "Checking subline " << next << std::endl;
 		int n = -1;
 		for(int i = 0; i < sub.matrix_->num_cols(); i++) {
 			if(i == prev) {

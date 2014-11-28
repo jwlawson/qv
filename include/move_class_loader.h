@@ -16,17 +16,17 @@
 #include <memory>
 #include <unordered_map>
 
-#include "int_matrix.h"
+#include "equiv_quiver_matrix.h"
 #include "mmi_move.h"
 
 namespace cluster {
 	class MoveClassLoader {
 		private:
-			typedef IntMatrix M;
+			typedef EquivQuiverMatrix M;
 			typedef std::shared_ptr<M> MPtr;
 			typedef std::shared_ptr<MMIMove> MovePtr;
 			typedef std::deque<MPtr> Queue;
-			typedef std::unordered_map<MPtr, std::pair<int, MovePtr>> Map;
+			typedef std::unordered_map<MPtr, int> Map;
 		public:
 			MoveClassLoader(const MPtr matrix, const std::vector<MovePtr>& moves);
 			bool has_next();

@@ -8,7 +8,7 @@
 namespace cluster {
 	TEST(MoveClassLoader, NoMovesOnlyReturnsInitial) {
 		int v[] = {0, 1, 2, -1, 0, 3, -2, -3, 0};
-		std::shared_ptr<IntMatrix> m = std::make_shared<IntMatrix>(3, 3, v);
+		std::shared_ptr<EquivQuiverMatrix> m = std::make_shared<EquivQuiverMatrix>(3, 3, v);
 		std::vector<std::shared_ptr<MMIMove>> w;
 
 		MoveClassLoader l(m, w);
@@ -20,7 +20,7 @@ namespace cluster {
 	}
 	TEST(MoveClassLoader, InitialIsAtDepth0) {
 		int v[] = {0, 1, 2, -1, 0, 3, -2, -3, 0};
-		std::shared_ptr<IntMatrix> m = std::make_shared<IntMatrix>(3, 3, v);
+		std::shared_ptr<EquivQuiverMatrix> m = std::make_shared<EquivQuiverMatrix>(3, 3, v);
 		std::vector<std::shared_ptr<MMIMove>> w;
 
 		MoveClassLoader l(m, w);
@@ -30,7 +30,7 @@ namespace cluster {
 	}
 	TEST(MoveClassLoader, SingleMoveReturnsTwo) {
 		int v[] = {0, 1, -1, 0, -1, 0, 1, 1, 1, -1, 0, 0, 0, -1, 0, 0};
-		std::shared_ptr<IntMatrix> m = std::make_shared<IntMatrix>(4, 4, v);
+		std::shared_ptr<EquivQuiverMatrix> m = std::make_shared<EquivQuiverMatrix>(4, 4, v);
 
 		int u[] = {0, 1, -1, -1, 0, 1, 1, -1, 0};
 		IntMatrix n(3, 3, u);
@@ -50,7 +50,7 @@ namespace cluster {
 		EXPECT_TRUE(m->equals(*q));
 		ASSERT_TRUE(l.has_next());
 		int x[] = {0, 2, -2, 0, -2, 0, 2, 1, 2, -2, 0, 0, 0, -1, 0, 0};
-		IntMatrix check(4, 4, x);
+		EquivQuiverMatrix check(4, 4, x);
 		auto r = l.next();
 		EXPECT_TRUE(check.equals(*r));
 		EXPECT_TRUE(r->equals(check));
@@ -58,7 +58,7 @@ namespace cluster {
 	}
 	TEST(MoveClassLoader, MoveMatrixAtDepth1) {
 		int v[] = {0, 1, -1, 0, -1, 0, 1, 1, 1, -1, 0, 0, 0, -1, 0, 0};
-		std::shared_ptr<IntMatrix> m = std::make_shared<IntMatrix>(4, 4, v);
+		std::shared_ptr<EquivQuiverMatrix> m = std::make_shared<EquivQuiverMatrix>(4, 4, v);
 
 		int u[] = {0, 1, -1, -1, 0, 1, 1, -1, 0};
 		IntMatrix n(3, 3, u);
@@ -86,7 +86,7 @@ namespace cluster {
 							 0, 1,-1, 0,-1, 0,
 							 0,-1, 0, 1, 0, 1,
 							 0, 1, 0, 0,-1, 0};
-		std::shared_ptr<IntMatrix> init = std::make_shared<IntMatrix>(6, 6, v);
+		std::shared_ptr<EquivQuiverMatrix> init = std::make_shared<EquivQuiverMatrix>(6, 6, v);
 
 		int ma[] = {0,-1, 1,-1,
 								1, 0,-1, 0,
@@ -109,9 +109,14 @@ namespace cluster {
 		std::vector<std::shared_ptr<MMIMove>> moves(1, move);
 
 		MoveClassLoader loader(init, moves);
-		while(loader.has_next()) {
-			std::cout << *loader.next() << std::endl;
-		}
+		ASSERT_TRUE(loader.has_next());
+		EXPECT_TRUE(init->equals(*loader.next()));
+
+		ASSERT_TRUE(loader.has_next());
+		auto p = loader.next();
+		ASSERT_TRUE(loader.has_next());
+		auto q = loader.next();
+		ASSERT_FALSE(loader.has_next());
 	}
 }
 

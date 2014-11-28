@@ -16,8 +16,10 @@ namespace cluster {
 	class EquivQuiverMatrix;
 
 	class EquivalenceChecker {
-		private:
-			typedef EquivQuiverMatrix M;
+	private:
+		typedef EquivQuiverMatrix M;
+		typedef std::vector<int> Permutation;
+		typedef std::shared_ptr<std::vector<Permutation>> PermVecPtr;
 	 public:
 		 /**
 			* Get the singleton instance of EquivalenceChecker.
@@ -42,7 +44,18 @@ namespace cluster {
 		 */
 		bool are_equivalent(const M &lhs, const M &rhs);
 		/** Get the mapping used in last equals check. */
-		std::vector<int> last_row_map() { return last_row_map_; }
+		Permutation last_row_map() { return last_row_map_; }
+		/**
+		 * Get all valid permutations from lhs to rhs.
+		 *
+		 * This method assumes that the two matrices are equivalent, so skips some
+		 * checks that are_equivalent does. This could cause problems if
+		 * are_equivalent is not checked before running this method.
+		 * @param lhs Matrix to get permutations from
+		 * @param rhs Matrix to get permutations to
+		 * @return vector of vectors representing the permutations
+		 */
+		PermVecPtr valid_row_maps(const M& lhs, const M& rhs);
 		/**
 		 * Allocation operator.
 		 */
@@ -107,9 +120,13 @@ namespace cluster {
 		 * Check whether the two matrices are permutations by considering the
 		 * mappings calculated earlier. Uses recursion on the index.
 		 */
-		bool check_perm(std::vector<int>& row_map, int index, 
-				const M& a, const M& b);
-
+		bool check_perm(Permutation& row_map, int index, const M& a, const M& b);
+		/**
+		 * Run through all permutations and add any valid ones to the PermVecPtr
+		 * parameter.
+		 */
+		void all_perms(Permutation& row_map, int index, const M& a, const M& b,
+				PermVecPtr perms);
 	};
 }
 

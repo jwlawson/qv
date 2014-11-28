@@ -11,12 +11,15 @@
 #include "equivalence_checker.h"
 
 namespace cluster {
+	/* Need to forward reference to prevent circular references. */
 	class EquivalenceChecker;
 
 	class EquivQuiverMatrix : public QuiverMatrix {
 		private:
 			typedef std::vector<std::pair<int, int>> PairVector;
-
+			typedef std::vector<int> Permutation;
+			typedef std::vector<Permutation> PermVec;
+			typedef std::shared_ptr<PermVec> PermVecPtr;
 		public:
 			/** 
 			 * Create a default matrix of size 0.
@@ -92,7 +95,14 @@ namespace cluster {
 			/**
 			 * Get the permutation taking this matrix to the given equivalent matrix.
 			 */
-			std::vector<int> get_permutation(const IntMatrix& mat) const;
+			Permutation get_permutation(const IntMatrix& mat) const;
+			/**
+			 * Get a vector of all permutations taking this matrix to the given
+			 * equivalent matrix.
+			 * This assumes that the matrix supplied is in fact equivalent to this
+			 * one, if not then problems could occur.
+			 */
+			PermVecPtr all_permutations(const EquivQuiverMatrix& mat);
 
 			/** Vector holding pairs of row sums and the abs row sums. */
 			PairVector rows_;

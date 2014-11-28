@@ -8,6 +8,12 @@
 #include "array_utils.h"
 
 namespace cluster {
+	namespace {
+		typedef EquivQuiverMatrix M;
+		typedef std::vector<int> Permutation;
+		typedef std::shared_ptr<std::vector<Permutation>> PermVecPtr;
+	}
+
 	std::weak_ptr<EquivalenceChecker> EquivalenceChecker::instance_ = 
 		std::make_shared<EquivalenceChecker>();
 
@@ -68,7 +74,16 @@ namespace cluster {
 		bool result = check_perm(last_row_map_, 0, a, b);
 		return result;
 	}
-
+	PermVecPtr EquivalenceChecker::valid_row_maps(const M& lhs, const M& rhs){
+		PermVecPtr result = std::make_shared<std::vector<Permutation>>();
+		maps_.reset();
+		bool rows_match = do_rows_match(lhs, rhs);
+		if (!rows_match) {
+			return result;
+		}
+		all_perms(last_row_map_, 0, lhs, rhs, result);
+		return result;
+	}
 	EquivalenceChecker& EquivalenceChecker::operator=(EquivalenceChecker mat) {
 		swap(*this, mat);
 		return *this;
@@ -130,8 +145,7 @@ namespace cluster {
 			 *
 			 * Want to check each possible permutation, so consider each possible
 			 * mapping, and for each fill in the remaining row_map entries. */
-			for(size_t i = 0; i < maps_.row_mappings[index].size() && !result;
-					++i) {
+			for(size_t i = 0; i < maps_.row_mappings[index].size() && !result; ++i) {
 				int val = maps_.row_mappings[index][i];
 				bool not_already_used = true;
 				for(int j = 0; j < index; ++j) {
@@ -146,6 +160,43 @@ namespace cluster {
 			}
 		}
 		return result;
+	}
+	void EquivalenceChecker::all_perms(Permutation& row_map, int index,
+			const M& a, const M& b, PermVecPtr perms) {
+		if(index == size_) {
+			/* Compute. Row_map contains a complete permutation, that is each index
+			 * represents a row, and the value at that index shows where to permute
+			 * that row.
+			 *
+			 * So actually perform the permutation and check for equality. */
+			for(int i = 0; i < size_; i++) {
+				last_col_map_[row_map[i]] = i;
+			}
+			a.permute_rows(row_map, ap_);
+			b.permute_columns(last_col_map_, pb_);
+			if(ap_.equals(pb_)) {
+				perms->push_back(row_map);
+			}
+		} else {
+			/* Row_map is not a complete permutation. Recursively add another entry to
+			 * the vector.
+			 *
+			 * Want to check each possible permutation, so consider each possible
+			 * mapping, and for each fill in the remaining row_map entries. */
+			for(size_t i = 0; i < maps_.row_mappings[index].size(); ++i) {
+				int val = maps_.row_mappings[index][i];
+				bool not_already_used = true;
+				for(int j = 0; j < index; ++j) {
+					if(row_map[j] == val) {
+						not_already_used = false;
+					}
+				}
+				if(not_already_used) {
+					row_map[index] = val;
+					all_perms(row_map, index + 1, a, b, perms);
+				}
+			}
+		}
 	}
 
 	/* Friends. */

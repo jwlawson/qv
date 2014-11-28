@@ -290,5 +290,14 @@ namespace cluster {
 		EXPECT_TRUE(m.equals(n));
 		EXPECT_TRUE(n.equals(m));
 	}
+	TEST(EquivMatrix, AllPermutations) {
+		EquivQuiverMatrix m("{ { 0 1 0 -1 } { -1 0 1 0 } { 0 -1 0 1 } { 1 0 -1 0 } }");
+		EquivQuiverMatrix n("{ { 0 1 0 -1 } { -1 0 1 0 } { 0 -1 0 1 } { 1 0 -1 0 } }");
+
+		ASSERT_TRUE(m.equals(n));
+		std::shared_ptr<std::vector<std::vector<int>>> vecp = m.all_permutations(n);
+		ASSERT_FALSE(vecp->empty());
+		EXPECT_EQ(4, vecp->size());
+	}
 }
 

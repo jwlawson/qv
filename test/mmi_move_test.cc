@@ -25,9 +25,9 @@ namespace cluster {
 		ASSERT_FALSE(app.empty());
 		EXPECT_EQ(app.size(), 1);
 		ASSERT_EQ(app[0].submatrix_->size(), 3);
-		EXPECT_EQ((*app[0].submatrix_)[0], 0);
-		EXPECT_EQ((*app[0].submatrix_)[1], 1);
-		EXPECT_EQ((*app[0].submatrix_)[2], 2);
+		EXPECT_EQ(0, (*app[0].submatrix_)[0]);
+		EXPECT_EQ(1, (*app[0].submatrix_)[1]);
+		EXPECT_EQ(2, (*app[0].submatrix_)[2]);
 	}
 
 	TEST(MMIMove, NotAppMove) {
@@ -63,12 +63,12 @@ namespace cluster {
 
 		ASSERT_FALSE(app.empty());
 		ASSERT_EQ(app.size(), 2);
-		EXPECT_EQ((*app[0].submatrix_)[0], 0);
-		EXPECT_EQ((*app[0].submatrix_)[1], 1);
-		EXPECT_EQ((*app[0].submatrix_)[2], 2);
-		EXPECT_EQ((*app[1].submatrix_)[0], 1);
-		EXPECT_EQ((*app[1].submatrix_)[1], 2);
-		EXPECT_EQ((*app[1].submatrix_)[2], 3);
+		EXPECT_EQ(0, (*app[0].submatrix_)[0]);
+		EXPECT_EQ(1, (*app[0].submatrix_)[1]);
+		EXPECT_EQ(2, (*app[0].submatrix_)[2]);
+		EXPECT_EQ(1, (*app[1].submatrix_)[0]);
+		EXPECT_EQ(2, (*app[1].submatrix_)[1]);
+		EXPECT_EQ(3, (*app[1].submatrix_)[2]);
 	}
 	TEST(MMIMove, BigExample) {
 		int v[] = {	0, 0, 2, 0, 0, 1, 0, 0, 0, 0,
@@ -97,11 +97,27 @@ namespace cluster {
 		AVec app = move.applicable_submatrices(check);
 
 		ASSERT_FALSE(app.empty());
-		EXPECT_EQ(app.size(), 1);
-		EXPECT_EQ((*app[0].submatrix_)[0], 1);
-		EXPECT_EQ((*app[0].submatrix_)[1], 4);
-		EXPECT_EQ((*app[0].submatrix_)[2], 6);
-		EXPECT_EQ((*app[0].submatrix_)[3], 8);
+		EXPECT_EQ(app.size(), 2);
+		/* Get the same submatrix twice, but with different permutations. */
+		EXPECT_EQ(1, (*app[0].submatrix_)[0]);
+		EXPECT_EQ(4, (*app[0].submatrix_)[1]);
+		EXPECT_EQ(6, (*app[0].submatrix_)[2]);
+		EXPECT_EQ(8, (*app[0].submatrix_)[3]);
+
+		EXPECT_EQ(1, (*app[1].submatrix_)[0]);
+		EXPECT_EQ(4, (*app[1].submatrix_)[1]);
+		EXPECT_EQ(6, (*app[1].submatrix_)[2]);
+		EXPECT_EQ(8, (*app[1].submatrix_)[3]);
+
+		EXPECT_EQ(0, (*app[0].perm_)[0]);
+		EXPECT_EQ(2, (*app[0].perm_)[1]);
+		EXPECT_EQ(1, (*app[0].perm_)[2]);
+		EXPECT_EQ(3, (*app[0].perm_)[3]);
+
+		EXPECT_EQ(0, (*app[1].perm_)[0]);
+		EXPECT_EQ(2, (*app[1].perm_)[1]);
+		EXPECT_EQ(3, (*app[1].perm_)[2]);
+		EXPECT_EQ(1, (*app[1].perm_)[3]);
 	}
 	TEST(MMIMove, NoMoveForSmallerMatrices) {
 		int v[] = { 0, 1,-1, 1, 0, 0,
@@ -238,9 +254,9 @@ namespace cluster {
 		MMIMove move(m, n, conn, req);
 		AVec app = move.applicable_submatrices(check);
 		ASSERT_EQ(app.size(), 1);
-		EXPECT_EQ((*app[0].submatrix_)[0], 0);
-		EXPECT_EQ((*app[0].submatrix_)[1], 1);
-		EXPECT_EQ((*app[0].submatrix_)[2], 2);
+		EXPECT_EQ(0, (*app[0].submatrix_)[0]);
+		EXPECT_EQ(1, (*app[0].submatrix_)[1]);
+		EXPECT_EQ(2, (*app[0].submatrix_)[2]);
 	}
 	TEST(MMIMove, LineToReqFalseForNoExtension) {
 		int v[] = { 0, 1,-1, 1,
@@ -689,7 +705,6 @@ namespace cluster {
 		ASSERT_FALSE(app.empty());
 		std::shared_ptr<IntMatrix> res = std::make_shared<IntMatrix>(4, 4);
 		move.move(app[0], *res);
-		std::cout << *res << std::endl;
 		EXPECT_TRUE(res->equals(*exp));
 		EXPECT_TRUE(exp->equals(*res));
 	}
@@ -814,6 +829,31 @@ namespace cluster {
 
 		EXPECT_TRUE(exp.equals(res));
 		EXPECT_TRUE(res.equals(exp));
+	}
+	TEST(MMIMove, MoveAppliesTwice) {
+		std::shared_ptr<IntMatrix> init = std::make_shared<IntMatrix>("{ { 0 -1 1 0 0 0 } { 1 0 0 -1 1 -1 } { -1 0 0 1 0 0 } { 0 1 -1 0 -1 0 } { 0 -1 0 1 0 1 } { 0 1 0 0 -1 0 } }");
+
+		int ma[] = {0,-1, 1,-1,
+								1, 0,-1, 0,
+							 -1, 1, 0, 1,
+							  1, 0,-1, 0};
+		IntMatrix m(4, 4, ma);
+		int na[] = {0, 1, 0,-1,
+							 -1, 0, 1, 0,
+							  0,-1, 0, 1,
+								1, 0,-1, 0};
+		IntMatrix n(4, 4, na);
+		std::vector<int> conn(2);
+		conn[0] = 0;
+		conn[1] = 3;
+		std::vector<MMIMove::ConnReq> req(2);
+		req[0] = mmi_conn::ConnectedTo(3);
+		req[1] = mmi_conn::ConnectedTo(0);
+
+		std::shared_ptr<MMIMove> move = std::make_shared<MMIMove>(m, n, conn, req);
+
+		AVec app = move->applicable_submatrices(init);
+		ASSERT_FALSE(app.empty());
 	}
 }
 

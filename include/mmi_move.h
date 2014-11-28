@@ -21,15 +21,16 @@
 namespace cluster {
 namespace mmi_conn {
 
-	namespace {
-		typedef std::shared_ptr<std::vector<int>> VectorPtr;
-		typedef std::shared_ptr<IntMatrix> MatrixPtr;
-	}
+	typedef std::shared_ptr<const std::vector<int>> VectorPtr;
+	typedef std::shared_ptr<IntMatrix> MatrixPtr;
 	struct Submatrix {
 		Submatrix(const MatrixPtr mat, const std::vector<int>&& sub,
 				const std::vector<int>&& perm) : 
 			matrix_(mat),
 			submatrix_(std::make_shared<std::vector<int>>(sub)),
+			perm_(std::make_shared<std::vector<int>>(perm)){}
+		Submatrix(const MatrixPtr mat, const VectorPtr sub, const std::vector<int>&& perm)
+			: matrix_(mat), submatrix_(sub),
 			perm_(std::make_shared<std::vector<int>>(perm)){}
 		const MatrixPtr matrix_;
 		const VectorPtr submatrix_;
@@ -73,7 +74,7 @@ class MMIMove {
 	public:
 		typedef std::function<bool(const mmi_conn::Submatrix&, int)> ConnReq;
 		typedef std::map<int, ConnReq> Connections;
-		typedef std::shared_ptr<std::vector<int>> VectorPtr;
+		typedef std::shared_ptr<const std::vector<int>> VectorPtr;
 		typedef std::shared_ptr<IntMatrix> MatrixPtr;
 		struct Applicable {
 			Applicable(const mmi_conn::Submatrix& sub, const IntMatrix& match)

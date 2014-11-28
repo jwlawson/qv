@@ -8,6 +8,11 @@
 #include "sized_submatrix_iterator.h"
 
 namespace cluster {
+	namespace {
+		typedef std::vector<int> Perm;
+		typedef std::vector<Perm> PermVec;
+		typedef std::shared_ptr<PermVec> PermVecPtr;
+	}
 	MMIMove::MMIMove(const IntMatrix& mata, const IntMatrix& matb, const
 			std::vector<int>& connections)
 		:	mata_(mata),
@@ -88,23 +93,25 @@ namespace cluster {
 				iter.next(m);
 				bool equal = false;
 				bool a = false;
-				std::vector<int> perm;
+				PermVecPtr perm;
 				if(mata_.equals(m)) {
-					perm = m.get_permutation(mata_);
+					perm = m.all_permutations(mata_);
 					a = true;
 					equal = true;
 				} else if(matb_.equals(m)) {
-					perm = m.get_permutation(matb_);
+					perm = m.all_permutations(matb_);
 					equal = true;
 				}
 				if(equal) {
-					std::vector<int> sub = iter.get_rows();
-					mmi_conn::Submatrix s(matrix, std::move(sub), std::move(perm));
-					if(check_connections(s)) {
-						if(a) {
-							result.emplace_back(s, matb_);
-						} else {
-							result.emplace_back(s, mata_);
+					std::shared_ptr<std::vector<int>> sub = std::make_shared<std::vector<int>>(iter.get_rows());
+					for(size_t k = 0; k < perm->size(); k++) {
+						mmi_conn::Submatrix s(matrix, sub, std::move((*perm)[k]));
+						if(check_connections(s)) {
+							if(a) {
+								result.emplace_back(s, matb_);
+							} else {
+								result.emplace_back(s, mata_);
+							}
 						}
 					}
 				}

@@ -236,10 +236,6 @@ namespace mmi_conn {
 		return isLine(sub, n, next);
 	}
 	bool ConnectedTo::operator()(const Submatrix& sub, int connection) {
-		std::cout << "Running ConnectedTo for " << conn_[0] << std::endl;
-					std::cout << "Perm: ";
-					for(size_t i = 0; i < (*sub.perm_).size(); i++) std::cout << i << "->" << (*sub.perm_)[i] << "  ";
-					std::cout << std::endl;
 		for(size_t i = 0; i < conn_.size(); ++i) {
 			for(size_t j = 0; j < sub.perm_->size(); ++j) {
 				if((*sub.perm_)[j] == conn_[i]) {
@@ -247,9 +243,6 @@ namespace mmi_conn {
 					break;
 				}
 			}
-		}
-		for(size_t i = 0; i < sub_conn_.size(); ++i) {
-			std::cout << "Subconn_ " << i << "->" << sub_conn_[i] << std::endl;
 		}
 		bool result = true;
 		seen_.resize(sub.matrix_->num_cols());
@@ -268,7 +261,6 @@ namespace mmi_conn {
 		return result;
 	}
 	bool ConnectedTo::isConnected(const Submatrix& sub, int size, int next) {
-		std::cout << "Next: "<< next<< std::endl;
 		bool result = true;
 		for(int i = 0; i < sub.matrix_->num_cols() && result; i++) {
 			if(std::find(seen_.begin(), seen_.begin() + size, i) != seen_.begin() + size) {
@@ -279,8 +271,7 @@ namespace mmi_conn {
 					!= sub.submatrix_->end()) {
 				/* i is in submatrix */
 				if(sub.matrix_->get(next, i) != 0 &&
-						std::find(sub_conn_.begin(), sub_conn_.end(), i) == conn_.end()) {
-					std::cout << "Comes back to sub at " << i <<  std::endl;
+						std::find(sub_conn_.begin(), sub_conn_.end(), i) == sub_conn_.end()) {
 					/* Comes back to submatrix in not allowed connection. */
 					result = false;
 				}
@@ -288,9 +279,6 @@ namespace mmi_conn {
 			}
 			if(sub.matrix_->get(next, i) != 0) {
 				seen_[size] = i;
-				std::cout << "Seen: ";
-				for(int k = 0; k <=size; k++) std::cout << seen_[k] << ", ";
-				std::cout << std::endl;
 				result = isConnected(sub, size + 1, i);
 			}
 		}

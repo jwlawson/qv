@@ -6,8 +6,7 @@
 namespace cluster {
 	MoveClassLoader::MoveClassLoader(const MPtr matrix,
 			const std::vector<MovePtr>& moves)
-		: last_(),
-			size_(matrix->num_rows()),
+		:	size_(matrix->num_rows()),
 			moves_(moves),
 			queue_(),
 			map_(),
@@ -35,7 +34,6 @@ namespace cluster {
 				}
 			}
 		}
-		last_ = result;
 		return result;
 	}
 	int MoveClassLoader::depth(){

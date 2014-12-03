@@ -855,5 +855,55 @@ namespace cluster {
 		AVec app = move->applicable_submatrices(init);
 		ASSERT_FALSE(app.empty());
 	}
+	TEST(MMIMove, NoneTrueForFullSubmatrix) {
+		int v[] = { 0, -1, 1, -1, 1, 0, -1, 0, -1, 1, 0, 1, 1, 0, -1, 0};
+		std::shared_ptr<IntMatrix> m = std::make_shared<IntMatrix>(4, 4, v);
+
+		int w[] = {0, 1, 1, -1, -1, 0, 0, 1, -1, 0, 0, 1, 1, -1, -1, 0};
+		IntMatrix n(4, 4, w);
+
+		std::vector<int> sub({ 0, 1, 2, 3 });
+		std::vector<int> perm({ 3, 2, 0, 1 });
+
+		mmi_conn::Submatrix s(m, std::move(sub), std::move(perm));
+		MMIMove::ConnReq req = mmi_conn::None();
+		EXPECT_TRUE(req(s, 0));
+		EXPECT_TRUE(req(s, 1));
+		EXPECT_TRUE(req(s, 2));
+		EXPECT_TRUE(req(s, 3));
+	}
+	TEST(MMIMove, NoneFalseForConnected) {
+		int v[] = { 0, -1, 1, -1, 1, 0, -1, 0, -1, 1, 0, 1, 1, 0, -1, 0};
+		std::shared_ptr<IntMatrix> m = std::make_shared<IntMatrix>(4, 4, v);
+
+		int w[] = {0, -1, 1, 1, 0, -1, -1, 0, 1};
+		IntMatrix n(3, 3, w);
+
+		std::vector<int> sub({ 0, 1, 2 });
+		std::vector<int> perm({ 0, 1, 2 });
+
+		mmi_conn::Submatrix s(m, std::move(sub), std::move(perm));
+		MMIMove::ConnReq req = mmi_conn::None();
+		EXPECT_FALSE(req(s, 0));
+		EXPECT_TRUE(req(s, 1));
+		EXPECT_FALSE(req(s, 2));
+	}
+	TEST(MMIMove, MoveOnSingleUnconnectedArrow) {
+		int v[] = {0, -1, 0, 0, 1, 0, -1, -1, 0, 1, 0, 1, 0, 1, -1, 0};
+		std::shared_ptr<IntMatrix> m = std::make_shared<IntMatrix>(4, 4, v);
+		auto move = std::make_shared<MMIMove>(IntMatrix("{ { 0 -1 } { 1 0 } }"),
+			IntMatrix("{ { 0 1 } { -1 0 } }"), std::vector<int>({ 1 }),
+			std::vector<MMIMove::ConnReq>({ mmi_conn::Unconnected() }));
+
+		AVec app = move->applicable_submatrices(m);
+		ASSERT_FALSE(app.empty());
+
+		auto n = std::make_shared<IntMatrix>(4, 4);
+		move->move(app[0], *n);
+
+		int w[] = { 0, 1, 0, 0, -1, 0, -1, -1, 0, 1, 0, 1, 0, 1, -1, 0};
+		IntMatrix exp(4, 4, w);
+		EXPECT_TRUE(exp.equals(*n));
+	}
 }
 

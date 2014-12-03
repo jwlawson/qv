@@ -23,6 +23,10 @@ namespace mmi_conn {
 
 	typedef std::shared_ptr<const std::vector<int>> VectorPtr;
 	typedef std::shared_ptr<IntMatrix> MatrixPtr;
+	/**
+	 * Struct containing all information about how a submatrix is embedded in a
+	 * larger matrix.
+	 */
 	struct Submatrix {
 		Submatrix(const MatrixPtr mat, const std::vector<int>&& sub,
 				const std::vector<int>&& perm) : 
@@ -36,6 +40,10 @@ namespace mmi_conn {
 		const VectorPtr submatrix_;
 		const VectorPtr perm_;
 	};
+	/**
+	 * Functor that returns true only if the arrows from the connection never
+	 * return to the submatrix.
+	 */
 	struct Unconnected {
 		bool operator()(const Submatrix& sub, int connection);
 		private:
@@ -47,12 +55,16 @@ namespace mmi_conn {
 		private:
 		bool isLine(const Submatrix& sub, int next, int prev) const;
 	};
+	/**
+	 * Functor that checks whether any arrows from the connection which eventually
+	 * coincide with the submatrix again only return at the specified vertices.
+	 * If the arrows never return to the matrix (or if there are no arrows from
+	 * the connection) then this will also return true.
+	 */
 	struct ConnectedTo {
-		ConnectedTo(int conn) : conn_(), sub_conn_(1) { conn_.push_back(conn); }
-		ConnectedTo(int conn1, int conn2) : conn_(), sub_conn_(2) {
-			conn_.push_back(conn1);
-			conn_.push_back(conn2);
-		}
+		ConnectedTo(int conn) : conn_({conn}), sub_conn_(1) {}
+		ConnectedTo(int conn1, int conn2) : conn_({conn1, conn2}), sub_conn_(2) {}
+		ConnectedTo(std::initializer_list<int> l) : conn_(l), sub_conn_(l.size()) {}
 		bool operator()(const Submatrix& sub, int connection);
 		private:
 		std::vector<int> conn_;
@@ -60,6 +72,10 @@ namespace mmi_conn {
 		std::vector<int> seen_;
 		bool isConnected(const Submatrix& sub, int depth, int next);
 	};
+	/**
+	 * Functor that checks whether the submatrix has a line connecting the
+	 * connection to the specified vertex.
+	 */
 	struct LineTo {
 		LineTo(int conn) : conn_(conn) {}
 		bool operator()(const Submatrix& sub, int connection);
@@ -67,6 +83,13 @@ namespace mmi_conn {
 		const int conn_;
 		int sub_conn_;
 		bool isLine(const Submatrix& sub, int next, int prev) const;
+	};
+	/**
+	 * Functor that returns true if the connection has no arrows outside the
+	 * submatrix.
+	 */
+	struct None {
+		bool operator()(const Submatrix& sub, int conenction) const;
 	};
 }
 class MMIMove {
@@ -76,6 +99,11 @@ class MMIMove {
 		typedef std::map<int, ConnReq> Connections;
 		typedef std::shared_ptr<const std::vector<int>> VectorPtr;
 		typedef std::shared_ptr<IntMatrix> MatrixPtr;
+		/**
+		 * Struct containing all information about a submatrix which is applicable
+		 * to this move. The match is not which move matrix is embedded in the
+		 * submatrix, but rather the one that the move will take that to.
+		 */
 		struct Applicable {
 			Applicable(const mmi_conn::Submatrix& sub, const IntMatrix& match)
 				: matrix_(sub.matrix_),

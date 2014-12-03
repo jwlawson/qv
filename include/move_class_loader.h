@@ -18,15 +18,23 @@
 
 #include "equiv_quiver_matrix.h"
 #include "mmi_move.h"
+#include "ss_move.h"
 
 namespace cluster {
 	class MoveClassLoader {
+		public:
+			struct Depth {
+				Depth() : moves_(0), sinksource_(0) {}
+				Depth(int moves, int ss) : moves_(moves), sinksource_(ss) {}
+				int moves_;
+				int sinksource_;
+			};
 		private:
 			typedef EquivQuiverMatrix M;
 			typedef std::shared_ptr<M> MPtr;
 			typedef std::shared_ptr<MMIMove> MovePtr;
 			typedef std::deque<MPtr> Queue;
-			typedef std::unordered_map<MPtr, int> Map;
+			typedef std::unordered_map<MPtr, Depth> Map;
 		public:
 			/**
 			 * Create a new Loader which will start with the specified matrix and
@@ -34,12 +42,19 @@ namespace cluster {
 			 * @param matrix Pointer to the initial matrix.
 			 * @param moves Vector of moves to check.
 			 */
-			MoveClassLoader(const MPtr matrix, const std::vector<MovePtr>& moves);
+			MoveClassLoader(const MPtr matrix, const std::vector<MovePtr>& moves,
+					bool sinksource = true);
+			MoveClassLoader(MoveClassLoader&) = delete;
+			MoveClassLoader(MoveClassLoader&&) = delete;
+			MoveClassLoader& operator=(MoveClassLoader&) = delete;
+			MoveClassLoader& operator=(MoveClassLoader&&) = delete;
 			/**
 			 * Check whether the next call to next() will be valid.
 			 * @return true if next() will return a valid matrix.
 			 */
-			bool has_next();
+			bool has_next() {
+				return !queue_.empty();
+			}
 			/**
 			 * Get the next matrix from the Move class. This will compute any matrices
 			 * which can be transformed from the returned matrix and add them to the
@@ -49,13 +64,17 @@ namespace cluster {
 			/**
 			 * Get the depth at which the previously returned matrix was found.
 			 */
-			int depth();
+			Depth depth() {
+				return depth_;
+			}
 
 		private:
 			/** Size of the matrix the moves are being applied to. */
 			const int size_;
 			/** Vector of the moves to check and apply. */
 			const std::vector<MovePtr>& moves_;
+			/** Sink source move. */
+			const SSMove ssmove_;
 			/** Queue of matrices to check moves against. */
 			Queue queue_;
 			/**
@@ -64,7 +83,9 @@ namespace cluster {
 			 */
 			Map map_;
 			/** Depth that the last returned matrix was computed at. */
-			int depth_;
+			Depth depth_;
+			/** True if should use sink source moves. */
+			const bool sinksource_;
 	};
 }
 

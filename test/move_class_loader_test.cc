@@ -11,7 +11,7 @@ namespace cluster {
 		std::shared_ptr<EquivQuiverMatrix> m = std::make_shared<EquivQuiverMatrix>(3, 3, v);
 		std::vector<std::shared_ptr<MMIMove>> w;
 
-		MoveClassLoader l(m, w);
+		MoveClassLoader l(m, w, false);
 		ASSERT_TRUE(l.has_next());
 		auto n = l.next();
 		EXPECT_TRUE(m->equals(*n));
@@ -26,7 +26,8 @@ namespace cluster {
 		MoveClassLoader l(m, w);
 		ASSERT_TRUE(l.has_next());
 		auto n = l.next();
-		EXPECT_EQ(l.depth(), 0);
+		EXPECT_EQ(l.depth().moves_, 0);
+		EXPECT_EQ(l.depth().sinksource_, 0);
 	}
 	TEST(MoveClassLoader, SingleMoveReturnsTwo) {
 		int v[] = {0, 1, -1, 0, -1, 0, 1, 1, 1, -1, 0, 0, 0, -1, 0, 0};
@@ -43,7 +44,7 @@ namespace cluster {
 		std::shared_ptr<MMIMove> mov = std::make_shared<MMIMove>(n, p, conn);
 		std::vector<std::shared_ptr<MMIMove>> moves(1, mov);
 
-		MoveClassLoader l(m, moves);
+		MoveClassLoader l(m, moves, false);
 
 		ASSERT_TRUE(l.has_next());
 		auto q = l.next();
@@ -71,13 +72,13 @@ namespace cluster {
 		std::shared_ptr<MMIMove> mov = std::make_shared<MMIMove>(n, p, conn);
 		std::vector<std::shared_ptr<MMIMove>> moves(1, mov);
 
-		MoveClassLoader l(m, moves);
+		MoveClassLoader l(m, moves, false);
 
 		ASSERT_TRUE(l.has_next());
 		auto r = l.next();
 		ASSERT_TRUE(l.has_next());
 		auto q = l.next();
-		EXPECT_EQ(l.depth(), 1);
+		EXPECT_EQ(l.depth().moves_, 1);
 	}
 	TEST(MoveClassLoader, SizeOfFullClass) {
 		int v[] = {0, 1,-1, 0, 0, 0,
@@ -108,7 +109,7 @@ namespace cluster {
 		std::shared_ptr<MMIMove> move = std::make_shared<MMIMove>(m, n, conn, req);
 		std::vector<std::shared_ptr<MMIMove>> moves(1, move);
 
-		MoveClassLoader loader(init, moves);
+		MoveClassLoader loader(init, moves, false);
 		ASSERT_TRUE(loader.has_next());
 		EXPECT_TRUE(init->equals(*loader.next()));
 
@@ -117,6 +118,27 @@ namespace cluster {
 		ASSERT_TRUE(loader.has_next());
 		auto q = loader.next();
 		ASSERT_FALSE(loader.has_next());
+	}
+	TEST(MoveClassLoader, SinkSourceClass) {
+		int v[] = { 0, 1, 0, 0, -1, 0, 1, 1, 0, -1, 0, 1, 0, -1, -1, 0};
+		std::shared_ptr<EquivQuiverMatrix> init = std::make_shared<EquivQuiverMatrix>(4, 4, v);
+
+		IntMatrix m("{ { 0 -1 -1 } { 1 0 1 } { 1 -1 0 } }");
+		IntMatrix n("{ { 0 1 -1 } { -1 0 1 } { 1 -1 0 } }");
+		std::vector<int> conn = {0};
+		std::vector<MMIMove::ConnReq> req = {mmi_conn::Unconnected()};
+		std::shared_ptr<MMIMove> move = std::make_shared<MMIMove>(m, n, conn, req);
+		std::vector<std::shared_ptr<MMIMove>> moves = {move};
+
+		MoveClassLoader loader(init, moves);
+		int count = 0;
+		while(loader.has_next()) {
+			*loader.next();
+			count++;
+		}
+		EXPECT_EQ(8, count);
+		EXPECT_EQ(1, loader.depth().moves_);
+		EXPECT_EQ(3, loader.depth().sinksource_);
 	}
 }
 

@@ -178,6 +178,9 @@ namespace cluster {
 		const int* data() const {
 			return data_.data();
 		}
+		const IntVector& vector() const {
+			return data_;
+		}
 		/**
 		 * Compute the hash of the matrix.
 		 *

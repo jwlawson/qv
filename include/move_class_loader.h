@@ -12,7 +12,7 @@
  */
 #pragma once
 
-#include <deque>
+#include <map>
 #include <memory>
 #include <unordered_map>
 
@@ -28,12 +28,17 @@ namespace cluster {
 				Depth(int moves, int ss) : moves_(moves), sinksource_(ss) {}
 				int moves_;
 				int sinksource_;
+				/* https://gcc.gnu.org/onlinedocs/libstdc++/manual/pairs.html */
+				bool operator<(const Depth& d) const {
+					return moves_ < d.moves_ || 
+						( !(d.moves_ < moves_) && sinksource_ < d.sinksource_);
+				}
 			};
 		private:
 			typedef EquivQuiverMatrix M;
 			typedef std::shared_ptr<M> MPtr;
 			typedef std::shared_ptr<MMIMove> MovePtr;
-			typedef std::deque<MPtr> Queue;
+			typedef std::multimap<Depth, MPtr> Queue;
 			typedef std::unordered_map<MPtr, Depth> Map;
 		public:
 			/**
@@ -53,7 +58,7 @@ namespace cluster {
 			 * @return true if next() will return a valid matrix.
 			 */
 			bool has_next() {
-				return !ss_queue_.empty() || !move_queue_.empty();
+				return !queue_.empty();
 			}
 			/**
 			 * Get the next matrix from the Move class. This will compute any matrices
@@ -76,8 +81,7 @@ namespace cluster {
 			/** Sink source move. */
 			const SSMove ssmove_;
 			/** Queue of matrices to check moves against. */
-			Queue move_queue_;
-			Queue ss_queue_;
+			Queue queue_;
 			/**
 			 * Map of all prevously seen matrices. Each matrix is mapped to the depth
 			 * at which it was found.

@@ -16,6 +16,8 @@ namespace cluster {
 
 		public:
 			EquivUnderlyingGraph(const IntMatrix&);
+			/** Override the virtual IntMatrix::set_matrix method */
+			void set_matrix(const IntMatrix& mat);
 
 	};
 }

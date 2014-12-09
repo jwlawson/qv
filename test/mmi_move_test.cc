@@ -905,5 +905,35 @@ namespace cluster {
 		IntMatrix exp(4, 4, w);
 		EXPECT_TRUE(exp.equals(*n));
 	}
+namespace {
+	std::shared_ptr<cluster::MMIMove> make_move(const std::string& a,
+			const std::string& b, std::initializer_list<int> c,
+			std::initializer_list<cluster::MMIMove::ConnReq> r) {
+		return std::make_shared<cluster::MMIMove>(
+				cluster::IntMatrix(a), cluster::IntMatrix(b),
+				std::vector<int>(c), std::vector<cluster::MMIMove::ConnReq>(r));
+	}
+	std::shared_ptr<cluster::EquivQuiverMatrix> matrix(const std::string& a) {
+		return std::make_shared<cluster::EquivQuiverMatrix>(a);
+	}
+}
+using namespace cluster::mmi_conn;
+TEST(MMIMove, SimpleMoveApplicableToDouble) {
+	auto move = make_move("{ { 0 1 0 } { -1 0 1 } { 0 -1 0 } }",
+			"{ { 0 -1 1 } { 1 0 -1 } { -1 1 0 } }", {0, 2}, {Unconnected(), Line()});
+	IntMatrix init("{ { 0 2 -1 0 0 0 } { -2 0 1 0 0 0 } { 1 -1 0 1 0 1 } { 0 0 -1 0 1 0 } { 0 0 0 -1 0 0 } { 0 0 -1 0 0 0 } }");
+	AVec app = move->applicable_submatrices(init);
+	ASSERT_FALSE(app.empty());
+}
+TEST(MMIMove, MixOfLineAndConnectedTo) {
+	auto move = make_move("{ { 0 -1 1 0 0 0 } { 1 0 -1 0 0 0 } { -1 1 0 1 0 0 } "
+			"{ 0 0 -1 0 1 1 } { 0 0 0 -1 0 0 } { 0 0 0 -1 0 0 } }",
+			"{ { 0 -1 1 0 0 0 } { 1 0 -1 0 0 0 } { -1 1 0 -1 1 1 } "
+			"{ 0 0 1 0 -1 -1 } { 0 0 -1 1 0 0 } { 0 0 -1 1 0 0 } }",
+			{0, 1, 5}, {ConnectedTo(5), Line(), ConnectedTo(0)});
+	IntMatrix init("{ { 0 1 0 0 0 0 0 0 0 } { -1 0 1 0 0 0 0 0 -1 } { 0 -1 0 1 0 0 -1 0 0 } { 0 0 -1 0 1 -1 1 0 1 } { 0 0 0 -1 0 1 0 0 0 } { 0 0 0 1 -1 0 0 0 -1 } { 0 0 1 -1 0 0 0 1 0 } { 0 0 0 0 0 0 -1 0 0 } { 0 1 0 -1 0 1 0 0 0 } }");
+	AVec app = move->applicable_submatrices(init);
+	ASSERT_FALSE(app.empty());
+}
 }
 

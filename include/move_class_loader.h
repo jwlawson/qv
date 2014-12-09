@@ -53,7 +53,7 @@ namespace cluster {
 			 * @return true if next() will return a valid matrix.
 			 */
 			bool has_next() {
-				return !queue_.empty();
+				return !ss_queue_.empty() || !move_queue_.empty();
 			}
 			/**
 			 * Get the next matrix from the Move class. This will compute any matrices
@@ -76,7 +76,8 @@ namespace cluster {
 			/** Sink source move. */
 			const SSMove ssmove_;
 			/** Queue of matrices to check moves against. */
-			Queue queue_;
+			Queue move_queue_;
+			Queue ss_queue_;
 			/**
 			 * Map of all prevously seen matrices. Each matrix is mapped to the depth
 			 * at which it was found.

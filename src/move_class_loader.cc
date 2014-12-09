@@ -10,7 +10,8 @@ namespace cluster {
 		:	size_(matrix->num_rows()),
 			moves_(moves),
 			ssmove_(),
-			queue_({matrix}),
+			move_queue_({matrix}),
+			ss_queue_(),
 			map_({ {matrix, Depth()} }),
 			depth_(),
 			sinksource_(sinksource) {}
@@ -19,8 +20,14 @@ namespace cluster {
 		typedef std::vector<MMIApp> MMIAppVec;
 		typedef SSMove::Applicable SSApp;
 		typedef std::vector<SSApp> SSAppVec;
-		MPtr result = queue_.front();
-		queue_.pop_front();
+		MPtr result;
+		if(!ss_queue_.empty()) {
+			result = ss_queue_.front();
+			ss_queue_.pop_front();
+		} else {
+			result = move_queue_.front();
+			move_queue_.pop_front();
+		}
 		depth_ = map_[result];
 		if(sinksource_) {
 			SSAppVec ssapp = ssmove_.applicable_submatrices(result);
@@ -29,7 +36,7 @@ namespace cluster {
 				ssmove_.move(*app,*ss_new);
 				if(map_.find(ss_new) == map_.end()) {
 					map_[ss_new] = Depth(depth_.moves_, depth_.sinksource_ + 1);
-					queue_.push_back(ss_new);
+					ss_queue_.push_back(ss_new);
 				}
 			}
 		}
@@ -41,7 +48,7 @@ namespace cluster {
 				m->move(appl[j], *new_matrix);
 				if(map_.find(new_matrix) == map_.end()) {
 					map_[new_matrix] = Depth(depth_.moves_ + 1, depth_.sinksource_);
-					queue_.push_back(new_matrix);
+					move_queue_.push_back(new_matrix);
 				}
 			}
 		}

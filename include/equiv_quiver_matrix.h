@@ -70,6 +70,7 @@ namespace cluster {
 			 * @param str String containing matrix information
 			 */
 			EquivQuiverMatrix(std::string str);
+			virtual ~EquivQuiverMatrix(){};
 			/**
 			 * Overwrite the set method in IntMatrix to allow the PairVector objects
 			 * to be initialised to the correct size.

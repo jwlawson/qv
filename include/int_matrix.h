@@ -68,6 +68,7 @@ namespace cluster {
 		 * @param str String containing matrix
 		 */
 		IntMatrix(std::string str);
+		virtual ~IntMatrix() {};
 		/**
 		 * Assignment operator. Sets this matrix to the one passed.
 		 * @param mat Matrix to copy

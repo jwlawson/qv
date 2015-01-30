@@ -57,6 +57,7 @@ namespace cluster {
 		 * @param str String containing matrix information
 		 */
 		QuiverMatrix(std::string str);
+		virtual ~QuiverMatrix() {};
 		/**
 		 * Check whether this matrix is definitely mutation infinite.
 		 * As no information is known about the mutation class, this can only check

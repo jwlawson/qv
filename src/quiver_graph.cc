@@ -17,6 +17,8 @@
  */
 #include "quiver_graph.h"
 
+#include "equiv_quiver_matrix.h"
+
 namespace cluster {
 
 template<class M>
@@ -47,6 +49,9 @@ QuiverGraph<M>::_GraphLoader & QuiverGraph<M>::_GraphLoader::operator++(){
 			}
 		}
 	}
+	if(_graph._queue.empty()){
+		_end = true;
+	}
 	return *this;
 }
 template<class M>
@@ -62,8 +67,13 @@ bool QuiverGraph<M>::_GraphLoader::mutate_at(const MatrixPtr & old_mat, int vert
 template<class M>
 void QuiverGraph<M>::_GraphLoader::seen_matrix(const UMatrixPtr & new_mat,
 		MatrixPtr old_mat, int vertex) {
-	_graph._map[new_mat][vertex] = old_mat;
-	_graph._map[old_mat][vertex] = new_mat;
+	if(_graph._map[old_mat][vertex] == nullptr) {
+		_graph._map[old_mat][vertex] = new_mat;
+	}
+	auto ref = _graph._map.find(new_mat);
+	if(ref != _graph._map.end() && IntMatrix::are_equal(*new_mat, *(ref->first))) {
+		_graph._map[new_mat][vertex] = old_mat;
+	}
 }
 template<class M>
 void QuiverGraph<M>::_GraphLoader::unseen_matrix(const UMatrixPtr & new_mat,
@@ -75,7 +85,6 @@ void QuiverGraph<M>::_GraphLoader::unseen_matrix(const UMatrixPtr & new_mat,
 }
 }
 
-#include "equiv_quiver_matrix.h"
 namespace cluster {
 template class QuiverGraph<EquivQuiverMatrix>;
 }

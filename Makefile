@@ -3,13 +3,9 @@ MAJOR = 0
 MINOR = 6
 VERSION = $(MAJOR).$(MINOR)
 
-LIB = lib$(NAME).so.$(VERSION)
-STATIC = lib$(NAME).a
-TEST = testqv
-
 # Using cygwin -std=gnu++11 should be used rather than -std=c++11
 ifeq ($(CXX),g++)
-CXXFLAGS = -fPIC -Wall -std=gnu++11 -march=native
+CXXFLAGS = -Wall -march=native
 OPT = -O3
 else
 CXXFLAGS = -Wall -std=c++11 -xHOST
@@ -17,6 +13,21 @@ OPT = -O3 -ipo -no-prec-div
 B_OPT = $(OPT)
 AR = xiar
 endif
+
+uname_S := $(shell sh -c 'uname -s 2>/dev/null || echo not')
+uname_M := $(shell sh -c 'uname -m 2>/dev/null || echo not')
+uname_O := $(shell sh -c 'uname -o 2>/dev/null || echo not')
+
+ifeq ($(uname_O),Cygwin)
+	CXXFLAGS += -std=gnu++11
+endif
+ifeq ($(uname_S),Linux)
+	CXXFLAGS += -std=gnu++11 -fPIC
+endif
+
+LIB = lib$(NAME).so.$(VERSION)
+STATIC = lib$(NAME).a
+TEST = testqv
 
 LDFLAGS = -shared -Wl,-soname,$(LIB)
 
@@ -114,6 +125,11 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc $(INC_DIR)/%.h
 
 $(OBJ_DIR)/%.o: $(TEST_DIR)/%.cc
 	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -c $< -o $@
+
+$(OBJS): | $(OBJ_DIR)
+
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
 
 clean:
 	$(RM) *.o *~ $(MAIN) $(OBJ_DIR)/*.o $(LIB) $(STATIC) $(TEST)

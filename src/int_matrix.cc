@@ -3,7 +3,22 @@
 #include <algorithm>
 #include <functional>
 #include <sstream>
-
+/*
+ * Cygwin std libc++ is broken and does not contain std::stoi.
+ * There are some possible workarounds online involving modifying the lib
+ * headers to remove the define guards preventing the function being declared.
+ * However I could not get these to work, so instead specify a preprocessor
+ * definition in the Makefile if running on Cygwin which enable the following
+ * definition of std::stoi using the old fashioned strtol method.
+ */
+#ifdef CYGWIN_STOI
+#include <cstdlib>
+namespace std {
+int stoi(const std::string & s) {
+	return (int)strtol(s.c_str(),nullptr,10);
+}
+}
+#endif
 namespace cluster {
 
 	IntMatrix::IntMatrix() : num_rows_(0), num_cols_(0), data_(0), hashcode_(113) {}

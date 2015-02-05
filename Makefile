@@ -19,7 +19,7 @@ uname_M := $(shell sh -c 'uname -m 2>/dev/null || echo not')
 uname_O := $(shell sh -c 'uname -o 2>/dev/null || echo not')
 
 ifeq ($(uname_O),Cygwin)
-	CXXFLAGS += -std=gnu++11
+	CXXFLAGS += -std=gnu++11 -DCYGWIN_STOI
 endif
 ifeq ($(uname_S),Linux)
 	CXXFLAGS += -std=gnu++11 -fPIC

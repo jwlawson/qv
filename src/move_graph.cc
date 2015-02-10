@@ -48,8 +48,9 @@ MoveGraph<M>::_GraphLoader & MoveGraph<M>::_GraphLoader::operator++(){
 				app_it != applicable.end(); ++app_it) {
 			UMatrixPtr new_matrix(new M(_size, _size));
 			move_it->move(*app_it, *new_matrix);
-			if (have_seen(new_matrix)) {
-				seen_matrix(new_matrix, mat);
+			typename GraphMap::const_iterator seen = _graph._map.find(new_matrix);
+			if (seen != _graph._map.end()) {
+				seen_matrix(seen, mat);
 				delete new_matrix;
 			} else {
 				unseen_matrix(new_matrix, mat);
@@ -59,14 +60,11 @@ MoveGraph<M>::_GraphLoader & MoveGraph<M>::_GraphLoader::operator++(){
 	return *this;
 }
 template<class M>
-bool MoveGraph<M>::_GraphLoader::have_seen(const UMatrixPtr & new_mat) {
-	return _graph._map.find(new_mat) != _graph._map.end();
-}
-template<class M>
-void MoveGraph<M>::_GraphLoader::seen_matrix(const UMatrixPtr & new_mat,
+void MoveGraph<M>::_GraphLoader::seen_matrix(
+		const typename GraphMap::const_iterator & new_mat,
 		MatrixPtr old_mat) {
-	_graph._map[new_mat].add_link(old_mat);
-	_graph._map[old_mat].add_link(new_mat);
+	_graph._map[new_mat->first].add_link(old_mat);
+	_graph._map[old_mat].add_link(new_mat->first);
 }
 template<class M>
 void MoveGraph<M>::_GraphLoader::unseen_matrix(const UMatrixPtr & new_mat,

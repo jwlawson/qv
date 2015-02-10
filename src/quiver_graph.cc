@@ -41,6 +41,7 @@ QuiverGraph<M>::_GraphLoader & QuiverGraph<M>::_GraphLoader::operator++(){
 			mat->mutate(i, *new_matrix);
 			if (have_seen(new_matrix)) {
 				seen_matrix(new_matrix, mat, i);
+				delete new_matrix;
 			} else {
 				if (new_matrix->is_infinite()) {
 					_end = true;
@@ -67,12 +68,12 @@ bool QuiverGraph<M>::_GraphLoader::mutate_at(const MatrixPtr & old_mat, int vert
 template<class M>
 void QuiverGraph<M>::_GraphLoader::seen_matrix(const UMatrixPtr & new_mat,
 		MatrixPtr old_mat, int vertex) {
-	if(_graph._map[old_mat][vertex] == nullptr) {
-		_graph._map[old_mat][vertex] = new_mat;
-	}
 	auto ref = _graph._map.find(new_mat);
 	if(ref != _graph._map.end() && IntMatrix::are_equal(*new_mat, *(ref->first))) {
 		_graph._map[new_mat][vertex] = old_mat;
+	}
+	if(_graph._map[old_mat][vertex] == nullptr) {
+		_graph._map[old_mat][vertex] = ref->first;
 	}
 }
 template<class M>

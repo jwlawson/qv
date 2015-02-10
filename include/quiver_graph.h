@@ -31,16 +31,28 @@ namespace cluster {
 
 template<class Matrix>
 class QuiverGraph {
+	public:
+		typedef Matrix* MatrixPtr;
+		typedef MatrixPtr UMatrixPtr;
 	private:
 		class _GraphLoader;
 		class _Link;
+		struct PtrEqual {
+			bool operator()( const UMatrixPtr & lhs, const UMatrixPtr & rhs) const {
+				return lhs->equals(*rhs);
+			}
+		};
+		struct PtrHash {
+			size_t operator()(const UMatrixPtr & ptr) const {
+				return ptr->hash();
+			}
+		};
 
 	public:
 		typedef _GraphLoader loader;
-		typedef Matrix* MatrixPtr;
-		typedef MatrixPtr UMatrixPtr;
 		typedef _Link Link;
 		typedef std::pair<Matrix, Link> value_type;
+		typedef std::unordered_map<UMatrixPtr, Link, PtrHash, PtrEqual> GraphMap;
 
 		QuiverGraph() = default;
 		QuiverGraph(const Matrix & mat);
@@ -49,10 +61,12 @@ class QuiverGraph {
 				delete it->first;
 			}
 		}
+		const typename GraphMap::const_iterator begin() const { return _map.begin(); }
+		const typename GraphMap::const_iterator end() const { return _map.end(); }
 
 	private:
 		const Matrix & _matrix;
-		std::unordered_map<UMatrixPtr, Link> _map;
+		GraphMap _map;
 		std::deque<MatrixPtr> _queue;
 
 		class _GraphLoader {
@@ -88,7 +102,13 @@ class QuiverGraph {
 				const MatrixPtr _matrix;
 
 				MatrixPtr & operator[](int i) { return _links[i]; }
-				const MatrixPtr operator[](int i) const { return _links[i]; }
+				const MatrixPtr & operator[](int i) const { return _links[i]; }
+				const typename std::vector<MatrixPtr>::const_iterator begin() const {
+					return _links.begin();
+				}
+				const typename std::vector<MatrixPtr>::const_iterator end() const {
+					return _links.end();
+				}
 
 			private:
 				std::vector<MatrixPtr> _links;

@@ -17,6 +17,7 @@
  */
 #include "move_graph.h"
 
+#include <algorithm>
 #include "gtest/gtest.h"
 
 namespace cluster {
@@ -28,9 +29,18 @@ MMIMove make_move(const std::string& a,
 	return MMIMove( cluster::IntMatrix(a), cluster::IntMatrix(b),
 			std::vector<int>(c), std::vector<cluster::MMIMove::ConnReq>(r));
 }
+struct graph_contains {
+	graph_contains(const EquivQuiverMatrix & m) : _matrix(m) {}
+	bool operator()(const std::pair<cluster::EquivQuiverMatrix* const,
+			cluster::MoveGraph<cluster::EquivQuiverMatrix>::Link> pair) {
+		return _matrix.equals(*pair.first);
+	}
+	private:
+		const EquivQuiverMatrix & _matrix;
+};
 }
 using namespace cluster::mmi_conn;
-TEST(MoveGraph, Simple) {
+TEST(MoveGraph, SingleMoveAppliesOnce) {
 	auto move = make_move("{ { 0 1 0 } { -1 0 1 } { 0 -1 0 } }",
 			"{ { 0 -1 1 } { 1 0 -1 } { -1 1 0 } }", {0, 2}, {Unconnected(), Line()});
 	IntMatrix init("{ { 0 2 -1 0 0 0 } { -2 0 1 0 0 0 } { 1 -1 0 1 0 1 } "
@@ -38,14 +48,53 @@ TEST(MoveGraph, Simple) {
 	std::vector<MMIMove> vec = { move };
 
 	MoveGraph<EquivQuiverMatrix> graph(init, vec);
+	int count_matrix = 0;
 	for( auto iter = graph.begin(); iter != graph.end(); ++iter) {
-		std::cout << *iter->first << "-> {" << std::endl;
+		count_matrix++;
+		int count_links = 0;
 		for( auto l_iter = iter->second.begin(); l_iter != iter->second.end();
 				++l_iter ) {
-			std::cout << **l_iter << std::endl;
+			count_links++;
 		}
-		std::cout << "}---" <<std::endl;
+		EXPECT_EQ(1,count_links);
 	}
+	EXPECT_EQ(2,count_matrix);
+}
+TEST(MoveGraph, SingleMoveAppliesTwice) {
+	auto move = make_move("{ { 0 1 0 } { -1 0 1 } { 0 -1 0 } }",
+			"{ { 0 -1 1 } { 1 0 -1 } { -1 1 0 } }", {0, 2}, {Unconnected(), Line()});
+	IntMatrix init("{ { 0 1 0 0 } { -1 0 1 0 } { 0 -1 0 1 } { 0 0 -1 0 } }");
+	std::vector<MMIMove> vec = { move };
+
+	MoveGraph<EquivQuiverMatrix> graph(init, vec);
+
+	int count_matrix = 0;
+	for(auto iter = graph.begin(); iter != graph.end(); ++iter) {
+		count_matrix++;
+	}
+	EXPECT_EQ(5,count_matrix);
+
+	EquivQuiverMatrix m("{ { 0 1 0 0 } { -1 0 1 0 } { 0 -1 0 1 } { 0 0 -1 0 } }");
+	EquivQuiverMatrix n("{ { 0 -1 1 0 } { 1 0 -1 0 } { -1 1 0 1 } { 0 0 -1 0 } }");
+	EquivQuiverMatrix p("{ { 0 1 0 0 } { -1 0 -1 1 } { 0 1 0 -1 } { 0 -1 1 0 } }");
+	EquivQuiverMatrix q("{ { 0 1 0 0 } { -1 0 0 -1 } { 0 0 0 1 } { 0 1 -1 0 } }");
+	EquivQuiverMatrix r("{ { 0 1 -1 0 } { -1 0 0 0 } { 1 0 0 1 } { 0 0 -1 0 } }");
+
+	EXPECT_TRUE(std::find_if(graph.begin(), graph.end(), graph_contains(m))
+			!= graph.end());
+
+	EXPECT_TRUE(std::find_if(graph.begin(), graph.end(), graph_contains(n))
+			!= graph.end());
+
+	EXPECT_TRUE(std::find_if(graph.begin(), graph.end(), graph_contains(p))
+			!= graph.end());
+
+	EXPECT_TRUE(std::find_if(graph.begin(), graph.end(), graph_contains(q))
+			!= graph.end());
+
+	EXPECT_TRUE(std::find_if(graph.begin(), graph.end(), graph_contains(r))
+			!= graph.end());
+
 }
 }
 

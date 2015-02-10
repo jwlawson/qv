@@ -86,18 +86,13 @@ class MoveGraph {
 				bool _end = false;
 				int _size;
 
-				bool have_seen(const UMatrixPtr & new_mat);
-				void seen_matrix(const UMatrixPtr & new_mat, MatrixPtr old_mat);
+				void seen_matrix(const typename GraphMap::const_iterator & new_mat,
+						MatrixPtr old_mat);
 				void unseen_matrix(const UMatrixPtr & new_mat, MatrixPtr old_mat);
 		};
 
 		class _Link {
 			private:
-				struct PtrHash {
-					size_t operator()(const MatrixPtr & ptr) const {
-						return ptr->hash();
-					}
-				};
 				typedef std::unordered_set<MatrixPtr, PtrHash, PtrEqual> Set;
 			public:
 				_Link() : _matrix(nullptr) {};

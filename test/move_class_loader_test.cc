@@ -3,6 +3,7 @@
  */
 #include "gtest/gtest.h"
 
+#include "consts.h"
 #include "move_class_loader.h"
 
 namespace cluster {
@@ -140,5 +141,17 @@ namespace cluster {
 		EXPECT_EQ(1, loader.depth().moves_);
 		EXPECT_EQ(3, loader.depth().sinksource_);
 	}
+	/*
+	TEST(MoveClassLoader, LargeClass) {
+		std::shared_ptr<EquivQuiverMatrix> init = std::make_shared<EquivQuiverMatrix>(
+				"{ { 0 1 0 0 0 0 0 0 0 } { -1 0 1 0 0 0 -1 0 0 } { 0 -1 0 1 -1 0 1 0 -1 } { 0 0 -1 0 1 0 0 0 1 } { 0 0 1 -1 0 1 -1 0 0 } { 0 0 0 0 -1 0 1 -1 0 } { 0 1 -1 0 1 -1 0 1 0 } { 0 0 0 0 0 1 -1 0 0 } { 0 0 1 -1 0 0 0 0 0 } }");
+
+		MoveClassLoader loader(init, qv::consts::Moves);
+		while(loader.has_next()) {
+			std::cout << *loader.next() << std::endl;
+			std::cout << "depth: " << loader.depth().moves_ << " ss: " << loader.depth().sinksource_ << std::endl;
+		}
+	}
+	*/
 }
 

@@ -72,29 +72,16 @@ TEST(MoveGraph, SingleMoveAppliesTwice) {
 	for(auto iter = graph.begin(); iter != graph.end(); ++iter) {
 		count_matrix++;
 	}
-	EXPECT_EQ(5,count_matrix);
+	EXPECT_EQ(2,count_matrix);
 
 	EquivQuiverMatrix m("{ { 0 1 0 0 } { -1 0 1 0 } { 0 -1 0 1 } { 0 0 -1 0 } }");
-	EquivQuiverMatrix n("{ { 0 -1 1 0 } { 1 0 -1 0 } { -1 1 0 1 } { 0 0 -1 0 } }");
-	EquivQuiverMatrix p("{ { 0 1 0 0 } { -1 0 -1 1 } { 0 1 0 -1 } { 0 -1 1 0 } }");
-	EquivQuiverMatrix q("{ { 0 1 0 0 } { -1 0 0 -1 } { 0 0 0 1 } { 0 1 -1 0 } }");
-	EquivQuiverMatrix r("{ { 0 1 -1 0 } { -1 0 0 0 } { 1 0 0 1 } { 0 0 -1 0 } }");
+	EquivQuiverMatrix p("{ { 0 -1 0 0 } { 1 0 -1 1 } { 0 1 0 -1 } { 0 -1 1 0 } }");
 
 	EXPECT_TRUE(std::find_if(graph.begin(), graph.end(), graph_contains(m))
 			!= graph.end());
 
-	EXPECT_TRUE(std::find_if(graph.begin(), graph.end(), graph_contains(n))
-			!= graph.end());
-
 	EXPECT_TRUE(std::find_if(graph.begin(), graph.end(), graph_contains(p))
 			!= graph.end());
-
-	EXPECT_TRUE(std::find_if(graph.begin(), graph.end(), graph_contains(q))
-			!= graph.end());
-
-	EXPECT_TRUE(std::find_if(graph.begin(), graph.end(), graph_contains(r))
-			!= graph.end());
-
 }
 }
 

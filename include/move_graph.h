@@ -70,6 +70,9 @@ class MoveGraph {
 		std::deque<MatrixPtr> _queue;
 		MoveVec _moves;
 
+		UMatrixPtr ss_move_equiv(UMatrixPtr mat);
+		void add_ss_equiv(UMatrixPtr mat);
+
 		class _GraphLoader {
 			public:
 				_GraphLoader() = default;
@@ -86,8 +89,7 @@ class MoveGraph {
 				bool _end = false;
 				int _size;
 
-				void seen_matrix(const typename GraphMap::const_iterator & new_mat,
-						MatrixPtr old_mat);
+				void seen_matrix(UMatrixPtr new_mat, UMatrixPtr old_mat);
 				void unseen_matrix(const UMatrixPtr & new_mat, MatrixPtr old_mat);
 		};
 

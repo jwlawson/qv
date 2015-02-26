@@ -18,6 +18,7 @@
 #include "move_graph.h"
 
 #include "equiv_quiver_matrix.h"
+#include "ss_move.h"
 
 namespace cluster {
 namespace {
@@ -28,7 +29,7 @@ template<class M>
 MoveGraph<M>::MoveGraph(const M & mat, MoveVec moves)
 		: _matrix(mat), _moves(std::move(moves)) {
 	UMatrixPtr m(new M(mat));
-	_queue.push_back(m);
+	add_ss_equiv(m);
 	_map.emplace(m, Link(_queue.front()));
 	_GraphLoader l(*this);
 	while(!_queue.empty() && !l.end()) {
@@ -37,8 +38,9 @@ MoveGraph<M>::MoveGraph(const M & mat, MoveVec moves)
 }
 template<class M> typename
 MoveGraph<M>::_GraphLoader & MoveGraph<M>::_GraphLoader::operator++(){
-	MatrixPtr mat = _graph._queue.front();
+	UMatrixPtr mat = _graph._queue.front();
 	_graph._queue.pop_front();
+	UMatrixPtr in_map = _graph.ss_move_equiv(mat);
 	for (auto move_it = _graph._moves.begin();
 			move_it != _graph._moves.end();
 			++move_it) {
@@ -48,23 +50,26 @@ MoveGraph<M>::_GraphLoader & MoveGraph<M>::_GraphLoader::operator++(){
 				app_it != applicable.end(); ++app_it) {
 			UMatrixPtr new_matrix(new M(_size, _size));
 			move_it->move(*app_it, *new_matrix);
-			typename GraphMap::const_iterator seen = _graph._map.find(new_matrix);
-			if (seen != _graph._map.end()) {
-				seen_matrix(seen, mat);
+			UMatrixPtr seen_map = _graph.ss_move_equiv(new_matrix);
+			if (seen_map) {
+				seen_matrix(seen_map, in_map);
 				delete new_matrix;
 			} else {
-				unseen_matrix(new_matrix, mat);
+				unseen_matrix(new_matrix, in_map);
 			}
 		}
+	}
+	if(in_map != mat) {
+		delete mat;
 	}
 	return *this;
 }
 template<class M>
 void MoveGraph<M>::_GraphLoader::seen_matrix(
-		const typename GraphMap::const_iterator & new_mat,
-		MatrixPtr old_mat) {
-	_graph._map[new_mat->first].add_link(old_mat);
-	_graph._map[old_mat].add_link(new_mat->first);
+		UMatrixPtr new_mat,
+		UMatrixPtr old_mat) {
+	_graph._map[new_mat].add_link(old_mat);
+	_graph._map[old_mat].add_link(new_mat);
 }
 template<class M>
 void MoveGraph<M>::_GraphLoader::unseen_matrix(const UMatrixPtr & new_mat,
@@ -72,7 +77,75 @@ void MoveGraph<M>::_GraphLoader::unseen_matrix(const UMatrixPtr & new_mat,
 	_graph._map.emplace(std::pair<MatrixPtr, Link>(new_mat, Link(new_mat)));
 	_graph._map[new_mat].add_link(old_mat);
 	_graph._map[old_mat].add_link(new_mat);
-	_graph._queue.push_back(new_mat);
+	_graph.add_ss_equiv(new_mat);
+}
+template<class M>
+void MoveGraph<M>::add_ss_equiv(UMatrixPtr new_mat) {
+	typedef std::unordered_set<UMatrixPtr, PtrHash, PtrEqual> Set;
+	Set to_add;
+	std::deque<UMatrixPtr> queue;
+	queue.push_back(new_mat);
+	to_add.insert(new_mat);
+	SSMove move;
+	while(!queue.empty()) {
+		UMatrixPtr mat = queue.front();
+		queue.pop_front();
+		auto applicable = move.applicable_submatrices(*mat);
+		for(auto it = applicable.begin();
+				it != applicable.end();
+				++it) {
+			UMatrixPtr pt = new M(mat->num_rows(),mat->num_cols());
+			move.move(*it, *pt);
+			auto ins = to_add.insert(pt);
+			if(ins.second) {
+				_queue.push_back(pt);
+				queue.push_back(pt);
+			} else {
+				delete pt;
+			}
+		}
+	}
+}
+template<class M>
+typename MoveGraph<M>::UMatrixPtr MoveGraph<M>::ss_move_equiv(UMatrixPtr chk_mat) {
+	auto ref = _map.find(chk_mat);
+	if(ref != _map.end()) {
+		return ref->first;
+	}
+	typedef std::unordered_set<UMatrixPtr, PtrHash, PtrEqual> Set;
+	Set found;
+	std::deque<UMatrixPtr> queue;
+	queue.push_back(chk_mat);
+	found.insert(chk_mat);
+	SSMove move;
+	UMatrixPtr result = nullptr;
+	while(!queue.empty()) {
+		UMatrixPtr mat = queue.front();
+		queue.pop_front();
+		auto applicable = move.applicable_submatrices(*mat);
+		for(auto it = applicable.begin();
+				!result && it != applicable.end();
+				++it) {
+			UMatrixPtr pt = new M(mat->num_rows(),mat->num_cols());
+			move.move(*it, *pt);
+			auto ins = found.insert(pt);
+			if(ins.second) {
+				auto in_map = _map.find(pt);
+				if(in_map != _map.end()) {
+					result = in_map->first;
+				}
+				queue.push_back(pt);
+			} else {
+				delete pt;
+			}
+		}
+	}
+	for(auto i = found.begin(); i != found.end(); ++i) {
+		if(*i != chk_mat) {
+			delete *i;
+		}
+	}
+	return result;
 }
 }
 namespace cluster {

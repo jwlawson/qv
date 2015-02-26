@@ -335,19 +335,5 @@ namespace mmi_conn {
 		}
 		return isLine(sub, n, next);
 	}
-	bool None::operator()(const Submatrix& sub, int connection) const {
-		for(int i = 0; i < sub.matrix_->num_cols(); i++) {
-			if(std::find(sub.submatrix_->begin(), sub.submatrix_->end(), i)
-					!= sub.submatrix_->end()) {
-				/* i is inside the submatrix. */
-				continue;
-			}
-			if(sub.matrix_->get(connection, i) != 0) {
-				/* Arrow from connection outside the submatrix. */
-				return false;
-			}
-		}
-		return true;
-	}
 }
 }

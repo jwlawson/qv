@@ -84,13 +84,6 @@ namespace mmi_conn {
 		int sub_conn_;
 		bool isLine(const Submatrix& sub, int next, int prev) const;
 	};
-	/**
-	 * Functor that returns true if the connection has no arrows outside the
-	 * submatrix.
-	 */
-	struct None {
-		bool operator()(const Submatrix& sub, int conenction) const;
-	};
 }
 class MMIMove {
 

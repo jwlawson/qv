@@ -108,9 +108,21 @@ namespace cluster {
 						mmi_conn::Submatrix s(matrix, sub, std::move((*perm)[k]));
 						if(check_connections(s)) {
 							if(a) {
-								result.emplace_back(s, matb_);
+								if(a_fin_) {
+									if(a_fin_(s)) {
+										result.emplace_back(s, matb_);
+									}
+								} else {
+									result.emplace_back(s, matb_);
+								}
 							} else {
-								result.emplace_back(s, mata_);
+								if(b_fin_) {
+									if(b_fin_(s)){
+										result.emplace_back(s, mata_);
+									}
+								} else {
+									result.emplace_back(s, mata_);
+								}
 							}
 						}
 					}

@@ -4,6 +4,7 @@
 #include "gtest/gtest.h"
 
 #include "mmi_move.h"
+#include "mutation_class.h"
 
 namespace cluster {
 
@@ -883,6 +884,17 @@ namespace {
 	std::shared_ptr<cluster::EquivQuiverMatrix> matrix(const std::string& a) {
 		return std::make_shared<cluster::EquivQuiverMatrix>(a);
 	}
+	template<typename F>
+	std::shared_ptr<cluster::MMIMove> make_move(const std::string& a,
+			const std::string& b, std::initializer_list<int> c,
+			std::initializer_list<cluster::MMIMove::ConnReq> r,
+			cluster::mmi_conn::Finite<F> atob) {
+		auto res = std::make_shared<cluster::MMIMove>(
+				cluster::IntMatrix(a), cluster::IntMatrix(b),
+				std::vector<int>(c), std::vector<cluster::MMIMove::ConnReq>(r));
+		res->finite_req_atob(atob);
+		return res;
+	}
 }
 using namespace cluster::mmi_conn;
 TEST(MMIMove, SimpleMoveApplicableToDouble) {
@@ -900,6 +912,27 @@ TEST(MMIMove, MixOfLineAndConnectedTo) {
 			{0, 1, 5}, {ConnectedTo(5), Line(), ConnectedTo(0)});
 	IntMatrix init("{ { 0 1 0 0 0 0 0 0 0 } { -1 0 1 0 0 0 0 0 -1 } { 0 -1 0 1 0 0 -1 0 0 } { 0 0 -1 0 1 -1 1 0 1 } { 0 0 0 -1 0 1 0 0 0 } { 0 0 0 1 -1 0 0 0 -1 } { 0 0 1 -1 0 0 0 1 0 } { 0 0 0 0 0 0 -1 0 0 } { 0 1 0 -1 0 1 0 0 0 } }");
 	AVec app = move->applicable_submatrices(init);
+	ASSERT_FALSE(app.empty());
+}
+namespace {
+	struct FiniteCheck {
+		bool operator()(EquivQuiverMatrix & mat) {
+			MutationClass cl(mat);
+			std::cout << mat << std::endl;
+			return cl.is_finite();
+		}
+	};
+	typedef mmi_conn::Finite<FiniteCheck> FinReq;
+}
+TEST(MMIMove, FiniteReqIsAppl) {
+	auto move = make_move("{ { 0 1 0 } { -1 0 1 } { 0 -1 0 } }",
+			"{ { 0 -1 1 } { 1 0 -1 } { -1 1 0 } }", {0, 2}, {Unconnected(), Line()});
+	/* Note the zero row needed to ensure that the size is correct */
+	mmi_conn::Finite<FiniteCheck> req(EquivQuiverMatrix("{ { 0 0 1 } { 0 0 0 } { -1 0 0 } }"));
+	move->finite_req_atob(req);
+
+	EquivQuiverMatrix a("{ { 0 1 0 0 } { -1 0 1 0 } { 0 -1 0 1 } { 0 0 -1 0 } }");
+	AVec app = move->applicable_submatrices(a);
 	ASSERT_FALSE(app.empty());
 }
 }

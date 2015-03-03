@@ -1,6 +1,6 @@
 NAME = qv
 MAJOR = 0
-MINOR = 6
+MINOR = 7
 VERSION = $(MAJOR).$(MINOR)
 
 # Using cygwin -std=gnu++11 should be used rather than -std=c++11

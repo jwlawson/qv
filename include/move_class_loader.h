@@ -53,13 +53,14 @@ namespace cluster {
 			typedef std::multimap<Depth, MPtr> Queue;
 			typedef std::unordered_map<MPtr, Depth> Map;
 		public:
+			typedef std::vector<MovePtr> MoveVec;
 			/**
 			 * Create a new Loader which will start with the specified matrix and
 			 * check all possible moves in the supplied vector of moves.
 			 * @param matrix Pointer to the initial matrix.
 			 * @param moves Vector of moves to check.
 			 */
-			MoveClassLoader(const MPtr matrix, const std::vector<MovePtr>& moves,
+			MoveClassLoader(const MPtr matrix, const MoveVec & moves,
 					bool sinksource = true);
 			MoveClassLoader(MoveClassLoader&) = delete;
 			MoveClassLoader(MoveClassLoader&&) = delete;
@@ -89,7 +90,7 @@ namespace cluster {
 			/** Size of the matrix the moves are being applied to. */
 			const int size_;
 			/** Vector of the moves to check and apply. */
-			const std::vector<MovePtr>& moves_;
+			const MoveVec & moves_;
 			/** Sink source move. */
 			const SSMove ssmove_;
 			/** Queue of matrices to check moves against. */

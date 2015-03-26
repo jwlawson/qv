@@ -1,6 +1,5 @@
 /*
  * move_graph.cc
- *
  * Copyright 2015 John Lawson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

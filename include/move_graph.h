@@ -1,7 +1,6 @@
 /*
  * move_graph.h
- *
- * Copyright 2015 John Lawson
+ * Copyright 2014-2015 John Lawson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +15,9 @@
  * limitations under the License.
  */
 /**
+ * Graph containing all matrices in a move-class and the moves which link them.
+ *
+ * The matrices are considered up to sink-source mutations.
  */
 #pragma once
 
@@ -36,11 +38,13 @@ class MoveGraph {
 	private:
 		class _GraphLoader;
 		class _Link;
+		/** Checks whether the matrices are equal, rather than the pointers */
 		struct PtrEqual {
 			bool operator()( const UMatrixPtr & lhs, const UMatrixPtr & rhs) const {
 				return lhs->equals(*rhs);
 			}
 		};
+		/** Gets the matrix hash */
 		struct PtrHash {
 			size_t operator()(const UMatrixPtr & ptr) const {
 				return ptr->hash();
@@ -54,7 +58,18 @@ class MoveGraph {
 		typedef std::unordered_map<UMatrixPtr, Link, PtrHash,
 							PtrEqual> GraphMap;
 
+		/**
+		 * Create an instance of an empty graph. With no inital matrix the graph
+		 * will never contain anything.
+		 */
 		MoveGraph() = default;
+		/**
+		 * Compute the move-class for the provided matrix which uses the moves
+		 * provided.
+		 *
+		 * All computations are done in the constructor - so once constructed the
+		 * class is fully formed, but it does take a while for the largest classes.
+		 */
 		MoveGraph(const Matrix & mat, MoveVec moves);
 		~MoveGraph() {
 			for(auto it = _map.begin(); it != _map.end(); ++it) {
@@ -65,25 +80,38 @@ class MoveGraph {
 		const typename GraphMap::const_iterator end() const { return _map.end(); }
 
 	private:
+		/** Initial matrix */
 		const Matrix & _matrix;
+		/** Map storing the links related to each matrix. */
 		GraphMap _map;
+		/** Queue of matrices to compute moves on */
 		std::deque<MatrixPtr> _queue;
+		/** Vector of all moves to use to compute the class. */
 		MoveVec _moves;
 
 		UMatrixPtr ss_move_equiv(UMatrixPtr mat);
 		void add_ss_equiv(UMatrixPtr mat);
 
+		/** 
+		 * Class which actually computes the class. cf MutationClassLoader
+		 *
+		 * Originally planned to follow the c++ iterator style, but that didn't fit
+		 * with the computations. Instead the whole class is computed by repeatedly
+		 * calling operator++ until end() returns true.
+		 *
+		 * The design is a little confused. The matrix queue should probably be a
+		 * member of _GraphLoader rather than MoveGraph.
+		 */
 		class _GraphLoader {
 			public:
 				_GraphLoader() = default;
 
 				_GraphLoader(MoveGraph & graph)
 					: _graph(graph), _size(_graph._matrix.num_rows()) {}
-
+				/** Compute all moves for the next matrix in the queue. */
 				loader & operator++();
-
+				/** Check whether the whole class is laoded. Returns true when it is. */
 				bool end() const {return _end;}
-
 			private:
 				MoveGraph & _graph;
 				bool _end = false;
@@ -92,22 +120,26 @@ class MoveGraph {
 				void seen_matrix(UMatrixPtr new_mat, UMatrixPtr old_mat);
 				void unseen_matrix(const UMatrixPtr & new_mat, MatrixPtr old_mat);
 		};
-
+		/**
+		 * Stores the edges between vertices in the graph.
+		 *
+		 * Each matrix M has one _Link associated to it, which contains references to
+		 * each matrix which is connected to M by an edge.
+		 */
 		class _Link {
 			private:
 				typedef std::unordered_set<MatrixPtr, PtrHash, PtrEqual> Set;
 			public:
 				_Link() : _matrix(nullptr) {};
 				_Link(MatrixPtr matrix) : _matrix(matrix) {}
-
+				/** Initial matrix */
 				const MatrixPtr _matrix;
+				/** Add matrix which is linked to the initial matrix. */
 				void add_link(MatrixPtr matrix) {
 					_links.insert(matrix);
 				}
 				const typename Set::const_iterator begin() const { return _links.begin(); }
 				const typename Set::const_iterator end() const { return _links.end(); }
-
-
 			private:
 				Set _links;
 		};

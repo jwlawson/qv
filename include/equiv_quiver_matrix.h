@@ -29,12 +29,11 @@ namespace cluster {
 	class EquivalenceChecker;
 
 	class EquivQuiverMatrix : public QuiverMatrix {
-		private:
+		public:
 			typedef std::vector<std::pair<int, int>> PairVector;
-			typedef std::vector<int> Permutation;
+			typedef const std::vector<int> & Permutation;
 			typedef std::vector<Permutation> PermVec;
 			typedef std::shared_ptr<PermVec> PermVecPtr;
-		public:
 			/** 
 			 * Create a default matrix of size 0.
 			 */

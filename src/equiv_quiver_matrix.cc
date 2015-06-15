@@ -21,12 +21,6 @@
 #include "array_utils.h"
 
 namespace cluster {
-	namespace {
-		typedef std::vector<std::pair<int, int>> PairVector;
-		typedef std::vector<int> Permutation;
-		typedef std::vector<Permutation> PermVec;
-		typedef std::shared_ptr<PermVec> PermVecPtr;
-	}
 	EquivQuiverMatrix::EquivQuiverMatrix()
 		: QuiverMatrix(),
 			rows_(),
@@ -128,11 +122,13 @@ namespace cluster {
 		}
 		IntMatrix::reset();
 	}
-	Permutation EquivQuiverMatrix::get_permutation(const IntMatrix& mat) const {
+	EquivQuiverMatrix::Permutation
+	EquivQuiverMatrix::get_permutation(const IntMatrix& mat) const {
 		this->equals(mat);
-		return std::move(checker_->last_row_map());
+		return checker_->last_row_map();
 	}
-	PermVecPtr EquivQuiverMatrix::all_permutations(const EquivQuiverMatrix& mat) {
+	EquivQuiverMatrix::PermVecPtr
+	EquivQuiverMatrix::all_permutations(const EquivQuiverMatrix& mat) {
 		return checker_->valid_row_maps(*this, mat);
 	}
 

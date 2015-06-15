@@ -32,7 +32,7 @@ namespace cluster {
 	class EquivalenceChecker {
 	private:
 		typedef EquivQuiverMatrix M;
-		typedef std::vector<int> Permutation;
+		typedef const std::vector<int> & Permutation;
 		typedef std::shared_ptr<std::vector<Permutation>> PermVecPtr;
 	 public:
 		 /**

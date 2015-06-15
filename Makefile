@@ -1,6 +1,6 @@
 NAME = qv
 MAJOR = 0
-MINOR = 8
+MINOR = 9
 VERSION = $(MAJOR).$(MINOR)
 
 # Using cygwin -std=gnu++11 should be used rather than -std=c++11
@@ -60,7 +60,7 @@ LFLAGS = -L$(HOME)/lib -L$(BASE_DIR)/lib
 
 # define any libraries to link into executable:
 #   if I want to link in libraries (libx.so or libx.a) use -lx
-LIBS =
+LIBS = -lginac
 TEST_LIBS = -lgtest -lgtest_main -pthread
 
 # define the C source files

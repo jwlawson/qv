@@ -31,7 +31,8 @@ namespace cluster {
 	class EquivQuiverMatrix : public QuiverMatrix {
 		public:
 			typedef std::vector<std::pair<int, int>> PairVector;
-			typedef const std::vector<int> & Permutation;
+			typedef std::vector<int> Permutation;
+			typedef const Permutation & CPermutation;
 			typedef std::vector<Permutation> PermVec;
 			typedef std::shared_ptr<PermVec> PermVecPtr;
 			/** 
@@ -109,7 +110,7 @@ namespace cluster {
 			/**
 			 * Get the permutation taking this matrix to the given equivalent matrix.
 			 */
-			Permutation get_permutation(const IntMatrix& mat) const;
+			CPermutation get_permutation(const IntMatrix& mat) const;
 			/**
 			 * Get a vector of all permutations taking this matrix to the given
 			 * equivalent matrix.

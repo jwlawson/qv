@@ -29,22 +29,33 @@
 namespace cluster {
 template<class Matrix>
 class __Seed {
+public:
 	typedef std::vector<GiNaC::ex> Cluster;
 
 	__Seed(int size)
 		: size_(size),
 		  matrix_(size, size),
-		  cluster_(size) {}
-	__Seed(const IntMatrix & mat, const std::vector<GiNaC::ex> cluster)
+		  cluster_(size) {
+		reset();
+	}
+	__Seed(const IntMatrix & mat, const std::vector<GiNaC::ex> & cluster)
 		: size_(mat.num_rows()),
 		  matrix_(mat),
-			cluster_(cluster) {}
-
+			cluster_(cluster) {
+		reset();
+	}
+	__Seed(IntMatrix && mat, Cluster && cluster)
+		: size_(mat.num_rows()),
+		  matrix_(mat),
+			cluster_(cluster) {
+		reset();
+	}
 	/**
 	 * Always call reset after changing the seed in any way. This ensures that the
 	 * hascode produced actually corresponds to the data in the seed.
 	 */
-	void reset() {
+	void
+	reset() {
 		matrix_.reset();
 		hashcode_ = compute_hash();
 	}
@@ -54,42 +65,46 @@ class __Seed {
 	 * @param k Vertex to mutate at
 	 * @param result Matrix to store result in
 	 */
-	void mutate(const int k, __Seed<Matrix> & result) const {
-		mutate_cluster(k, result);
+	void
+	mutate(const int k, __Seed<Matrix> & result) const {
+		mutate_cluster(k, result.cluster_);
 		matrix_.mutate(k, result.matrix_);
 		result.reset();
 	}
 	/** Return the hash code for this seed. */
-	size_t hash() const {
+	size_t
+	hash() const {
 		return hashcode_;
 	}
 	/** Check whether the given seed is equivalent to this. */
-	bool equals(const __Seed<Matrix> & seed) const;
+	bool
+	equals(const __Seed<Matrix> & seed) const;
 	/** Return the number of variables in the seed. */
-	size_t size() const {
+	size_t
+	size() const {
 		return size_;
 	}
-	private:
-		size_t size_;
-		Matrix matrix_;
-		Cluster cluster_;
-		size_t hashcode_;
+	template<class M>
+	friend std::ostream &
+	operator<<(std::ostream & os, const __Seed<M> & seed);
+private:
+	size_t size_;
+	Matrix matrix_;
+	Cluster cluster_;
+	size_t hashcode_;
 
-		size_t compute_hash() const;
-		void mutate_cluster(const int k, Cluster & result) const;
-
+	size_t
+	compute_hash() const;
+	void
+	mutate_cluster(const int k, Cluster & result) const;
 };
-
-typedef __Seed<EquivQuiverMatrix> Seed;
-typedef __Seed<QuiverMatrix> LabelledSeed;
-
 template<class Matrix>
 void
 __Seed<Matrix>::mutate_cluster(const int k, Cluster & result) const {
 	GiNaC::ex pos = 1;
 	GiNaC::ex neg = 1;
 	/* Get pointer to mutating row in matrix */
-	int* data = matrix_.data() + (k * size_);
+	const int* data = matrix_.data() + (k * size_);
 
 	for(size_t j = 0; j < size_; j++){
 		if(*data > 0){
@@ -105,5 +120,18 @@ __Seed<Matrix>::mutate_cluster(const int k, Cluster & result) const {
 	}
 	result[k] = (pos+neg)/cluster_[k];
 }
+template<class Matrix>
+std::ostream &
+operator<<(std::ostream & os, const __Seed<Matrix> & seed) {
+	os << "{ ";
+	for(size_t i = 0; i < seed.size_; ++i) {
+		os << seed.cluster_[i] << " ";
+	}
+	os << "} " << seed.matrix_;
+	return os;
+}
+
+typedef __Seed<EquivQuiverMatrix> Seed;
+typedef __Seed<QuiverMatrix> LabelledSeed;
 }
 

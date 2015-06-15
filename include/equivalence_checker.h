@@ -32,7 +32,7 @@ namespace cluster {
 	class EquivalenceChecker {
 	private:
 		typedef EquivQuiverMatrix M;
-		typedef const std::vector<int> & Permutation;
+		typedef std::vector<int> Permutation;
 		typedef std::shared_ptr<std::vector<Permutation>> PermVecPtr;
 	 public:
 		 /**
@@ -56,9 +56,11 @@ namespace cluster {
 		 * @param rhs Second matrix
 		 * @return true if matrices are equivalent
 		 */
-		bool are_equivalent(const M &lhs, const M &rhs);
+		bool
+		are_equivalent(const M &lhs, const M &rhs);
 		/** Get the mapping used in last equals check. */
-		Permutation last_row_map() { return last_row_map_; }
+		const Permutation &
+		last_row_map() { return last_row_map_; }
 		/**
 		 * Get all valid permutations from lhs to rhs.
 		 *
@@ -69,11 +71,13 @@ namespace cluster {
 		 * @param rhs Matrix to get permutations to
 		 * @return vector of vectors representing the permutations
 		 */
-		PermVecPtr valid_row_maps(const M& lhs, const M& rhs);
+		PermVecPtr
+		valid_row_maps(const M& lhs, const M& rhs);
 		/**
 		 * Allocation operator.
 		 */
-		EquivalenceChecker& operator=(EquivalenceChecker mat);
+		EquivalenceChecker&
+		operator=(EquivalenceChecker mat);
 		/**
 		 * Swap function used in allocating. Swaps each of the private data members.
 		 */
@@ -121,25 +125,30 @@ namespace cluster {
 		std::vector<int> b_row_vals_;
 
 		/** Check whether the rows of the matrices match. */
-		bool do_rows_match(const M& a, const M& b);
+		bool
+		do_rows_match(const M& a, const M& b);
 		/** Check whether the row/column sums match. */
-		bool sums_equivalent(const M& a, const M& b) const;
+		bool
+		sums_equivalent(const M& a, const M& b) const;
 		/** 
 		 * Convenience method to check if two int vectors contain the same numbers
 		 * in different orders.
 		 */
-		bool arrays_equivalent(const std::vector<int>& a,
+		bool
+		arrays_equivalent(const std::vector<int>& a,
 				const std::vector<int>& b) const;
 		/**
 		 * Check whether the two matrices are permutations by considering the
 		 * mappings calculated earlier. Uses recursion on the index.
 		 */
-		bool check_perm(Permutation& row_map, int index, const M& a, const M& b);
+		bool
+		check_perm(Permutation & row_map, int index, const M& a, const M& b);
 		/**
 		 * Run through all permutations and add any valid ones to the PermVecPtr
 		 * parameter.
 		 */
-		void all_perms(Permutation& row_map, int index, const M& a, const M& b,
+		void
+		all_perms(Permutation & row_map, int index, const M& a, const M& b,
 				PermVecPtr perms);
 	};
 }

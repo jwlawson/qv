@@ -21,12 +21,6 @@
 #include "array_utils.h"
 
 namespace cluster {
-	namespace {
-		typedef EquivQuiverMatrix M;
-		typedef std::vector<int> Permutation;
-		typedef std::shared_ptr<std::vector<Permutation>> PermVecPtr;
-	}
-
 	std::weak_ptr<EquivalenceChecker> EquivalenceChecker::instance_ = 
 		std::make_shared<EquivalenceChecker>();
 
@@ -59,7 +53,8 @@ namespace cluster {
 			a_row_vals_(size_),
 			b_row_vals_(size_){}
 
-	bool EquivalenceChecker::are_equivalent(const M& a, const M& b) {
+	bool
+	EquivalenceChecker::are_equivalent(const M& a, const M& b) {
 		if(a.num_rows() != b.num_rows() ) {
 			return false;
 		}
@@ -87,7 +82,8 @@ namespace cluster {
 		bool result = check_perm(last_row_map_, 0, a, b);
 		return result;
 	}
-	PermVecPtr EquivalenceChecker::valid_row_maps(const M& lhs, const M& rhs){
+	EquivalenceChecker::PermVecPtr
+	EquivalenceChecker::valid_row_maps(const M& lhs, const M& rhs){
 		PermVecPtr result = std::make_shared<std::vector<Permutation>>();
 		maps_.reset();
 		bool rows_match = do_rows_match(lhs, rhs);
@@ -97,14 +93,15 @@ namespace cluster {
 		all_perms(last_row_map_, 0, lhs, rhs, result);
 		return result;
 	}
-	EquivalenceChecker& EquivalenceChecker::operator=(EquivalenceChecker mat) {
+	EquivalenceChecker &
+	EquivalenceChecker::operator=(EquivalenceChecker mat) {
 		swap(*this, mat);
 		return *this;
 	}
 
 	/* Private methods */
-
-	bool EquivalenceChecker::do_rows_match(const M& a, const M& b) {
+	bool
+	EquivalenceChecker::do_rows_match(const M& a, const M& b) {
 		bool rows_match = true;
 		for (int a_ind = 0; a_ind < size_ && rows_match; a_ind++) {
 			int inRow = std::count(b.rows_.begin(), b.rows_.end(), a.rows_[a_ind]);
@@ -125,18 +122,18 @@ namespace cluster {
 		}
 		return rows_match;
 	}
-
-	bool EquivalenceChecker::sums_equivalent(const M& a, const M& b) const {
+	bool
+	EquivalenceChecker::sums_equivalent(const M& a, const M& b) const {
 		return std::is_permutation(a.rows_.begin(), a.rows_.end(), b.rows_.begin())
 			&& std::is_permutation(a.cols_.begin(), a.cols_.end(), b.cols_.begin());
 	}
-
-	bool EquivalenceChecker::arrays_equivalent(const std::vector<int>& a,
+	bool
+	EquivalenceChecker::arrays_equivalent(const std::vector<int>& a,
 	    const std::vector<int>& b) const {
 		return std::is_permutation(a.begin(), a.end(), b.begin());
 	}
-
-	bool EquivalenceChecker::check_perm(std::vector<int>& row_map, int index,
+	bool
+	EquivalenceChecker::check_perm(Permutation & row_map, int index,
 			const M& a, const M& b) {
 		bool result = false;
 		if(index == size_) {
@@ -174,7 +171,8 @@ namespace cluster {
 		}
 		return result;
 	}
-	void EquivalenceChecker::all_perms(Permutation& row_map, int index,
+	void
+	EquivalenceChecker::all_perms(Permutation & row_map, int index,
 			const M& a, const M& b, PermVecPtr perms) {
 		if(index == size_) {
 			/* Compute. Row_map contains a complete permutation, that is each index
@@ -211,10 +209,8 @@ namespace cluster {
 			}
 		}
 	}
-
-	/* Friends. */
-
-	void swap(EquivalenceChecker& f, EquivalenceChecker& s) {
+	void
+	swap(EquivalenceChecker& f, EquivalenceChecker& s) {
 		using std::swap;
 		swap(f.ap_, s.ap_);
 		swap(f.pb_, s.pb_);

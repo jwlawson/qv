@@ -122,7 +122,7 @@ namespace cluster {
 		}
 		IntMatrix::reset();
 	}
-	EquivQuiverMatrix::Permutation
+	EquivQuiverMatrix::CPermutation
 	EquivQuiverMatrix::get_permutation(const IntMatrix& mat) const {
 		this->equals(mat);
 		return checker_->last_row_map();

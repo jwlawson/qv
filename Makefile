@@ -61,7 +61,7 @@ LFLAGS = -L$(HOME)/lib -L$(BASE_DIR)/lib
 # define any libraries to link into executable:
 #   if I want to link in libraries (libx.so or libx.a) use -lx
 LIBS = -lginac
-TEST_LIBS = -lgtest -lgtest_main -pthread
+TEST_LIBS = -lgtest -lgtest_main -lginac -pthread
 
 # define the C source files
 SRCS = $(wildcard $(SRC_DIR)/*.cc)

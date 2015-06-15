@@ -36,11 +36,13 @@ class QuiverGraph {
 	private:
 		class _GraphLoader;
 		class _Link;
+		/** Compares two matrices using their equals method.  */
 		struct PtrEqual {
 			bool operator()( const UMatrixPtr & lhs, const UMatrixPtr & rhs) const {
 				return lhs->equals(*rhs);
 			}
 		};
+		/** Gets hash using Matrix::hash method */
 		struct PtrHash {
 			size_t operator()(const UMatrixPtr & ptr) const {
 				return ptr->hash();
@@ -53,8 +55,11 @@ class QuiverGraph {
 		typedef std::pair<Matrix, Link> value_type;
 		typedef std::unordered_map<UMatrixPtr, Link, PtrHash, PtrEqual> GraphMap;
 
+		/** Construct an empty graph which contains nothing. */
 		QuiverGraph() = default;
+		/** Construct the exchange graph for the specified matrix. */
 		QuiverGraph(const Matrix & mat);
+		/** Delete any matrix pointers controlled by this graph. */
 		~QuiverGraph() {
 			for(auto it = _map.begin(); it != _map.end(); ++it) {
 				delete it->first;
@@ -64,10 +69,17 @@ class QuiverGraph {
 		const typename GraphMap::const_iterator end() const { return _map.end(); }
 
 	private:
+		/** Initial matrix */
 		const Matrix & _matrix;
+		/** Map of matrices and their links. */
 		GraphMap _map;
+		/** Queue of matrices to mutate next. */
 		std::deque<MatrixPtr> _queue;
 
+		/** 
+		 * GraphLoader actually computes the whole graph. The Graph ctor loops on
+		 * the ::operator++ until ::end() returns true.
+		 */
 		class _GraphLoader {
 			public:
 				_GraphLoader() = default;
@@ -92,6 +104,9 @@ class QuiverGraph {
 						int vertex);
 		};
 
+		/**
+		 * Link stores the edges adjacent to its matrix.
+		 */
 		class _Link {
 			public:
 				_Link() :_matrix(nullptr) {};

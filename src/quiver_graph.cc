@@ -22,7 +22,7 @@ namespace cluster {
 
 template<class M>
 QuiverGraph<M>::QuiverGraph(const M & mat) : _matrix(mat) {
-	UMatrixPtr m(new M(mat));
+	MatrixPtr m(new M(mat));
 	_queue.push_back(m);
 	_map.emplace(m, Link(_queue.front()));
 	_GraphLoader l(*this);
@@ -36,7 +36,7 @@ QuiverGraph<M>::_GraphLoader & QuiverGraph<M>::_GraphLoader::operator++(){
 	_graph._queue.pop_front();
 	for (int i = 0; i < _size && !_end; ++i) {
 		if (mutate_at(mat, i)) {
-			UMatrixPtr new_matrix(new M(_size, _size));
+			MatrixPtr new_matrix(new M(_size, _size));
 			mat->mutate(i, *new_matrix);
 			if (have_seen(new_matrix)) {
 				seen_matrix(new_matrix, mat, i);
@@ -55,17 +55,17 @@ QuiverGraph<M>::_GraphLoader & QuiverGraph<M>::_GraphLoader::operator++(){
 	return *this;
 }
 template<class M>
-bool QuiverGraph<M>::_GraphLoader::have_seen(const UMatrixPtr & new_mat) {
+bool QuiverGraph<M>::_GraphLoader::have_seen(MatrixPtr new_mat) {
 	return _graph._map.find(new_mat) != _graph._map.end();
 }
 template<class M>
-bool QuiverGraph<M>::_GraphLoader::mutate_at(const MatrixPtr & old_mat, int vertex) {
+bool QuiverGraph<M>::_GraphLoader::mutate_at(MatrixPtr old_mat, int vertex) {
 	bool result = _graph._map.find(old_mat) != _graph._map.end() 
 		&& _graph._map[old_mat][vertex] == nullptr;
 	return result;
 }
 template<class M>
-void QuiverGraph<M>::_GraphLoader::seen_matrix(const UMatrixPtr & new_mat,
+void QuiverGraph<M>::_GraphLoader::seen_matrix(MatrixPtr new_mat,
 		MatrixPtr old_mat, int vertex) {
 	auto ref = _graph._map.find(new_mat);
 	if(ref != _graph._map.end() && IntMatrix::are_equal(*new_mat, *(ref->first))) {
@@ -76,9 +76,9 @@ void QuiverGraph<M>::_GraphLoader::seen_matrix(const UMatrixPtr & new_mat,
 	}
 }
 template<class M>
-void QuiverGraph<M>::_GraphLoader::unseen_matrix(const UMatrixPtr & new_mat,
+void QuiverGraph<M>::_GraphLoader::unseen_matrix(MatrixPtr new_mat,
 		MatrixPtr old_mat, int vertex) {
-	_graph._map.emplace(std::pair<MatrixPtr, Link>(new_mat, _Link(new_mat)));
+	_graph._map.emplace(new_mat, _Link(new_mat));
 	_graph._map[new_mat][vertex] = old_mat;
 	_graph._map[old_mat][vertex] = new_mat;
 	_graph._queue.push_back(new_mat);

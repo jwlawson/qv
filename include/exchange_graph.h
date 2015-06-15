@@ -29,7 +29,7 @@
 namespace cluster {
 
 template<class Matrix>
-class QuiverGraph {
+class ExchangeGraph {
 public:
 	typedef Matrix * MatrixPtr;
 private:
@@ -54,11 +54,11 @@ public:
 	typedef std::unordered_map<MatrixPtr, Link, PtrHash, PtrEqual> GraphMap;
 
 	/** Construct an empty graph which contains nothing. */
-	QuiverGraph() = default;
+	ExchangeGraph() = default;
 	/** Construct the exchange graph for the specified matrix. */
-	QuiverGraph(const Matrix & mat);
+	ExchangeGraph(const Matrix & mat);
 	/** Delete any matrix pointers controlled by this graph. */
-	~QuiverGraph() {
+	~ExchangeGraph() {
 		for(auto it = _map.begin(); it != _map.end(); ++it) {
 			delete it->first;
 		}
@@ -86,7 +86,7 @@ private:
 	public:
 		_GraphLoader() = default;
 
-		_GraphLoader(QuiverGraph & graph)
+		_GraphLoader(ExchangeGraph & graph)
 			: _graph(graph),
 				_size(_graph._matrix.num_rows()) {}
 		/** Load the next section of the graph. */
@@ -96,7 +96,7 @@ private:
 			return _end;
 		}
 	private:
-		QuiverGraph & _graph;
+		ExchangeGraph & _graph;
 		bool _end = false;
 		int _size;
 
@@ -104,6 +104,14 @@ private:
 		bool mutate_at(MatrixPtr old_mat, int vertex);
 		void seen_matrix(MatrixPtr new_mat, MatrixPtr old_mat, int vertex);
 		void unseen_matrix(MatrixPtr new_mat, MatrixPtr old_mat, int vertex);
+		/** Return true if the two Matrices are the same (not up to permutation) */
+		bool is_exactly(MatrixPtr lhs, MatrixPtr rhs);
+		/** Create a new Matrix to use in mutation. */
+		MatrixPtr new_instance();
+		/** Get the size of the matrices in the graph. */
+		size_t size(MatrixPtr m) const {
+			return m->size();
+		}
 	};
 	/**
 	 * Link stores the edges adjacent to its matrix.
@@ -128,5 +136,73 @@ private:
 		LinkVec _links;
 	};
 };
+template<class M>
+ExchangeGraph<M>::ExchangeGraph(const M & mat) : _matrix(mat) {
+	MatrixPtr m(new M(mat));
+	_queue.push_back(m);
+	_map.emplace(m, Link(_queue.front()));
+	_GraphLoader l(*this);
+	while(!l.end()) {
+		++l;
+	}
+}
+template<class M> typename
+ExchangeGraph<M>::_GraphLoader &
+ExchangeGraph<M>::_GraphLoader::operator++(){
+	MatrixPtr mat = _graph._queue.front();
+	_graph._queue.pop_front();
+	for (int i = 0; i < _size && !_end; ++i) {
+		if (mutate_at(mat, i)) {
+			MatrixPtr new_matrix = new_instance();
+			mat->mutate(i, *new_matrix);
+			if (have_seen(new_matrix)) {
+				seen_matrix(new_matrix, mat, i);
+				delete new_matrix;
+			} else {
+				if (new_matrix->is_infinite()) {
+					_end = true;
+				}
+				unseen_matrix(new_matrix, mat, i);
+			}
+		}
+	}
+	if(_graph._queue.empty()){
+		_end = true;
+	}
+	return *this;
+}
+template<class M>
+bool
+ExchangeGraph<M>::_GraphLoader::have_seen(MatrixPtr new_mat) {
+	return _graph._map.find(new_mat) != _graph._map.end();
+}
+template<class M>
+bool
+ExchangeGraph<M>::_GraphLoader::mutate_at(MatrixPtr old_mat, int vertex) {
+	bool result = _graph._map.find(old_mat) != _graph._map.end() 
+		&& _graph._map[old_mat][vertex] == nullptr;
+	return result;
+}
+template<class M>
+void
+ExchangeGraph<M>::_GraphLoader::seen_matrix(MatrixPtr new_mat,
+		MatrixPtr old_mat, int vertex) {
+	auto ref = _graph._map.find(new_mat);
+	if(ref != _graph._map.end() && is_exactly(*new_mat, *(ref->first))) {
+		_graph._map[new_mat][vertex] = old_mat;
+	}
+	if(_graph._map[old_mat][vertex] == nullptr) {
+		_graph._map[old_mat][vertex] = ref->first;
+	}
+}
+template<class M>
+void
+ExchangeGraph<M>::_GraphLoader::unseen_matrix(MatrixPtr new_mat,
+		MatrixPtr old_mat, int vertex) {
+	_graph._map.emplace(new_mat, _Link(new_mat));
+	_graph._map[new_mat][vertex] = old_mat;
+	_graph._map[old_mat][vertex] = new_mat;
+	_graph._queue.push_back(new_mat);
+}
 }
 

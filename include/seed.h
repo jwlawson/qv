@@ -27,77 +27,106 @@
 #include "ginac/ginac.h"
 
 namespace cluster {
-template<class Matrix>
+template<class Mat>
 class __Seed {
 public:
 	typedef std::vector<GiNaC::ex> Cluster;
+	typedef Mat Matrix;
 
-	__Seed(int size)
-		: size_(size),
-		  matrix_(size, size),
-		  cluster_(size) {
-		reset();
-	}
-	__Seed(const IntMatrix & mat, const std::vector<GiNaC::ex> & cluster)
-		: size_(mat.num_rows()),
-		  matrix_(mat),
-			cluster_(cluster) {
-		reset();
-	}
-	__Seed(IntMatrix && mat, Cluster && cluster)
-		: size_(mat.num_rows()),
-		  matrix_(mat),
-			cluster_(cluster) {
-		reset();
-	}
+	/** Construct 'empty' instance with specified size. */
+	__Seed(int size);
+	/** Construct seed with the specified matrix and cluster. */
+	__Seed(const IntMatrix & mat, const Cluster & cluster);
+	/** Construct seed with the specified matrix and cluster. */
+	__Seed(IntMatrix && mat, Cluster && cluster);
 	/**
 	 * Always call reset after changing the seed in any way. This ensures that the
 	 * hascode produced actually corresponds to the data in the seed.
 	 */
-	void
-	reset() {
-		matrix_.reset();
-		hashcode_ = compute_hash();
-	}
+	void reset();
 	/**
-	 * Mutate this matrix at the specified vertex. The resulting matrix is
-	 * stored in the provided matrix.
+	 * Mutate this seed at the specified vertex. The resulting seed is
+	 * stored in the provided seed.
 	 * @param k Vertex to mutate at
 	 * @param result Matrix to store result in
 	 */
-	void
-	mutate(const int k, __Seed<Matrix> & result) const {
-		mutate_cluster(k, result.cluster_);
-		matrix_.mutate(k, result.matrix_);
-		result.reset();
-	}
+	void mutate(const int k, __Seed<Matrix> & result) const;
 	/** Return the hash code for this seed. */
-	size_t
-	hash() const {
-		return hashcode_;
-	}
+	size_t hash() const;
 	/** Check whether the given seed is equivalent to this. */
-	bool
-	equals(const __Seed<Matrix> & seed) const;
+	bool equals(const __Seed<Matrix> & seed) const;
 	/** Return the number of variables in the seed. */
-	size_t
-	size() const {
-		return size_;
-	}
+	size_t size() const;
+	/** Access a reference to the Seed matrix. */
+	const Matrix & matrix() const;
+	/** Access a reference to the Seed cluster. */
+	const Cluster & cluster() const;
+	/** Output Seed to output stream. */
 	template<class M>
 	friend std::ostream &
 	operator<<(std::ostream & os, const __Seed<M> & seed);
 private:
+	/** Size of the seed */
 	size_t size_;
+	/** Matrix/Quiver of the seed. */
 	Matrix matrix_;
+	/** Cluster of the seed. */
 	Cluster cluster_;
+	/** Cached Hashcode. */
 	size_t hashcode_;
-
-	size_t
-	compute_hash() const;
-	void
-	mutate_cluster(const int k, Cluster & result) const;
+	/** Recompute the cached hashcode if the instance is changed. */
+	size_t compute_hash() const;
+	/** Perform mutation at the vertex k, on the cluster. */
+	void mutate_cluster(const int k, Cluster & result) const;
 };
+template<class Matrix>
+__Seed<Matrix>::__Seed(int size)
+: size_(size), matrix_(size, size), cluster_(size) {
+	reset();
+}
+template<class Matrix>
+__Seed<Matrix>::__Seed(const IntMatrix & mat, const Cluster & cluster)
+: size_(mat.num_rows()), matrix_(mat), cluster_(cluster) {
+	reset();
+}
+template<class Matrix>
+__Seed<Matrix>::__Seed(IntMatrix && mat, Cluster && cluster)
+: size_(mat.num_rows()), matrix_(mat), cluster_(cluster) {
+	reset();
+}
+template<class Matrix>
+void
+__Seed<Matrix>::reset() {
+	matrix_.reset();
+	hashcode_ = compute_hash();
+}
+template<class Matrix>
+void
+__Seed<Matrix>::mutate(const int k, __Seed<Matrix> & result) const {
+	mutate_cluster(k, result.cluster_);
+	matrix_.mutate(k, result.matrix_);
+	result.reset();
+}
+template<class Matrix>
+size_t
+__Seed<Matrix>::hash() const {
+	return hashcode_;
+}
+template<class Matrix>
+size_t
+__Seed<Matrix>::size() const {
+	return size_;
+}
+template<class Matrix>
+const Matrix &
+__Seed<Matrix>::matrix() const {
+	return matrix_;
+}
+template<class Matrix>
+const typename __Seed<Matrix>::Cluster &
+__Seed<Matrix>::cluster() const {
+	return cluster_;
+}
 template<class Matrix>
 void
 __Seed<Matrix>::mutate_cluster(const int k, Cluster & result) const {
@@ -118,7 +147,7 @@ __Seed<Matrix>::mutate_cluster(const int k, Cluster & result) const {
 	for(size_t i = 0; i < size_; ++i) {
 		result[i] = cluster_[i];
 	}
-	result[k] = (pos+neg)/cluster_[k];
+	result[k] = ((pos+neg)/cluster_[k]).normal();
 }
 template<class Matrix>
 std::ostream &

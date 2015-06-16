@@ -19,23 +19,21 @@
 
 #include "ginac_util.h"
 
-namespace cluster {
-
 namespace {
-typedef LabelledSeed LSeed;
+typedef cluster::LabelledSeed LSeed;
 
-Seed::Cluster
+cluster::Seed::Cluster
 default_cluster(size_t size) {
-	Seed::Cluster result(size);
+	cluster::Seed::Cluster result(size);
 	std::string var = "x";
 	for(size_t i = 0; i < size; ++i) {
-		result[i] = ginac::symbol(var + std::to_string(i));
+		result[i] = cluster::ginac::symbol(var + std::to_string(i));
 	}
 	return result;
 }
 }
 
-
+namespace cluster {
 TEST(Seed, Rank2Symmetric) {
 	EquivQuiverMatrix m("{ { 0 1 } { -1 0 } }");
 	Seed s(std::move(m), std::move(default_cluster(2)));

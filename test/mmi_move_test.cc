@@ -931,7 +931,6 @@ namespace {
 	struct FiniteCheck {
 		bool operator()(EquivQuiverMatrix & mat) {
 			MutationClass cl(mat);
-			std::cout << mat << std::endl;
 			return cl.is_finite();
 		}
 	};

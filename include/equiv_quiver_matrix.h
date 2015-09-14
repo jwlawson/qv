@@ -117,7 +117,7 @@ namespace cluster {
 			 * This assumes that the matrix supplied is in fact equivalent to this
 			 * one, if not then problems could occur.
 			 */
-			PermVecPtr all_permutations(const EquivQuiverMatrix& mat);
+			PermVecPtr all_permutations(const EquivQuiverMatrix& mat) const;
 
 			/** Vector holding pairs of row sums and the abs row sums. */
 			PairVector rows_;

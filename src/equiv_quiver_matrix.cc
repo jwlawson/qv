@@ -128,7 +128,7 @@ namespace cluster {
 		return checker_->last_row_map();
 	}
 	EquivQuiverMatrix::PermVecPtr
-	EquivQuiverMatrix::all_permutations(const EquivQuiverMatrix& mat) {
+	EquivQuiverMatrix::all_permutations(const EquivQuiverMatrix& mat) const {
 		return checker_->valid_row_maps(*this, mat);
 	}
 

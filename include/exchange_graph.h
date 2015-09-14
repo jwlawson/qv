@@ -244,7 +244,7 @@ __ExchangeGraph<M>::_GraphLoader::should_stop(MatrixPtr /*ignored*/) {
 }
 /* _Link */
 template<class M>
-__ExchangeGraph<M>::_Link::_Link() :_matrix(nullptr) {};
+__ExchangeGraph<M>::_Link::_Link() :_matrix(nullptr) {}
 template<class M>
 __ExchangeGraph<M>::_Link::_Link(MatrixPtr matrix, int size)
 : _matrix(matrix), _links(size, nullptr){}

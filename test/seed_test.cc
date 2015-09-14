@@ -62,6 +62,19 @@ TEST(Seed, Rank2SymmetricPermuted) {
 	EXPECT_TRUE(res.equals(exp));
 	EXPECT_TRUE(exp.equals(res));
 }
+TEST(Seed, PermutedEquals) {
+	EquivQuiverMatrix m("{ { 0 1 1 1 } { -1 0 0 0 } { -1 0 0 0 } { -1 0 0 0 } }");
+	Seed::Cluster cl = default_cluster(4);
+	Seed s(m, cl);
+
+	GiNaC::ex tmp = cl[1];
+	cl[1] = cl[2];
+	cl[2] = cl[3];
+	cl[3] = tmp;
+	Seed exp(m, cl);
+	EXPECT_TRUE(s.equals(exp));
+	EXPECT_TRUE(exp.equals(s));
+}
 TEST(LSeed, Rank2Symmetric) {
 	EquivQuiverMatrix m("{ { 0 1 } { -1 0 } }");
 	LabelledSeed s(std::move(m), std::move(default_cluster(2)));
@@ -90,6 +103,33 @@ TEST(LSeed, Rank2SymmetricPermuted) {
 	EXPECT_FALSE(res.equals(exp));
 	EXPECT_FALSE(exp.equals(res));
 }
+TEST(Seed, B2Type) {
+	EquivQuiverMatrix m("{ { 0 1 } { -2 0 } }");
+	Seed s(std::move(m), std::move(default_cluster(2)));
+	Seed res(2);
+	s.mutate(0, res);
+	EquivQuiverMatrix n("{ { 0 -1 } { 2 0 } }");
 
+	Seed::Cluster c = default_cluster(2);
+	GiNaC::ex first = (1 + c[1]*c[1])/c[0];
+	
+	Seed::Cluster exp_c = default_cluster(2);
+	exp_c[0] = first;
+	Seed exp(n, exp_c);
+	EXPECT_TRUE(res.equals(exp));
+	EXPECT_TRUE(exp.equals(res));
+	std::cout << res << std::endl;
+	std::cout << exp << std::endl;
+
+	first = (1 + c[0])/c[1];
+	exp_c[0] = c[0];
+	exp_c[1] = first;
+	Seed exp2(n,exp_c);
+	s.mutate(1, res);
+	EXPECT_TRUE(res.equals(exp2));
+	EXPECT_TRUE(exp2.equals(res));
+	std::cout << res << std::endl;
+	std::cout << exp2 << std::endl;
+}
 }
 

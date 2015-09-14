@@ -127,13 +127,19 @@ const typename __Seed<Matrix>::Cluster &
 __Seed<Matrix>::cluster() const {
 	return cluster_;
 }
+/**
+ * Need to use entries in k-th column to compute mutation.
+ *
+ * For skew-symmetric matrices it doesn't matter whether we use the row or
+ * column, but it does for skew-symmetrizable matrices.
+ */
 template<class Matrix>
 void
 __Seed<Matrix>::mutate_cluster(const int k, Cluster & result) const {
 	GiNaC::ex pos = 1;
 	GiNaC::ex neg = 1;
-	/* Get pointer to mutating row in matrix */
-	const int* data = matrix_.data() + (k * size_);
+	/* Get pointer to mutating column in matrix */
+	const int* data = matrix_.data() + k;
 
 	for(size_t j = 0; j < size_; j++){
 		if(*data > 0){
@@ -141,7 +147,7 @@ __Seed<Matrix>::mutate_cluster(const int k, Cluster & result) const {
 		} else if (*data < 0){
 			neg *= pow(cluster_[j], -1 * (*data));
 		}
-		++data;
+		data += size_;
 	}
 	result.resize(size_);
 	for(size_t i = 0; i < size_; ++i) {

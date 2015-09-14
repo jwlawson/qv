@@ -18,14 +18,26 @@
 
 namespace cluster {
 
+/*
+ * This could probably be written in a more efficient way using the knowledge
+ * that the quiver is determined by the cluster. Hence you only need to check
+ * whether the clusters are permutations of each other. If you then wanted to be
+ * extra safe, check that the matrices are equal under that permutation.
+ */
 template<>
 bool
 Seed::equals(const Seed & seed) const {
 	bool result = hash() == seed.hash() && matrix_.equals(seed.matrix_);
 	if(result) {
-		EquivQuiverMatrix::Permutation perm = matrix_.get_permutation(seed.matrix_);
-		for(size_t i = 0; result && i < perm.size(); ++i) {
-			result = cluster_[i] == seed.cluster_[perm[i]];
+		EquivQuiverMatrix::PermVecPtr pv = matrix_.all_permutations(seed.matrix_);
+		result = false;
+		for(auto it = pv->begin(); !result && it != pv->end(); ++it) {
+			EquivQuiverMatrix::Permutation & perm = *it;
+			bool p_res = true;
+			for(size_t i = 0; p_res && i < perm.size(); ++i) {
+				p_res = cluster_[i] == seed.cluster_[perm[i]];
+			}
+			result = p_res;
 		}
 	}
 	return result;

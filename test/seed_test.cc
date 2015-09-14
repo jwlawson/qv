@@ -118,8 +118,6 @@ TEST(Seed, B2Type) {
 	Seed exp(n, exp_c);
 	EXPECT_TRUE(res.equals(exp));
 	EXPECT_TRUE(exp.equals(res));
-	std::cout << res << std::endl;
-	std::cout << exp << std::endl;
 
 	first = (1 + c[0])/c[1];
 	exp_c[0] = c[0];
@@ -128,8 +126,6 @@ TEST(Seed, B2Type) {
 	s.mutate(1, res);
 	EXPECT_TRUE(res.equals(exp2));
 	EXPECT_TRUE(exp2.equals(res));
-	std::cout << res << std::endl;
-	std::cout << exp2 << std::endl;
 }
 }
 

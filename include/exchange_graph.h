@@ -178,7 +178,7 @@ typename __ExchangeGraph<M>::_GraphLoader &
 __ExchangeGraph<M>::_GraphLoader::operator++(){
 	MatrixPtr mat = _graph._queue.front();
 	_graph._queue.pop_front();
-	for (int i = 0; i < _size && !_end; ++i) {
+	for (std::size_t i = 0; i < _size && !_end; ++i) {
 		if (mutate_at(mat, i)) {
 			MatrixPtr new_matrix = new_instance();
 			mat->mutate(i, *new_matrix);

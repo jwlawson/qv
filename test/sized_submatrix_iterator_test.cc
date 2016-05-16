@@ -34,7 +34,7 @@ namespace cluster {
 		EXPECT_EQ(n.get(0,0), 0);
 
 		std::vector<int> rows = i.get_rows();
-		ASSERT_EQ(rows.size(), 1);
+		ASSERT_EQ(rows.size(), static_cast<unsigned int>(1));
 		EXPECT_EQ(rows[0], 0);
 
 		i.next(n);
@@ -43,7 +43,7 @@ namespace cluster {
 		EXPECT_EQ(n.get(0,0), 3);
 
 		rows = i.get_rows();
-		ASSERT_EQ(rows.size(), 1);
+		ASSERT_EQ(rows.size(), static_cast<unsigned int>(1));
 		EXPECT_EQ(rows[0], 1);
 
 		EXPECT_FALSE(i.has_next());

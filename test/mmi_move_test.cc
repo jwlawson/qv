@@ -37,8 +37,8 @@ namespace cluster {
 		AVec app = move.applicable_submatrices(m);
 
 		ASSERT_FALSE(app.empty());
-		EXPECT_EQ(app.size(), 1);
-		ASSERT_EQ(app[0].submatrix_->size(), 3);
+		EXPECT_EQ(app.size(), static_cast<unsigned int>(1));
+		ASSERT_EQ(app[0].submatrix_->size(), static_cast<unsigned int>(3));
 		EXPECT_EQ(0, (*app[0].submatrix_)[0]);
 		EXPECT_EQ(1, (*app[0].submatrix_)[1]);
 		EXPECT_EQ(2, (*app[0].submatrix_)[2]);
@@ -76,7 +76,7 @@ namespace cluster {
 		AVec app = move.applicable_submatrices(check);
 
 		ASSERT_FALSE(app.empty());
-		ASSERT_EQ(app.size(), 2);
+		ASSERT_EQ(app.size(), static_cast<unsigned int>(2));
 		EXPECT_EQ(0, (*app[0].submatrix_)[0]);
 		EXPECT_EQ(1, (*app[0].submatrix_)[1]);
 		EXPECT_EQ(2, (*app[0].submatrix_)[2]);
@@ -111,7 +111,7 @@ namespace cluster {
 		AVec app = move.applicable_submatrices(check);
 
 		ASSERT_FALSE(app.empty());
-		EXPECT_EQ(app.size(), 2);
+		EXPECT_EQ(app.size(), static_cast<unsigned int>(2));
 		/* Get the same submatrix twice, but with different permutations. */
 		EXPECT_EQ(1, (*app[0].submatrix_)[0]);
 		EXPECT_EQ(4, (*app[0].submatrix_)[1]);
@@ -267,7 +267,7 @@ namespace cluster {
 
 		MMIMove move(m, n, conn, req);
 		AVec app = move.applicable_submatrices(check);
-		ASSERT_EQ(app.size(), 1);
+		ASSERT_EQ(app.size(), static_cast<unsigned int>(1));
 		EXPECT_EQ(0, (*app[0].submatrix_)[0]);
 		EXPECT_EQ(1, (*app[0].submatrix_)[1]);
 		EXPECT_EQ(2, (*app[0].submatrix_)[2]);
@@ -893,9 +893,6 @@ namespace {
 		return std::make_shared<cluster::MMIMove>(
 				cluster::IntMatrix(a), cluster::IntMatrix(b),
 				std::vector<int>(c), std::vector<cluster::MMIMove::ConnReq>(r));
-	}
-	std::shared_ptr<cluster::EquivQuiverMatrix> matrix(const std::string& a) {
-		return std::make_shared<cluster::EquivQuiverMatrix>(a);
 	}
 	template<typename F>
 	std::shared_ptr<cluster::MMIMove> make_move(const std::string& a,

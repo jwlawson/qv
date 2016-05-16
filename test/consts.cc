@@ -34,9 +34,6 @@ namespace {
 				cluster::IntMatrix(a), cluster::IntMatrix(b),
 				std::vector<int>(c), std::vector<cluster::MMIMove::ConnReq>(r));
 	}
-	std::shared_ptr<cluster::EquivQuiverMatrix> matrix(const std::string& a) {
-		return std::make_shared<cluster::EquivQuiverMatrix>(a);
-	}
 	std::shared_ptr<cluster::EquivUnderlyingGraph> graph(const std::string& a) {
 		return std::make_shared<cluster::EquivUnderlyingGraph>(cluster::IntMatrix(a));
 	}

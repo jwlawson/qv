@@ -47,7 +47,7 @@ TEST(ExchangeGraph, Pentagon) {
 			EXPECT_NE(*l_it, nullptr);
 		}
 	}
-	EXPECT_EQ(5, num_seeds);
+	EXPECT_EQ(static_cast<std::size_t>(5), num_seeds);
 }
 TEST(LabelledExchangeGraph, Decagon) {
 	QuiverMatrix m("{ { 0 1 } { -1 0 } }");
@@ -62,7 +62,7 @@ TEST(LabelledExchangeGraph, Decagon) {
 			EXPECT_NE(*l_it, nullptr);
 		}
 	}
-	EXPECT_EQ(10, num_seeds);
+	EXPECT_EQ(static_cast<std::size_t>(10), num_seeds);
 }
 TEST(LabelledQuiverGraph, Pentagon) {
 	QuiverMatrix m("{ { 0 1  0 } { -1 0 1 } { 0 -1 0 } }");
@@ -75,7 +75,7 @@ TEST(LabelledQuiverGraph, Pentagon) {
 			EXPECT_NE(*l_it, nullptr);
 		}
 	}
-	EXPECT_EQ(14, num_seeds);
+	EXPECT_EQ(static_cast<std::size_t>(14), num_seeds);
 }
 TEST(QuiverGraph, Pentagon) {
 	EquivQuiverMatrix m("{ { 0 1  0 } { -1 0 1 } { 0 -1 0 } }");
@@ -88,7 +88,7 @@ TEST(QuiverGraph, Pentagon) {
 			EXPECT_NE(*l_it, nullptr);
 		}
 	}
-	EXPECT_EQ(4, num_seeds);
+	EXPECT_EQ(static_cast<std::size_t>(4), num_seeds);
 }
 }
 

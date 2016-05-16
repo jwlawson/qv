@@ -258,9 +258,9 @@ namespace cluster {
 
 		std::vector<int> perm = m.get_permutation(n);
 		ASSERT_FALSE(perm.empty());
-		ASSERT_EQ(perm.size(), 3);
+		ASSERT_EQ(perm.size(), static_cast<std::size_t>(3));
 		for( size_t i = 0; i < perm.size(); i++) {
-			EXPECT_EQ(perm[i], i);
+			EXPECT_EQ(static_cast<std::size_t>(perm[i]), i);
 		}
 	}
 	TEST(EquivMatrix, SwapPerm) {
@@ -273,7 +273,7 @@ namespace cluster {
 
 		std::vector<int> perm = m.get_permutation(n);
 		ASSERT_FALSE(perm.empty());
-		ASSERT_EQ(perm.size(), 3);
+		ASSERT_EQ(perm.size(), static_cast<std::size_t>(3));
 		EXPECT_EQ(perm[0], 2);
 		EXPECT_EQ(perm[1], 1);
 		EXPECT_EQ(perm[2], 0);
@@ -313,7 +313,7 @@ namespace cluster {
 		ASSERT_TRUE(m.equals(n));
 		std::shared_ptr<std::vector<std::vector<int>>> vecp = m.all_permutations(n);
 		ASSERT_FALSE(vecp->empty());
-		EXPECT_EQ(4, vecp->size());
+		EXPECT_EQ(static_cast<std::size_t>(4), vecp->size());
 	}
 }
 

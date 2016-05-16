@@ -5,7 +5,7 @@ VERSION = $(MAJOR).$(MINOR)
 
 # Using cygwin -std=gnu++11 should be used rather than -std=c++11
 ifeq ($(CXX),g++)
-CXXFLAGS = -Wall -march=native
+CXXFLAGS = -Wall -Wextra -Werror -march=native
 OPT = -O3 -g
 else
 CXXFLAGS = -Wall -std=c++11 -xHOST

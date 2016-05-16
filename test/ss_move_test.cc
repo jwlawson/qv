@@ -34,7 +34,7 @@ TEST(SSMove, SingleSource) {
 	SSMove move;
 	AppVec app = move.applicable_submatrices(m);
 	ASSERT_FALSE(app.empty());
-	EXPECT_EQ(1, app.size());
+	EXPECT_EQ(static_cast<unsigned int>(1), app.size());
 	IntMatrix exp("{ { 0 1 0 0 } { -1 0 -1 1 } { 0 1 0 -1 } { 0 -1 1 0 } }");
 	IntMatrix res(4, 4);
 	move.move(app[0], res);
@@ -44,7 +44,7 @@ TEST(SSMove, TwoApps) {
 	IntMatrix m("{ { 0 1 0 0 } { -1 0 -1 -1 } { 0 1 0 1 } { 0 1 -1 0 } }");
 	SSMove move;
 	AppVec app = move.applicable_submatrices(m);
-	ASSERT_EQ(3, app.size());
+	ASSERT_EQ(static_cast<unsigned int>(3), app.size());
 
 	IntMatrix res(4, 4);
 	IntMatrix exp("{ { 0 -1 0 0 } { 1 0 -1 -1 } { 0 1 0 1 } { 0 1 -1 0 } }");

@@ -27,7 +27,7 @@ namespace cluster {
 		MutationClass c(mat);
 
 		EXPECT_TRUE(c.is_finite());
-		EXPECT_EQ(4, c.size());
+		EXPECT_EQ(static_cast<std::size_t>(4), c.size());
 		EXPECT_TRUE(c.contains(std::make_shared<EquivQuiverMatrix>(mat)));
 	}
 

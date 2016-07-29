@@ -17,6 +17,7 @@
 #include "int_matrix.h"
 
 #include <algorithm>
+#include <cstring>
 #include <functional>
 #include <sstream>
 /*
@@ -266,19 +267,21 @@ namespace cluster {
 			IntMatrix& result) const {
 		int ind = 0;
 		for(int i = 0; i < num_rows_; ++i) {
-			for(int j =0; j < num_cols_; ++j) {
-				result.data_[vec[i] * num_cols_ + j] = data_[ind++];
-			}
+			int offset = vec[i] * num_cols_;
+			std::memcpy(result.data_.data() + offset, data_.data() + ind,
+					num_cols_ * sizeof(int));
+			ind += num_cols_;
 		}
 		result.reset();
 	}
 
 	void IntMatrix::permute_columns(const std::vector<int>& vec,
 			IntMatrix& result) const {
-		int ind = 0;
+		int ind = -1;
 		for(int i = 0; i < num_rows_; ++i) {
+			int offset = i * num_cols_;
 			for(int j = 0; j < num_cols_; ++j) {
-				result.data_[i * num_cols_ + vec[j]] = data_[ind++];
+				result.data_[offset + vec[j]] = data_[++ind];
 			}
 		}
 		result.reset();
@@ -292,7 +295,8 @@ namespace cluster {
 
 	std::size_t IntMatrix::compute_hash() const {
 		std::size_t hash = 113;
-		for (int i = 0; i < num_rows_ * num_cols_; i++) {
+		int_fast16_t max =  num_rows_ * num_cols_;
+		for (int_fast16_t i = 0; i < max; i++) {
 			hash *= 31;
 			hash += data_[i];
 		}

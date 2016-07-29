@@ -17,6 +17,7 @@
 #include "equiv_quiver_matrix.h"
 
 #include <algorithm>
+#include <boost/functional/hash.hpp>
 
 #include "array_utils.h"
 
@@ -137,11 +138,11 @@ namespace cluster {
 	std::size_t EquivQuiverMatrix::compute_hash() const {
 		std::size_t hash = 137;
 		std::vector<std::pair<int, int>> rows(rows_);
-		std::vector<std::pair<int, int>> cols(cols_);
+//		std::vector<std::pair<int, int>> cols(cols_);
 		std::sort(rows.begin(), rows.end());
-		std::sort(cols.begin(), cols.end());
-		hash += 257 * arrays::hash(rows);
-		hash += 73 * arrays::hash(cols);
+//		std::sort(cols.begin(), cols.end());
+		boost::hash_combine(hash, arrays::hash(rows));
+//		boost::hash_combine(hash, arrays::hash(cols));
 
 		return hash;
 	}

@@ -17,6 +17,8 @@
 #include "array_utils.h"
 #include <algorithm>
 
+#include <boost/functional/hash.hpp>
+
 namespace cluster {
 	namespace arrays {
 		int *sort(int *arr, const int size) {
@@ -25,28 +27,18 @@ namespace cluster {
 		}
 
 		std::size_t hash(const int *arr, const int size) {
-			std::size_t hash = 47;
-			for (int i = 0; i < size; i++) {
-				hash *= 31;
-				hash += arr[i];
-			}
-			return hash;
-		}
-
-		std::size_t hash(const std::vector<int>& arr) {
-			std::size_t hash = 47;
-			for (uint i = 0; i < arr.size(); i++) {
-				hash *= 31;
-				hash += arr[i];
-			}
-			return hash;
+			return boost::hash_range(arr, arr + size);
 		}
 
 		std::size_t hash(const std::vector<std::pair<int, int>>& vec) {
-			std::size_t hash = 47;
+			size_t hash { 47 };
 			for(uint i = 0; i < vec.size(); ++i) {
 				hash *= 31;
-				hash += (vec[i].first + 17 * vec[i].second);
+				hash += vec[i].first;
+			}
+			for(uint i = 0; i < vec.size(); ++i) {
+				hash *= 31;
+				hash += vec[i].second;
 			}
 			return hash;
 		}

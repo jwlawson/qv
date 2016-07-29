@@ -18,13 +18,15 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <vector>
 
 namespace cluster {
 	namespace arrays {
 		int *sort(int *arr, const int size);
 		std::size_t hash(const int *arr, const int size);
-		std::size_t hash(const std::vector<int>& arr);
+		template<class T>
+		std::size_t hash(const std::vector<T>& arr);
 		std::size_t hash(const std::vector<std::pair<int, int>>& vec);
 		/** Find the number of occurences of the value in the vector. */
 		int number_in(const std::vector<int>& arr, const int val);
@@ -48,5 +50,16 @@ namespace cluster {
 		 * PROBABLY NOT NEEDED, use a == b.
 		 */
 		bool equal(const std::vector<int>& a, const std::vector<int>& b);
+	}
+	template<class T>
+	inline
+	std::size_t hash(const std::vector<T>& vec) {
+		T const * data_ = vec.data();
+		std::size_t hash{113};
+		for (int_fast16_t i = 0; i < vec.size(); i++) {
+			hash *= 31;
+			hash += data_[i];
+		}
+		return hash;
 	}
 }

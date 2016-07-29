@@ -1,11 +1,14 @@
 NAME = qv
 MAJOR = 0
-MINOR = 9
+MINOR = 11
 VERSION = $(MAJOR).$(MINOR)
 
 # Using cygwin -std=gnu++11 should be used rather than -std=c++11
 ifeq ($(CXX),g++)
-CXXFLAGS = -Wall -Wextra -Werror -march=native
+CXXFLAGS += -Wall -Wextra -Werror -march=native
+CXXFLAGS += -fno-signed-zeros -fno-math-errno -fno-rounding-math
+CXXFLAGS += -fno-signaling-nans -fno-trapping-math
+CXXFLAGS += -ffinite-math-only
 OPT = -O3 -g
 else
 CXXFLAGS = -Wall -std=c++11 -xHOST

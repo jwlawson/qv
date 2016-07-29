@@ -37,6 +37,24 @@ namespace cluster {
 		EXPECT_EQ(exp, res);
 	}
 
+	TEST(EquivMutationClassSize, E8) {
+		EquivQuiverMatrix m(dynkin::E8);
+		int exp = 1574;
+		int res = equivsize::Size(m);
+
+		EXPECT_EQ(exp, res);
+	}
+
+	/*
+	// Takes ~13s
+	TEST(EquivMutationClassSize, Rank12) {
+		std::string str = "{ { 0 -1 0 0 0 0 0 -1 1 0 0 1 } { 1 0 1 0 0 0 0 0 0 -1 0 -1 } { 0 -1 0 -1 0 0 0 0 0 1 1 0 } { 0 0 1 0 1 0 0 0 0 0 -2 0 } { 0 0 0 -1 0 -1 0 0 0 1 1 0 } { 0 0 0 0 1 0 1 0 0 -1 0 -1 } { 0 0 0 0 0 -1 0 -1 1 0 0 1 } { 1 0 0 0 0 0 1 0 -2 0 0 0 } { -1 0 0 0 0 0 -1 2 0 0 0 0 } { 0 1 -1 0 -1 1 0 0 0 0 0 0 } { 0 0 -1 2 -1 0 0 0 0 0 0 0 } { -1 1 0 0 0 1 -1 0 0 0 0 0 } }";
+		EquivQuiverMatrix m(str);
+		int exp = 368;
+		int res = equivsize::Size(m);
+		EXPECT_EQ(exp, res);
+	}
+	*/
 
 	TEST(EquivMutationClassSize, D6) {
 		EquivQuiverMatrix m(dynkin::D6);
@@ -93,10 +111,7 @@ namespace cluster {
 	 *
 	 * I changed the hashcode, so that these matrices no longer have the same
 	 * hash, which seems to have prevented this from cropping up.
-	 *
-	 * The test is now ignored as it takes ~3 mins to run.
 	 */
-	/*
 	TEST(EquivMutationClassSize, Big) {
 		std::string str = "{ { 0 1 0 0 0 0 0 0 } "
 												"{ -1 0 1 0 0 0 0 0 } "
@@ -111,7 +126,6 @@ namespace cluster {
 		int result = equivsize::Size(m);
 		EXPECT_TRUE(result > 0);
 	}
-	*/
 
 	/*
 	 * This is another example of a matrix which appeared to be in the map, even

@@ -109,18 +109,12 @@ namespace cluster {
 
 				std::vector<std::vector<int>> row_mappings;
 		};
-
-		/** Sotres permuted a matrix. */
-		IntMatrix ap_;
-		/** Stores permuted b matrix. */
-		IntMatrix pb_;
 		/** Size of matrices to check. */
 		int size_;
 		/** Info about the possible permutations between the specified matrices. */
 		Mapping maps_;
 		/** Mapping used in last equals check run. */
 		std::vector<int> last_row_map_;
-		std::vector<int> last_col_map_;
 		std::vector<int> a_row_vals_;
 		std::vector<int> b_row_vals_;
 

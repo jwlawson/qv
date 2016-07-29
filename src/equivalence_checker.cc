@@ -17,6 +17,7 @@
 #include "equivalence_checker.h"
 
 #include <algorithm>
+#include <cassert>
 
 #include "array_utils.h"
 
@@ -34,22 +35,18 @@ namespace cluster {
 	}
 
 	EquivalenceChecker::EquivalenceChecker()
-		: ap_(0, 0), 
-			pb_(0, 0), 
+		:
 			size_(0),
 			maps_(0),
 			last_row_map_(size_),
-			last_col_map_(size_),
 			a_row_vals_(size_),
 			b_row_vals_(size_){}
 
 	EquivalenceChecker::EquivalenceChecker(const int size)
-		: ap_(size, size),
-		  pb_(size, size),
+		:
 			size_(size),
 			maps_(size),
 			last_row_map_(size_),
-			last_col_map_(size_),
 			a_row_vals_(size_),
 			b_row_vals_(size_){}
 
@@ -124,8 +121,7 @@ namespace cluster {
 	}
 	bool
 	EquivalenceChecker::sums_equivalent(const M& a, const M& b) const {
-		return std::is_permutation(a.rows_.begin(), a.rows_.end(), b.rows_.begin())
-			&& std::is_permutation(a.cols_.begin(), a.cols_.end(), b.cols_.begin());
+		return std::is_permutation(a.rows_.begin(), a.rows_.end(), b.rows_.begin());
 	}
 	bool
 	EquivalenceChecker::arrays_equivalent(const std::vector<int>& a,
@@ -137,18 +133,16 @@ namespace cluster {
 			const M& a, const M& b) {
 		bool result = false;
 		if(index == size_) {
-			/* Compute. Row_map contains a complete permutation, that is each index
-			 * represents a row, and the value at that index shows where to permute
-			 * that row.
-			 *
-			 * So actually perform the permutation and check for equality. */
-			for(int i = 0; i < size_; i++) {
-				last_col_map_[row_map[i]] = i;
-			}
-			a.permute_rows(row_map, ap_);
-			b.permute_columns(last_col_map_, pb_);
-			result = ap_.equals(pb_);
-
+		/* Row_map contains a complete permutation, that is each index
+		 * represents a row, and the value at that index shows where to permute
+		 * that row.
+		 *
+		 * We have a full permutation which maps a to b, so the matrices should be
+		 * equivalent. We have been checking that the permutation is valid as we
+		 * construct it, so shouldn't need to explicitly compute the permted
+		 * matrices.
+		 */
+			result = true;
 		} else {
 			/* Row_map is not a complete permutation. Recursively add another entry to
 			 * the vector.
@@ -157,15 +151,24 @@ namespace cluster {
 			 * mapping, and for each fill in the remaining row_map entries. */
 			for(size_t i = 0; i < maps_.row_mappings[index].size() && !result; ++i) {
 				int val = maps_.row_mappings[index][i];
+				/* Check that val is not already in the permutation */
 				bool not_already_used = true;
-				for(int j = 0; j < index; ++j) {
-					if(row_map[j] == val) {
-						not_already_used = false;
-					}
+				for(int j = 0; not_already_used && j < index; ++j) {
+					not_already_used = !(row_map[j] == val);
 				}
 				if(not_already_used) {
-					row_map[index] = val;
-					result = check_perm(row_map, index + 1, a, b);
+					/* Check that adding the perm index -> val would give a good
+					 * permutation, using what has been constructed so far. */
+					bool skip = false;
+					int const * a_data = a.data() + index * size_;
+					int const * b_row_data = b.data() + val * size_;
+					for(int j = 0; !skip && j < index; ++j, ++a_data) {
+						skip = ( *a_data != b_row_data[row_map[j]] );
+					}
+					if(!skip) {
+						row_map[index] = val;
+						result = check_perm(row_map, index + 1, a, b);
+					}
 				}
 			}
 		}
@@ -175,36 +178,27 @@ namespace cluster {
 	EquivalenceChecker::all_perms(Permutation & row_map, int index,
 			const M& a, const M& b, PermVecPtr perms) {
 		if(index == size_) {
-			/* Compute. Row_map contains a complete permutation, that is each index
-			 * represents a row, and the value at that index shows where to permute
-			 * that row.
-			 *
-			 * So actually perform the permutation and check for equality. */
-			for(int i = 0; i < size_; i++) {
-				last_col_map_[row_map[i]] = i;
-			}
-			a.permute_rows(row_map, ap_);
-			b.permute_columns(last_col_map_, pb_);
-			if(ap_.equals(pb_)) {
-				perms->push_back(row_map);
-			}
+			perms->push_back(row_map);
 		} else {
-			/* Row_map is not a complete permutation. Recursively add another entry to
-			 * the vector.
-			 *
-			 * Want to check each possible permutation, so consider each possible
-			 * mapping, and for each fill in the remaining row_map entries. */
 			for(size_t i = 0; i < maps_.row_mappings[index].size(); ++i) {
 				int val = maps_.row_mappings[index][i];
 				bool not_already_used = true;
-				for(int j = 0; j < index; ++j) {
-					if(row_map[j] == val) {
-						not_already_used = false;
-					}
+				for(int j = 0; not_already_used && j < index; ++j) {
+					not_already_used = !(row_map[j] == val);
 				}
 				if(not_already_used) {
-					row_map[index] = val;
-					all_perms(row_map, index + 1, a, b, perms);
+					/* Check that adding the perm index -> val would give a good
+					 * permutation, using what has been constructed so far. */
+					bool skip = false;
+					int const * a_data = a.data() + index * size_;
+					int const * b_row_data = b.data() + val * size_;
+					for(int j = 0; !skip && j < index; ++j, ++a_data) {
+						skip = ( *a_data != b_row_data[row_map[j]] );
+					}
+					if(!skip) {
+						row_map[index] = val;
+						all_perms(row_map, index + 1, a, b, perms);
+					}
 				}
 			}
 		}
@@ -212,8 +206,9 @@ namespace cluster {
 	void
 	swap(EquivalenceChecker& f, EquivalenceChecker& s) {
 		using std::swap;
-		swap(f.ap_, s.ap_);
-		swap(f.pb_, s.pb_);
+		swap(f.last_row_map_, s.last_row_map_);
+		swap(f.a_row_vals_  , s.a_row_vals_  );
+		swap(f.b_row_vals_  , s.b_row_vals_  );
 		swap(f.size_, s.size_);
 		swap(f.maps_, s.maps_);
 	}

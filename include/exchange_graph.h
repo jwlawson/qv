@@ -30,7 +30,7 @@
 
 namespace cluster {
 
-template<class Mat>
+template<class Mat, class ContinueMatrix>
 class __ExchangeGraph {
 public:
 	typedef Mat Matrix;
@@ -94,6 +94,7 @@ private:
 		__ExchangeGraph & _graph;
 		bool _end = false;
 		size_t _size;
+		ContinueMatrix _should_continue;
 
 		bool have_seen(MatrixPtr new_mat);
 		bool mutate_at(MatrixPtr old_mat, int vertex);
@@ -132,18 +133,18 @@ private:
 	};
 };
 /* ExchangeGraph */
-template<class M>
+template<class M, class C>
 bool
-__ExchangeGraph<M>::PtrEqual::operator()(MatrixPtr lhs, MatrixPtr rhs) const {
+__ExchangeGraph<M,C>::PtrEqual::operator()(MatrixPtr lhs, MatrixPtr rhs) const {
 	return lhs->equals(*rhs);
 }
-template<class M>
+template<class M, class C>
 size_t
-__ExchangeGraph<M>::PtrHash::operator()(MatrixPtr ptr) const {
+__ExchangeGraph<M,C>::PtrHash::operator()(MatrixPtr ptr) const {
 return ptr->hash();
 }
-template<class M>
-__ExchangeGraph<M>::__ExchangeGraph(const M & mat, size_t max_num)
+template<class M, class C>
+__ExchangeGraph<M,C>::__ExchangeGraph(const M & mat, size_t max_num)
 : _matrix(mat), _matrix_size(size(mat)), _max_num(max_num) {
 	MatrixPtr m(new M(mat));
 	_queue.push_back(m);
@@ -153,29 +154,29 @@ __ExchangeGraph<M>::__ExchangeGraph(const M & mat, size_t max_num)
 		++l;
 	}
 }
-template<class M>
-__ExchangeGraph<M>::~__ExchangeGraph() {
+template<class M, class C>
+__ExchangeGraph<M,C>::~__ExchangeGraph() {
 		for(auto it = _map.begin(); it != _map.end(); ++it) {
 			delete it->first;
 		}
 	}
-template<class M>
-const typename __ExchangeGraph<M>::GraphMap::const_iterator
-__ExchangeGraph<M>::begin() const {
+template<class M, class C>
+const typename __ExchangeGraph<M,C>::GraphMap::const_iterator
+__ExchangeGraph<M,C>::begin() const {
 	return _map.begin();
 }
-template<class M>
-const typename __ExchangeGraph<M>::GraphMap::const_iterator
-__ExchangeGraph<M>::end() const {
+template<class M, class C>
+const typename __ExchangeGraph<M,C>::GraphMap::const_iterator
+__ExchangeGraph<M,C>::end() const {
 	return _map.end();
 }
 /* _GraphLoader */
-template<class M>
-__ExchangeGraph<M>::_GraphLoader::_GraphLoader(__ExchangeGraph & graph)
+template<class M, class C>
+__ExchangeGraph<M,C>::_GraphLoader::_GraphLoader(__ExchangeGraph & graph)
 : _graph(graph), _size(graph._matrix_size) {}
-template<class M>
-typename __ExchangeGraph<M>::_GraphLoader &
-__ExchangeGraph<M>::_GraphLoader::operator++(){
+template<class M, class C>
+typename __ExchangeGraph<M,C>::_GraphLoader &
+__ExchangeGraph<M,C>::_GraphLoader::operator++(){
 	MatrixPtr mat = _graph._queue.front();
 	_graph._queue.pop_front();
 	for (std::size_t i = 0; i < _size && !_end; ++i) {
@@ -198,26 +199,27 @@ __ExchangeGraph<M>::_GraphLoader::operator++(){
 	}
 	return *this;
 }
-template<class M>
+template<class M, class C>
 bool
-__ExchangeGraph<M>::_GraphLoader::end() const {
+__ExchangeGraph<M,C>::_GraphLoader::end() const {
 	return _end;
 }
-template<class M>
+template<class M, class C>
 bool
-__ExchangeGraph<M>::_GraphLoader::have_seen(MatrixPtr new_mat) {
+__ExchangeGraph<M,C>::_GraphLoader::have_seen(MatrixPtr new_mat) {
 	return _graph._map.find(new_mat) != _graph._map.end();
 }
-template<class M>
+template<class M, class C>
 bool
-__ExchangeGraph<M>::_GraphLoader::mutate_at(MatrixPtr old_mat, int vertex) {
-	bool result = _graph._map.find(old_mat) != _graph._map.end() 
+__ExchangeGraph<M,C>::_GraphLoader::mutate_at(MatrixPtr old_mat, int vertex) {
+	bool result = _should_continue(old_mat, vertex)
+		&& _graph._map.find(old_mat) != _graph._map.end()
 		&& _graph._map[old_mat][vertex] == nullptr;
 	return result;
 }
-template<class M>
+template<class M, class C>
 void
-__ExchangeGraph<M>::_GraphLoader::seen_matrix(MatrixPtr new_mat,
+__ExchangeGraph<M,C>::_GraphLoader::seen_matrix(MatrixPtr new_mat,
 		MatrixPtr old_mat, int vertex) {
 	auto ref = _graph._map.find(new_mat);
 	if(ref != _graph._map.end() && is_exactly(new_mat, ref->first)) {
@@ -227,45 +229,100 @@ __ExchangeGraph<M>::_GraphLoader::seen_matrix(MatrixPtr new_mat,
 		_graph._map[old_mat][vertex] = ref->first;
 	}
 }
-template<class M>
+template<class M, class C>
 void
-__ExchangeGraph<M>::_GraphLoader::unseen_matrix(MatrixPtr new_mat,
+__ExchangeGraph<M,C>::_GraphLoader::unseen_matrix(MatrixPtr new_mat,
 		MatrixPtr old_mat, int vertex) {
 	_graph._map.emplace(new_mat, _Link(new_mat, _size));
 	_graph._map[new_mat][vertex] = old_mat;
 	_graph._map[old_mat][vertex] = new_mat;
 	_graph._queue.push_back(new_mat);
 }
-template<class M>
+template<class M, class C>
 bool
-__ExchangeGraph<M>::_GraphLoader::should_stop(MatrixPtr /*ignored*/) {
+__ExchangeGraph<M,C>::_GraphLoader::should_stop(MatrixPtr /*ignored*/) {
 	size_t num = _graph._map.size();
 	return num > _graph._max_num;
 }
 /* _Link */
-template<class M>
-__ExchangeGraph<M>::_Link::_Link() :_matrix(nullptr) {}
-template<class M>
-__ExchangeGraph<M>::_Link::_Link(MatrixPtr matrix, int size)
+template<class M, class C>
+__ExchangeGraph<M,C>::_Link::_Link() :_matrix(nullptr) {}
+template<class M, class C>
+__ExchangeGraph<M,C>::_Link::_Link(MatrixPtr matrix, int size)
 : _matrix(matrix), _links(size, nullptr){}
-template<class M>
-typename __ExchangeGraph<M>::MatrixPtr & 
-__ExchangeGraph<M>::_Link::operator[](int i) {
+template<class M, class C>
+typename __ExchangeGraph<M,C>::MatrixPtr &
+__ExchangeGraph<M,C>::_Link::operator[](int i) {
 	return _links[i];
 }
-template<class M>
-const typename __ExchangeGraph<M>::_Link::LinkVec::const_iterator
-__ExchangeGraph<M>::_Link::begin() const {
+template<class M, class C>
+const typename __ExchangeGraph<M,C>::_Link::LinkVec::const_iterator
+__ExchangeGraph<M,C>::_Link::begin() const {
 	return _links.begin();
 }
-template<class M>
-const typename __ExchangeGraph<M>::_Link::LinkVec::const_iterator
-__ExchangeGraph<M>::_Link::end() const {
+template<class M, class C>
+const typename __ExchangeGraph<M,C>::_Link::LinkVec::const_iterator
+__ExchangeGraph<M,C>::_Link::end() const {
 	return _links.end();
 }
-typedef __ExchangeGraph<Seed> ExchangeGraph;
-typedef __ExchangeGraph<LabelledSeed> LabelledExchangeGraph;
-typedef __ExchangeGraph<QuiverMatrix> LabelledQuiverGraph;
-typedef __ExchangeGraph<EquivQuiverMatrix> QuiverGraph;
+namespace _EGContinueChecks {
+struct AlwaysContinue {
+	bool operator()(void * /* ignored */, int /* ignored */) const {
+		return true;
+	}
+};
+struct InfiniteTypeSink {
+	bool operator()(QuiverMatrix const * const mptr, int /*vertex*/) const {
+		for(int i = 0; i < mptr->num_rows(); ++i) {
+			_vertex_cache[i].clear();
+		}
+		const int * row = mptr->data();
+		for(int c = 0, r = 0; r < mptr->num_rows(); ++r) {
+			for(c = 0; c < mptr->num_cols(); ++c) {
+				if(*(row++) > 1) {
+					_vertex_cache[r].push_back(c);
+				}
+			}
+		}
+		for(auto pair : _vertex_cache) {
+			for(int next_vert : pair.second) {
+				for(int third_vert : _vertex_cache[next_vert]) {
+					if(std::find(_vertex_cache[third_vert].begin(),
+								_vertex_cache[third_vert].end(), pair.first) !=
+							_vertex_cache[third_vert].end()) {
+						return false;
+					}
+				}
+			}
+		}
+		/*
+		const int * row_start = mptr->data() + (vertex*mptr->num_cols());
+		for(int i = 0; i < mptr->num_cols(); ++i) {
+			if(row_start[i] < -1) return false;
+		}
+		*/
+		return true;
+	}
+	bool operator()(Seed const * const sptr, int vertex) const {
+		return operator()(&(sptr->matrix()), vertex);
+	}
+	bool operator()(LabelledSeed const * const sptr, int vertex) const {
+		return operator()(&(sptr->matrix()), vertex);
+	}
+	mutable std::map<int, std::vector<int>> _vertex_cache;
+};
+}
+template <class M>
+using  _EGAlways = __ExchangeGraph<M, _EGContinueChecks::AlwaysContinue>;
+template <class M>
+using  _EGGreen = __ExchangeGraph<M, _EGContinueChecks::InfiniteTypeSink>;
+typedef _EGAlways<Seed> ExchangeGraph;
+typedef _EGAlways<LabelledSeed> LabelledExchangeGraph;
+typedef _EGAlways<QuiverMatrix> LabelledQuiverGraph;
+typedef _EGAlways<EquivQuiverMatrix> QuiverGraph;
+typedef _EGGreen<Seed> GreenExchangeGraph;
+typedef _EGGreen<LabelledSeed> GreenLabelledExchangeGraph;
+typedef _EGGreen<QuiverMatrix> GreenLabelledQuiverGraph;
+typedef _EGGreen<EquivQuiverMatrix> GreenQuiverGraph;
 }
 

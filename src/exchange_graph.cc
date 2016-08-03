@@ -109,5 +109,86 @@ bool
 QuiverGraph::_GraphLoader::should_stop(MatrixPtr new_matrix) {
 	return new_matrix->is_infinite();
 }
+/* Now the same, but for the 'Green' versions
+ * TODO Refactor to avoid this repetition */
+template<>
+Seed *
+GreenExchangeGraph::_GraphLoader::new_instance() {
+	return new Seed(_size);
+}
+template<>
+bool
+GreenExchangeGraph::_GraphLoader::is_exactly(
+		MatrixPtr lhs,
+		MatrixPtr rhs) {
+	return IntMatrix::are_equal(lhs->matrix(), rhs->matrix())
+		&& (lhs->cluster() == rhs->cluster());
+}
+template<>
+size_t
+GreenExchangeGraph::size(const Matrix & m) const {
+	return m.size();
+}
+template<>
+LabelledSeed *
+GreenLabelledExchangeGraph::_GraphLoader::new_instance() {
+	return new LabelledSeed(_size);
+}
+template<>
+bool
+GreenLabelledExchangeGraph::_GraphLoader::is_exactly(
+		MatrixPtr /*ignored*/,
+		MatrixPtr /*ignored*/) {
+	return true;
+}
+template<>
+size_t
+GreenLabelledExchangeGraph::size(const Matrix & m) const {
+	return m.size();
+}
+template<>
+QuiverMatrix *
+GreenLabelledQuiverGraph::_GraphLoader::new_instance() {
+	return new QuiverMatrix(_size, _size);
+}
+template<>
+bool
+GreenLabelledQuiverGraph::_GraphLoader::is_exactly(
+		MatrixPtr /*ignored*/,
+		MatrixPtr /*ignored*/) {
+	return true;
+}
+template<>
+size_t
+GreenLabelledQuiverGraph::size(const Matrix & m) const {
+	return m.num_rows();
+}
+template<>
+bool
+GreenLabelledQuiverGraph::_GraphLoader::should_stop(MatrixPtr new_matrix) {
+	return new_matrix->is_infinite();
+}
+template<>
+EquivQuiverMatrix *
+GreenQuiverGraph::_GraphLoader::new_instance() {
+	return new EquivQuiverMatrix(_size, _size);
+}
+template<>
+bool
+GreenQuiverGraph::_GraphLoader::is_exactly(
+		MatrixPtr lhs,
+		MatrixPtr rhs) {
+	return IntMatrix::are_equal(*lhs, *rhs);
+}
+template<>
+size_t
+GreenQuiverGraph::size(const Matrix & m) const {
+	return m.num_rows();
+}
+template<>
+bool
+GreenQuiverGraph::_GraphLoader::should_stop(MatrixPtr new_matrix) {
+	return new_matrix->is_infinite();
+}
 }
 

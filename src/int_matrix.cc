@@ -51,9 +51,7 @@ namespace cluster {
 			num_cols_(cols),
 			data_(rows *cols),
 			hashcode_(0) {
-		for (int i = 0; i < rows * cols; i++) {
-			data_[i] = values[i];
-		}
+		std::memcpy(data_.data(), values, rows * cols * sizeof(int));
 		hashcode_=compute_hash();
 	}
 
@@ -134,9 +132,8 @@ namespace cluster {
 	void IntMatrix::set_matrix(const IntMatrix& mat) {
 		if(mat.num_rows_ == num_rows_ && mat.num_cols_ == num_cols_) {
 			/* Don't need to allocate a new array */
-			for(int i = 0; i < num_rows_ * num_cols_; i++) {
-				data_[i] = mat.data_[i];
-			}
+			std::memcpy(data_.data(), mat.data_.data(),
+					num_rows_ * num_cols_ * sizeof(int));
 		} else {
 			data_ = IntVector(mat.data_);
 			num_rows_ = mat.num_rows_;

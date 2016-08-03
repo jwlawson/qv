@@ -107,7 +107,7 @@ namespace cluster {
 		/** Cached row vector to write mutation data to. */
 		static std::vector<int> k_row_;
 		/** Cached col vector to write mutation data to. */
-		static std::vector<int> k_col_;
+		static std::vector<int> k_abs_row_;
 	};
 	template<class T>
 	inline
@@ -115,8 +115,10 @@ namespace cluster {
 		int index = 0;
 		k_row_.reserve(num_cols_);
 		get_row(k, k_row_);
-		k_col_.reserve(num_rows_);
-		get_col(k, k_col_);
+		k_abs_row_.reserve(num_cols_);
+		for(int i = 0; i < num_cols_; ++i) {
+			k_abs_row_[i] = std::abs(k_row_[i]);
+		}
 		for(int i = 0; i < num_rows_; i++) {
 			if(i == k) {
 				for(int j = 0; j < num_cols_; ++j) {
@@ -128,8 +130,8 @@ namespace cluster {
 					if(j == k) {
 						result.data_[index] = -1 * data_[index];
 					} else {
-						result.data_[index] = data_[index] + (std::abs(k_col_[i]) * k_row_[j] 
-								+ k_col_[i] * std::abs(k_row_[j])) / 2;
+						result.data_[index] = data_[index] + (k_abs_row_[i] * k_row_[j] 
+								+ -k_row_[i] * k_abs_row_[j]) / 2;
 					}
 					++index;
 				}

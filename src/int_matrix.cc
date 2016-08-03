@@ -109,13 +109,11 @@ namespace cluster {
 	const std::vector<int> IntMatrix::get_row(const int row) const {
 		std::vector<int> result(num_cols_);
 		get_row(row, result);
-		return std::move(result);
+		return result;
 	}
 	void IntMatrix::get_row(const int row, std::vector<int>& result) const {
 		int count = row * num_cols_;
-		for (int j = 0; j < num_cols_; j++) {
-			result[j] = data_[count++];
-		}
+		std::memcpy(result.data(), data_.data() + count, num_cols_ * sizeof(int));
 	}
 	const std::vector<int> IntMatrix::get_col(const int col) const {
 		std::vector<int> result(num_rows_);

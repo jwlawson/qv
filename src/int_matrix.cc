@@ -44,18 +44,24 @@ namespace cluster {
 		: num_rows_(rows),
 			num_cols_(cols),
 			data_(rows *cols, 0),
-			hashcode_(113) {}
+			hashcode_(113),
+			recompute_hash_{true}
+	{}
 
 	IntMatrix::IntMatrix(const int rows, const int cols, const int values[])
 		: num_rows_(rows),
 			num_cols_(cols),
 			data_(rows *cols),
-			hashcode_(0) {
+			hashcode_(0),
+			recompute_hash_{true}
+	{
 		std::memcpy(data_.data(), values, rows * cols * sizeof(int));
-		hashcode_=compute_hash();
 	}
 
-	IntMatrix::IntMatrix(std::string str) {
+	IntMatrix::IntMatrix(std::string str)
+		:	hashcode_{0},
+			recompute_hash_{true}
+	{
 		std::stringstream ss;
 		ss << str;
 		std::string buf;
@@ -102,7 +108,6 @@ namespace cluster {
 		num_rows_ = row_size;
 		num_cols_ = col_size;
 		data_ = std::move(data);
-		hashcode_ = compute_hash();
 	}
 
 	/* Public methods */
@@ -118,7 +123,7 @@ namespace cluster {
 	const std::vector<int> IntMatrix::get_col(const int col) const {
 		std::vector<int> result(num_rows_);
 		get_col(col, result);
-		return std::move(result);
+		return result;
 	}
 	void IntMatrix::get_col(const int col, std::vector<int>& result) const{
 		int count = col;
@@ -329,6 +334,7 @@ namespace cluster {
 		swap(first.num_rows_, second.num_rows_);
 		swap(first.num_cols_, second.num_cols_);
 		swap(first.hashcode_, second.hashcode_);
+		swap(first.recompute_hash_, second.recompute_hash_);
 	}
 }
 

@@ -91,25 +91,19 @@ namespace cluster {
 		 * Get the number of rows in the matrix.
 		 * @return Number of rows
 		 */
-		int num_rows() const {
-			return num_rows_;
-		}
+		int num_rows() const;
 		/**
 		 * Get the number of columns in the matrix.
 		 * @return Number fo columns
 		 */
-		int num_cols() const {
-			return num_cols_;
-		}
+		int num_cols() const;
 		/**
 		 * Get the value stored in the matrix at a specific position.
 		 * @param row Row position
 		 * @param col Column position
 		 * @return Value at (row, col)
 		 */
-		int get(const int row, const int col) const {
-			return data_[get_index(row, col)];
-		}
+		int get(const int row, const int col) const;
 		/**
 		 * Get a vector containing all entries in the specified row.
 		 * @param row Row to return
@@ -153,16 +147,12 @@ namespace cluster {
 		 * @param col Column position
 		 * @param value Value to set
 		 */
-		void set(const int row, const int col, const int value) {
-			data_[get_index(row, col)] = value;
-		}
+		void set(const int row, const int col, const int value);
 		/**
 		 * Reset any state associated to the matrix. Call this any time that the
 		 * data stored in the matrix may change.
 		 */
-		virtual void reset() {
-			hashcode_ = compute_hash();
-		}
+		virtual void reset();
 		/**
 		 * Find the first row that is all zeros. The value returned will then be
 		 * the index of this row.
@@ -177,32 +167,22 @@ namespace cluster {
 		 * @param mat Matrix to check
 		 * @return true if the matries are equal
 		 */
-		virtual bool equals(const IntMatrix &mat) const {
-			return hashcode_ == mat.hashcode_ && data_ == mat.data_;
-		}
+		virtual bool equals(const IntMatrix &mat) const;
 		/**
 		 * Get a pointer to the underlying array.
 		 *
 		 * Only use this if you are sure you know what you are doing.
 		 * @return Pointer to the array that the matrix data is stored in
 		 */
-		int* data() {
-			return data_.data();
-		}
-		const int* data() const {
-			return data_.data();
-		}
-		const IntVector& vector() const {
-			return data_;
-		}
+		int* data();
+		const int* data() const;
+		const IntVector& vector() const;
 		/**
 		 * Compute the hash of the matrix.
 		 *
 		 * @return Hash of the matrix
 		 */
-		size_t hash() const {
-			return hashcode_;
-		}
+		size_t hash() const;
 		/**
 		 * Static method to check whether two matrices are equal.
 		 *
@@ -309,7 +289,9 @@ namespace cluster {
 
 	 private:
 		/** Cached hashcode for the matrix. */
-		std::size_t hashcode_;
+		mutable std::size_t hashcode_;
+		/** true if the hash needs recomputing */
+		mutable bool recompute_hash_;
 
 		/** Get the index in the array for the provided position. */
 		int get_index(const int row, const int col) const;
@@ -317,6 +299,60 @@ namespace cluster {
 		/** Multiply left and right together and put the result into result. */
 		void mult(const IntMatrix &left, const IntMatrix &right, IntMatrix &result) const;
 	};
+	inline
+	int
+	IntMatrix::num_rows() const {
+		return num_rows_;
+	}
+	inline
+	int
+	IntMatrix::num_cols() const {
+		return num_cols_;
+	}
+	inline
+	int
+	IntMatrix::get(const int row, const int col) const {
+		return data_[get_index(row, col)];
+	}
+	inline
+	void
+	IntMatrix::set(const int row, const int col, const int value) {
+		data_[get_index(row, col)] = value;
+	}
+	inline
+	void
+	IntMatrix::reset() {
+		recompute_hash_ = true;
+	}
+	inline
+	bool
+	IntMatrix::equals(const IntMatrix &mat) const {
+		return hash() == mat.hash() && data_ == mat.data_;
+	}
+	inline
+	int*
+	IntMatrix::data() {
+		return data_.data();
+	}
+	inline
+	const int*
+	IntMatrix::data() const {
+		return data_.data();
+	}
+	inline
+	const IntMatrix::IntVector&
+	IntMatrix::vector() const {
+		return data_;
+	}
+	inline
+	size_t
+	IntMatrix::hash() const {
+		if(recompute_hash_) {
+			hashcode_ = compute_hash();
+			recompute_hash_ = false;
+		}
+		return hashcode_;
+	}
 }
 namespace std {
 	/* Add hash function to the std::hash struct. */

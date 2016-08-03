@@ -23,42 +23,40 @@
 
 namespace cluster {
 	EquivQuiverMatrix::EquivQuiverMatrix()
-		: QuiverMatrix(),
-			rows_()
-	{
-		checker_ = EquivalenceChecker::Get(0);
-	}
+		: QuiverMatrix()
+		, rows_()
+		, checker_(EquivalenceChecker::Get(0))
+	{}
 
 	EquivQuiverMatrix::EquivQuiverMatrix(const int rows, const int cols)
 		: QuiverMatrix(rows, cols)
 		, rows_(rows, std::make_pair(0,0))
-	{
-		checker_ = EquivalenceChecker::Get(rows);
-	}
+		, checker_(EquivalenceChecker::Get(rows))
+	{}
 
 	EquivQuiverMatrix::EquivQuiverMatrix(const int rows, const int cols,
 			const int values[])
-		: QuiverMatrix(rows, cols, values),
-			rows_(rows, std::make_pair(0,0))
+		: QuiverMatrix(rows, cols, values)
+		, rows_(rows, std::make_pair(0,0))
+		, checker_(EquivalenceChecker::Get(rows))
 	{
-		checker_ = EquivalenceChecker::Get(rows);
 		reset();
 	}
 
 	EquivQuiverMatrix::EquivQuiverMatrix(const IntMatrix& matrix)
 		: QuiverMatrix(matrix),
 		  rows_(matrix.num_rows(), std::make_pair(0,0))
+		, checker_(EquivalenceChecker::Get(matrix.num_rows()))
 	{
-		checker_ = EquivalenceChecker::Get(matrix.num_rows());
 		reset();
 	}
 
 	EquivQuiverMatrix::EquivQuiverMatrix(std::string str) 
 		: QuiverMatrix(str),
 			rows_(num_rows(), std::make_pair(0,0))
+		, checker_(EquivalenceChecker::Get(num_rows_))
 	{
-			checker_ = EquivalenceChecker::Get(num_rows_);
-			reset();
+		reset();
 	}
 
 	void EquivQuiverMatrix::set_matrix(const IntMatrix& mat) {
@@ -70,9 +68,10 @@ namespace cluster {
 
 	/* Note that the static_cast will create a copy of mat */
 	bool EquivQuiverMatrix::equals(const IntMatrix &mat) const {
-		return checker_->are_equivalent(*this, 
-				static_cast<EquivQuiverMatrix>(mat));
+		auto e_mat = static_cast<EquivQuiverMatrix>(mat);
+		return checker_->are_equivalent(*this, e_mat);
 	}
+
 	bool EquivQuiverMatrix::equals(const EquivQuiverMatrix &mat) const {
 		return checker_->are_equivalent(*this, mat);
 	}
@@ -98,11 +97,13 @@ namespace cluster {
 		}
 		IntMatrix::reset();
 	}
+
 	EquivQuiverMatrix::CPermutation
 	EquivQuiverMatrix::get_permutation(const IntMatrix& mat) const {
 		this->equals(mat);
 		return checker_->last_row_map();
 	}
+
 	EquivQuiverMatrix::PermVecPtr
 	EquivQuiverMatrix::all_permutations(const EquivQuiverMatrix& mat) const {
 		return checker_->valid_row_maps(*this, mat);

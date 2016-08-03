@@ -34,7 +34,7 @@ namespace cluster {
 			/**
 			 * Return the next matrix in the iterator.
 			 */
-			T next();
+			T const& next();
 			/**
 			 * Check if the iterator has another matrix to return.
 			 * @return true if calling next will return a valid matrix

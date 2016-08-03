@@ -34,9 +34,6 @@ namespace cluster {
 		if(mat.num_rows() != num_rows_) {
 			rows_ = PairVec(mat.num_rows(), std::make_pair(0,0));
 		}
-		if(mat.num_cols() != num_cols_) {
-			cols_ = PairVec(mat.num_cols(), std::make_pair(0,0));
-		}
 		if(mat.num_rows() == num_rows_ && mat.num_cols() == num_cols_) {
 			/* Don't need to allocate a new array */
 			for(int i = 0; i < num_rows_ * num_cols_; i++) {

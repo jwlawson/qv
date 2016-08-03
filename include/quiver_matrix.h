@@ -25,8 +25,7 @@
 #include <cstdlib> /* std::abs */
 
 namespace cluster {
-	class QuiverMatrix :
-		public IntMatrix {
+	class QuiverMatrix : public IntMatrix {
 	 public:
 		 /** Construct a default QuiverMatrix of size 0. */
 		QuiverMatrix();
@@ -49,18 +48,18 @@ namespace cluster {
 		 * Copy constructor. Copies all data from the specified matrix.
 		 * @param mat Matrix to copy
 		 */
-		QuiverMatrix(const QuiverMatrix &mat);
+		QuiverMatrix(const QuiverMatrix &mat) = default;
 		/**
 		 * Similar to the copy constructor, this method takes a matrix which the
 		 * compiler has already copied and sets this matrix to that.
 		 * @param matrix Matrix to copy
 		 */
-		QuiverMatrix(IntMatrix matrix);
+		QuiverMatrix(IntMatrix const& matrix);
 		/**
 		 * Move constructor.
 		 * @param matrix Matrix to move into this one
 		 */
-		QuiverMatrix(QuiverMatrix&&);
+		QuiverMatrix(QuiverMatrix&&) = default;
 		/**
 		 * Create a QuiverMatrix from a string. The string is expected to be
 		 * formatted like one from the << method.
@@ -81,7 +80,8 @@ namespace cluster {
 		 * Assignment operator.
 		 * @param mat Matrix to set this to
 		 */
-		QuiverMatrix &operator=(QuiverMatrix mat);
+		QuiverMatrix &operator=(QuiverMatrix const& mat) = default;
+		QuiverMatrix &operator=(QuiverMatrix && mat) = default;
 
 		/**
 		 * Mutate this matrix at the specified vertex. The resulting matrix is
@@ -90,33 +90,7 @@ namespace cluster {
 		 * @param result Matrix to store result in
 		 */
 		template<class T>
-		void mutate(const int k, T &result) const {
-			
-			int index = 0;
-			k_row_.reserve(num_cols_);
-			get_row(k, k_row_);
-			k_col_.reserve(num_rows_);
-			get_col(k, k_col_);
-			for (int i = 0; i < num_rows_; i++) {
-				if(i == k) {
-					for(int j = 0; j < num_cols_; ++j) {
-						result.data_[index] = -1 * data_[index];
-						++index;
-					}
-				} else {
-					for(int j = 0; j< num_cols_; ++j) {
-						if(j==k) {
-							result.data_[index] = -1 * data_[index];
-						} else {
-							result.data_[index] = data_[index] + (std::abs(k_col_[i]) * k_row_[j] 
-									+ k_col_[i] * std::abs(k_row_[j])) / 2;
-						}
-						++index;
-					}
-				}
-			}
-			result.reset();
-		}
+		void mutate(const int k, T& result) const;
 		/**
 		 * Find the subquiver by removing the vertex specified.
 		 *
@@ -128,21 +102,53 @@ namespace cluster {
 		 * @param result Matrix to store result in
 		 */
 		template<class T>
-		void subquiver(const int k, T& result) const {
-			submatrix(k, k, result);
-			int zero = result.zero_row();
-			if (zero != -1) {
-				T tmp(result.num_rows() - 1, result.num_cols() - 1);
-				result.subquiver(zero, tmp);
-				result=std::move(tmp);
-			}
-			result.reset();
-		}
-
+		void subquiver(const int k, T& result) const;
 	 private:
+		/** Cached row vector to write mutation data to. */
 		static std::vector<int> k_row_;
+		/** Cached col vector to write mutation data to. */
 		static std::vector<int> k_col_;
 	};
+	template<class T>
+	inline
+	void QuiverMatrix::mutate(const int k, T& result) const {
+		int index = 0;
+		k_row_.reserve(num_cols_);
+		get_row(k, k_row_);
+		k_col_.reserve(num_rows_);
+		get_col(k, k_col_);
+		for(int i = 0; i < num_rows_; i++) {
+			if(i == k) {
+				for(int j = 0; j < num_cols_; ++j) {
+					result.data_[index] = -1 * data_[index];
+					++index;
+				}
+			} else {
+				for(int j = 0; j < num_cols_; ++j) {
+					if(j == k) {
+						result.data_[index] = -1 * data_[index];
+					} else {
+						result.data_[index] = data_[index] + (std::abs(k_col_[i]) * k_row_[j] 
+								+ k_col_[i] * std::abs(k_row_[j])) / 2;
+					}
+					++index;
+				}
+			}
+		}
+		result.reset();
+	}
+	template<class T>
+	inline
+	void QuiverMatrix::subquiver(const int k, T& result) const {
+		submatrix(k, k, result);
+		int zero = result.zero_row();
+		if (zero != -1) {
+			T tmp(result.num_rows() - 1, result.num_cols() - 1);
+			result.subquiver(zero, tmp);
+			result=std::move(tmp);
+		}
+		result.reset();
+	}
 }
 
 namespace std {

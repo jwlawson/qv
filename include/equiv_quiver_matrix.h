@@ -70,12 +70,12 @@ namespace cluster {
 			 * Copy constructor.
 			 * @param mat Matrix to copy
 			 */
-			EquivQuiverMatrix(const EquivQuiverMatrix& mat);
+			EquivQuiverMatrix(const EquivQuiverMatrix& mat) = default;
 			/**
 			 * Move constructor.
 			 * @param mat Matrix to move into this one.
 			 */
-			EquivQuiverMatrix(EquivQuiverMatrix&& mat);
+			EquivQuiverMatrix(EquivQuiverMatrix&& mat) = default;
 			/**
 			 * Create a EquivQuiverMatrix from a string. The string is expected to be
 			 * formatted like one from the << method.
@@ -106,7 +106,8 @@ namespace cluster {
 			/**
 			 * Assignment operator.
 			 */
-			EquivQuiverMatrix& operator=(const EquivQuiverMatrix& mat)=default;
+			EquivQuiverMatrix& operator=(const EquivQuiverMatrix& mat) = default;
+			EquivQuiverMatrix& operator=(EquivQuiverMatrix && mat) = default;
 			/**
 			 * Get the permutation taking this matrix to the given equivalent matrix.
 			 */
@@ -121,8 +122,6 @@ namespace cluster {
 
 			/** Vector holding pairs of row sums and the abs row sums. */
 			PairVector rows_;
-			/** Vector holding column sums and abs column sums. */
-			PairVector cols_;
 		protected:
 			/** Overwritten hash function. */
 			virtual std::size_t compute_hash() const;

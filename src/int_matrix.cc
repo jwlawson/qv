@@ -56,17 +56,6 @@ namespace cluster {
 		}
 		hashcode_=compute_hash();
 	}
-	IntMatrix::IntMatrix(const IntMatrix &mat)
-		: num_rows_(mat.num_rows_),
-			num_cols_(mat.num_cols_),
-			data_(mat.data_),
-			hashcode_(mat.hashcode_) {
-		}
-
-	IntMatrix::IntMatrix(IntMatrix&& mat)
-		: IntMatrix() {
-		swap(*this, mat);
-	}
 
 	IntMatrix::IntMatrix(std::string str) {
 		std::stringstream ss;
@@ -119,10 +108,6 @@ namespace cluster {
 	}
 
 	/* Public methods */
-	IntMatrix &IntMatrix::operator= (IntMatrix mat) {
-		swap(*this, mat);
-		return *this;
-	}
 	const std::vector<int> IntMatrix::get_row(const int row) const {
 		std::vector<int> result(num_cols_);
 		get_row(row, result);

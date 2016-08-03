@@ -58,12 +58,12 @@ namespace cluster {
 		 * Copy constructor.
 		 * @param mat Matrix to copy
 		 */
-		IntMatrix(const IntMatrix &mat);
+		IntMatrix(const IntMatrix &mat) = default;
 		/**
 		 * Move constructor. Leaves the passed matrix as a default IntMatrix.
 		 * @param mat Matrix to move into this
 		 */
-		IntMatrix(IntMatrix &&mat);
+		IntMatrix(IntMatrix &&mat) = default;
 		/**
 		 * Construct an IntMatrix from a string. the string is expected to be
 		 * formatted like one used in the << method.
@@ -85,7 +85,8 @@ namespace cluster {
 		 * Assignment operator. Sets this matrix to the one passed.
 		 * @param mat Matrix to copy
 		 */
-		IntMatrix &operator=(IntMatrix mat);
+		IntMatrix &operator=(IntMatrix const& mat) = default;
+		IntMatrix &operator=(IntMatrix && mat) = default;
 		/** 
 		 * Get the number of rows in the matrix.
 		 * @return Number of rows

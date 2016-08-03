@@ -30,19 +30,10 @@ namespace cluster {
 	QuiverMatrix::QuiverMatrix(const int rows, const int cols, const int values[])
 		: IntMatrix(rows, cols, values) {}
 	
-	QuiverMatrix::QuiverMatrix(const QuiverMatrix &mat)
-		: IntMatrix(mat) {}
+	QuiverMatrix::QuiverMatrix(IntMatrix const& matrix) : IntMatrix(matrix) {}
 	
-	QuiverMatrix::QuiverMatrix(IntMatrix matrix) : IntMatrix(matrix) {}
-	
-	QuiverMatrix::QuiverMatrix(QuiverMatrix &&mat) : IntMatrix(mat) {}
-
 	QuiverMatrix::QuiverMatrix(std::string str) : IntMatrix(str) {}
 
-	QuiverMatrix &QuiverMatrix::operator=(QuiverMatrix mat) {
-		IntMatrix::operator=(mat);
-		return *this;
-	}
 	std::vector<int> QuiverMatrix::k_row_;
 	std::vector<int> QuiverMatrix::k_col_;
 

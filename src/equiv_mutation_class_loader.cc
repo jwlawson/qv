@@ -31,8 +31,7 @@ namespace cluster {
 	}
 
 	void EquivMutationClassLoader::seen_matrix(std::shared_ptr<M> mat,
-	                                     std::shared_ptr<M> previous,
-																			 const int vertex) {
+			std::shared_ptr<M> previous, const int vertex) {
 		map_[previous].link(vertex);
 		if (map_.count(mat) > 0) {
 			/*
@@ -57,8 +56,7 @@ namespace cluster {
 	}
 
 	void EquivMutationClassLoader::unseen_matrix(std::shared_ptr<M> mat,
-	                                       std::shared_ptr<M> previous,
-																				 const int vertex) {
+			std::shared_ptr<M> previous, const int vertex) {
 		set_.insert(mat);
 		MutationClassLoader<EquivQuiverMatrix>::unseen_matrix(mat, previous, vertex);
 	}

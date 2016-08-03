@@ -19,6 +19,7 @@
 #include "equiv_quiver_matrix.h"
 #include "int_matrix.h"
 #include "equivalence_checker.h"
+#include "dynkin.h"
 
 #include <memory>
 
@@ -314,6 +315,20 @@ namespace cluster {
 		std::shared_ptr<std::vector<std::vector<int>>> vecp = m.all_permutations(n);
 		ASSERT_FALSE(vecp->empty());
 		EXPECT_EQ(static_cast<std::size_t>(4), vecp->size());
+	}
+	TEST(EquivMatrix, CopiesShared) {
+		EquivQuiverMatrix m(dynkin::A3);
+		EquivQuiverMatrix n("{ { 0 1 0 } { -1 0 1 } { 0 -1 0 } }");
+		EXPECT_TRUE(m.equals(n));
+		EXPECT_TRUE(n.equals(m));
+
+		std::shared_ptr<EquivQuiverMatrix> p;
+		p = std::make_shared<EquivQuiverMatrix>(m);
+		EXPECT_TRUE(m.equals(*p));
+		EXPECT_TRUE(p->equals(m));
+		EXPECT_TRUE(n.equals(*p));
+		EXPECT_TRUE(p->equals(n));
+
 	}
 }
 

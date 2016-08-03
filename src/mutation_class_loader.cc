@@ -43,12 +43,28 @@ namespace cluster {
 		queue_.push_back(matrix_);
 	}
 
-	template<class T>
-	T MutationClassLoader<T>::next() {
-		std::shared_ptr<T> result = queue_.front();
+	/* Can move the result as it is no longer needed in the loader. */
+	template<>
+	QuiverMatrix
+	MutationClassLoader<QuiverMatrix>::next() {
+		std::shared_ptr<QuiverMatrix> next = queue_.front();
 		queue_.pop_front();
-		if (compute_mutations(result)) {
-			return std::move(*result);
+		if (compute_mutations(next)) {
+			return std::move(*next);
+		} else {
+			return INFINITE;
+		}
+	}
+	/* In EquivQuiver case, the matrices are kept in memory, so a reference can
+	 * be returned safely */
+	template<>
+	EquivQuiverMatrix
+	MutationClassLoader<EquivQuiverMatrix>::next() {
+		std::shared_ptr<EquivQuiverMatrix> next = queue_.front();
+		EquivQuiverMatrix const& result = *next;
+		queue_.pop_front();
+		if (compute_mutations(next)) {
+			return result;
 		} else {
 			return INFINITE;
 		}

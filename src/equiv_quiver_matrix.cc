@@ -55,7 +55,7 @@ namespace cluster {
 		reset();
 	}
 
-	EquivQuiverMatrix::EquivQuiverMatrix(std::string const& str) 
+	EquivQuiverMatrix::EquivQuiverMatrix(std::string const& str)
 		: QuiverMatrix(str)
 		, rows_(num_rows(), std::make_pair(0,0))
 		, checker_(EquivalenceChecker::Get(num_rows_))

@@ -83,7 +83,7 @@ namespace cluster {
 			 * @see IntMatrix#IntMatrix(std::String)
 			 * @param str String containing matrix information
 			 */
-			EquivQuiverMatrix(std::string str);
+			EquivQuiverMatrix(std::string const& str);
 			virtual ~EquivQuiverMatrix(){};
 			/**
 			 * Overwrite the set method in IntMatrix to allow the PairVector objects

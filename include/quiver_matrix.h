@@ -67,7 +67,7 @@ namespace cluster {
 		 * @see IntMatrix#IntMatrix(std::String)
 		 * @param str String containing matrix information
 		 */
-		QuiverMatrix(std::string str);
+		QuiverMatrix(std::string const& str);
 		virtual ~QuiverMatrix() {};
 		/**
 		 * Check whether this matrix is definitely mutation infinite.
@@ -104,36 +104,27 @@ namespace cluster {
 		template<class T>
 		void subquiver(const int k, T& result) const;
 	 private:
-		/** Cached row vector to write mutation data to. */
-		static std::vector<int> k_row_;
 		/** Cached col vector to write mutation data to. */
 		static std::vector<int> k_abs_row_;
 	};
 	template<class T>
 	inline
 	void QuiverMatrix::mutate(const int k, T& result) const {
-		int index = 0;
-		k_row_.reserve(num_cols_);
-		get_row(k, k_row_);
+		int const * k_row = data_.data() + k * num_cols_;
 		k_abs_row_.reserve(num_cols_);
 		for(int i = 0; i < num_cols_; ++i) {
-			k_abs_row_[i] = std::abs(k_row_[i]);
+			k_abs_row_[i] = std::abs(k_row[i]);
 		}
-		for(int i = 0; i < num_rows_; i++) {
-			if(i == k) {
-				for(int j = 0; j < num_cols_; ++j) {
-					result.data_[index] = -1 * data_[index];
-					++index;
-				}
-			} else {
-				for(int j = 0; j < num_cols_; ++j) {
-					if(j == k) {
-						result.data_[index] = -1 * data_[index];
-					} else {
-						result.data_[index] = data_[index] + (k_abs_row_[i] * k_row_[j] 
-								+ -k_row_[i] * k_abs_row_[j]) / 2;
-					}
-					++index;
+		int const * this_data = data_.data();
+		int * result_data = result.data_.data();
+		for(int i = 0; i < num_rows_; ++i) {
+			for(int j = 0; j < num_cols_; ++j, ++this_data, ++result_data) {
+				if(i == k || j == k) {
+					*result_data= -(*this_data);
+				} else {
+				*result_data = *this_data +
+					(k_abs_row_[i] * k_row[j] - k_row[i] * k_abs_row_[j]) / 2;
+					/*(k_row[i] < 0 ? -1 : 1) * std::min(k_row[i] * k_row[j], 0);*/
 				}
 			}
 		}

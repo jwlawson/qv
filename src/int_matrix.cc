@@ -58,7 +58,7 @@ namespace cluster {
 		std::memcpy(data_.data(), values, rows * cols * sizeof(int));
 	}
 
-	IntMatrix::IntMatrix(std::string str)
+	IntMatrix::IntMatrix(std::string const& str)
 		:	hashcode_{0},
 			recompute_hash_{true}
 	{

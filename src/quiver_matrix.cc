@@ -21,6 +21,8 @@
  */
 #include "quiver_matrix.h"
 
+#include <algorithm>
+
 namespace cluster {
 	QuiverMatrix::QuiverMatrix() : IntMatrix() {}
 	
@@ -32,19 +34,13 @@ namespace cluster {
 	
 	QuiverMatrix::QuiverMatrix(IntMatrix const& matrix) : IntMatrix(matrix) {}
 	
-	QuiverMatrix::QuiverMatrix(std::string str) : IntMatrix(str) {}
+	QuiverMatrix::QuiverMatrix(std::string const& str) : IntMatrix(str) {}
 
-	std::vector<int> QuiverMatrix::k_row_;
-	std::vector<int> QuiverMatrix::k_col_;
+	std::vector<int> QuiverMatrix::k_abs_row_;
 
 	bool QuiverMatrix::is_infinite() const {
-		for (int i = 0; i < num_rows_ * num_cols_; i++) {
-			int val = data_[i];
-			if (val >= 3 || val <= -3) {
-				return true;
-			}
-		}
-		return false;
+		return std::any_of(data_.data(), data_.data() + num_rows_ * num_cols_,
+				[](int val){return val >=3 || val <= -3; });
 	}
 
 }

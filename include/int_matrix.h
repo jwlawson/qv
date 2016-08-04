@@ -79,7 +79,7 @@ namespace cluster {
 		 *
 		 * @param str String containing matrix
 		 */
-		IntMatrix(std::string str);
+		IntMatrix(std::string const& str);
 		virtual ~IntMatrix() {};
 		/**
 		 * Assignment operator. Sets this matrix to the one passed.

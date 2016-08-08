@@ -137,7 +137,7 @@ TEST(GreenContinue, Reuse) {
 	EXPECT_FALSE(chk(&m, 1));
 	EXPECT_FALSE(chk(&m, 2));
 	EXPECT_FALSE(chk(&m, 3));
-	
+
 	const QuiverMatrix n("{ { 0 1 -1 0 } { -1 0 1 1 } { 1 -1 0 1 } { 0 -1 -1 0 } }");
 	EXPECT_TRUE(chk(&n, 0));
 	EXPECT_TRUE(chk(&n, 1));

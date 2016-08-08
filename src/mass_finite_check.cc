@@ -20,17 +20,19 @@
 
 namespace cluster {
 
-	MassFiniteCheck::MassFiniteCheck(){
-		set_ = std::make_shared<MSet>();
-	}
+	MassFiniteCheck::MassFiniteCheck()
+		: set_{ std::make_shared<MSet>() }
+		, last_new_{false}
+		, last_checked_{ std::make_shared<M>() }
+	{}
 
 	bool MassFiniteCheck::is_finite(const M& matrix) {
 		if(matrix.num_rows() < 2 && matrix.num_cols() < 2) {
 			return true;
 		}
-		MPtr p = std::make_shared<M>(matrix);
+		*last_checked_ = matrix;
 		last_new_ = false;
-		if(set_contains(p)) {
+		if(set_contains(last_checked_)) {
 			return true;
 		}
 		if(fastinf::is_infinite(matrix)) {
@@ -63,9 +65,7 @@ namespace cluster {
 	}
 
 	void MassFiniteCheck::add_class(const MutationClass& c){
-		for(auto iter = c.begin(); iter != c.end(); iter++){
-			set_->insert(*iter);
-		}
+		set_->insert(c.begin(), c.end());
 	}
 
 }

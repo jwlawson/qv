@@ -129,6 +129,8 @@ namespace cluster {
 		private:
 			/** Equivalence checker to check if matrices are equivalent. */
 			std::shared_ptr<EquivalenceChecker> checker_;
+			/** Cached sorted row sums and abs row sums. */
+			mutable PairVector sorted_rows_;
 
 	};
 }

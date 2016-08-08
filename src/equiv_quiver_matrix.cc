@@ -26,12 +26,14 @@ namespace cluster {
 		: QuiverMatrix()
 		, rows_()
 		, checker_(EquivalenceChecker::Get(0))
+		, sorted_rows_()
 	{}
 
 	EquivQuiverMatrix::EquivQuiverMatrix(const int rows, const int cols)
 		: QuiverMatrix(rows, cols)
 		, rows_(rows, std::make_pair(0,0))
 		, checker_(EquivalenceChecker::Get(rows))
+		, sorted_rows_(rows_)
 	{}
 
 	EquivQuiverMatrix::EquivQuiverMatrix(const int rows, const int cols,
@@ -39,22 +41,25 @@ namespace cluster {
 		: QuiverMatrix(rows, cols, values)
 		, rows_(rows, std::make_pair(0,0))
 		, checker_(EquivalenceChecker::Get(rows))
+		, sorted_rows_(rows_)
 	{
 		reset();
 	}
 
 	EquivQuiverMatrix::EquivQuiverMatrix(const IntMatrix& matrix)
-		: QuiverMatrix(matrix),
-		  rows_(matrix.num_rows(), std::make_pair(0,0))
+		: QuiverMatrix(matrix)
+		, rows_(matrix.num_rows(), std::make_pair(0,0))
 		, checker_(EquivalenceChecker::Get(matrix.num_rows()))
+		, sorted_rows_(rows_)
 	{
 		reset();
 	}
 
 	EquivQuiverMatrix::EquivQuiverMatrix(std::string const& str) 
-		: QuiverMatrix(str),
-			rows_(num_rows(), std::make_pair(0,0))
+		: QuiverMatrix(str)
+		, rows_(num_rows(), std::make_pair(0,0))
 		, checker_(EquivalenceChecker::Get(num_rows_))
+		, sorted_rows_(rows_)
 	{
 		reset();
 	}
@@ -62,8 +67,10 @@ namespace cluster {
 	void EquivQuiverMatrix::set_matrix(const IntMatrix& mat) {
 		if(mat.num_rows() != num_rows_) {
 			rows_ = PairVector(mat.num_rows(), std::make_pair(0,0));
+			sorted_rows_ = rows_;
 		}
 		IntMatrix::set_matrix(mat);
+		reset();
 	}
 
 	/* Note that the static_cast will create a copy of mat */
@@ -113,12 +120,9 @@ namespace cluster {
 
 	std::size_t EquivQuiverMatrix::compute_hash() const {
 		std::size_t hash = 137;
-		std::vector<std::pair<int, int>> rows(rows_);
-//		std::vector<std::pair<int, int>> cols(cols_);
-		std::sort(rows.begin(), rows.end());
-//		std::sort(cols.begin(), cols.end());
-		boost::hash_combine(hash, arrays::hash(rows));
-//		boost::hash_combine(hash, arrays::hash(cols));
+		sorted_rows_ = rows_;
+		std::sort(sorted_rows_.begin(), sorted_rows_.end());
+		boost::hash_combine(hash, arrays::hash(sorted_rows_));
 
 		return hash;
 	}

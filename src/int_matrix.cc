@@ -125,7 +125,7 @@ namespace cluster {
 		get_col(col, result);
 		return result;
 	}
-	void IntMatrix::get_col(const int col, std::vector<int>& result) const{
+	void IntMatrix::get_col(const int col, std::vector<int>& result) const {
 		int count = col;
 		for (int j = 0; j < num_rows_; j++) {
 			result[j] = data_[count];
@@ -133,16 +133,7 @@ namespace cluster {
 		}
 	}
 	void IntMatrix::set_matrix(const IntMatrix& mat) {
-		if(mat.num_rows_ == num_rows_ && mat.num_cols_ == num_cols_) {
-			/* Don't need to allocate a new array */
-			std::memcpy(data_.data(), mat.data_.data(),
-					num_rows_ * num_cols_ * sizeof(int));
-		} else {
-			data_ = IntVector(mat.data_);
-			num_rows_ = mat.num_rows_;
-			num_cols_ = mat.num_cols_;
-		}
-		reset();
+		operator=(mat);
 	}
 	int IntMatrix::zero_row() const {
 		bool isZero = false;

@@ -66,6 +66,7 @@ namespace cluster {
 			std::shared_ptr<MSet> set_;
 			/** true if the last checked matrix was in a new mutation class. */
 			bool last_new_;
+			MPtr last_checked_;
 
 			/**
 			 * Check whether the matrix has been computed to be finite previously.

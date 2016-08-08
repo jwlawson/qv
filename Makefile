@@ -1,6 +1,6 @@
 NAME = qv
 MAJOR = 0
-MINOR = 11
+MINOR = 13
 VERSION = $(MAJOR).$(MINOR)
 
 # Using cygwin -std=gnu++11 should be used rather than -std=c++11
@@ -9,7 +9,7 @@ CXXFLAGS += -Wall -Wextra -Werror -march=native
 CXXFLAGS += -fno-signed-zeros -fno-math-errno -fno-rounding-math
 CXXFLAGS += -fno-signaling-nans -fno-trapping-math
 CXXFLAGS += -ffinite-math-only
-OPT = -O3 -g
+OPT = -Ofast
 else
 CXXFLAGS = -Wall -std=c++11 -xHOST
 OPT = -O3 -ipo -no-prec-div

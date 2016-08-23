@@ -38,8 +38,8 @@ namespace cluster {
 		StreamSubIter<QuiverMatrix> iter(ss);
 
 		ASSERT_TRUE(iter.has_next());
-		EXPECT_TRUE(exp1.equals(*(iter.next())));
-		EXPECT_TRUE(exp2.equals(*(iter.next())));
+		EXPECT_TRUE(exp1.equals(iter.next()));
+		EXPECT_TRUE(exp2.equals(iter.next()));
 	}
 
 	TEST(StreamSubIterator, Info) {

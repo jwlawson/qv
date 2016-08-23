@@ -29,11 +29,12 @@ namespace cluster {
 		SubmatrixIterator();
 		SubmatrixIterator(const T& initial);
 
-		std::shared_ptr<T> next();
+		T const& next();
 		bool has_next();
 
 	 private:
 		T matrix_;
+		T submatrix_;
 		int count_;
 		int max_;
 

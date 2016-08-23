@@ -31,7 +31,7 @@ namespace cluster {
 
 		SubmatrixIterator<QuiverMatrix> iter(m);
 
-		EXPECT_TRUE(exp.equals(*(iter.next())));
+		EXPECT_TRUE(exp.equals(iter.next()));
 	}
 
 	TEST(SubmatrixIter, Second) {
@@ -44,7 +44,7 @@ namespace cluster {
 		SubmatrixIterator<QuiverMatrix> iter(m);
 		iter.next();
 
-		EXPECT_TRUE(exp.equals(*(iter.next())));
+		EXPECT_TRUE(exp.equals(iter.next()));
 	}
 
 	TEST( SubmatrixIter, Degenerate) {
@@ -55,6 +55,14 @@ namespace cluster {
 
 		SubmatrixIterator<QuiverMatrix> iter(m);
 
-		EXPECT_TRUE(exp.equals(*(iter.next())));
+		EXPECT_TRUE(exp.equals(iter.next()));
+	}
+	TEST(SubmatrixIter, InfiniteSub) {
+		QuiverMatrix m("{ { 0 2 -2 2 } { -2 0 2 0 } { 2 -2 0 0 } { -2 0 0 0 } }");
+		SubmatrixIterator<QuiverMatrix> iter(m);
+		while(iter.has_next()) {
+			std::cout << iter.next() << std::endl;
+		}
+
 	}
 }

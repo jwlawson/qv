@@ -22,7 +22,8 @@
 namespace cluster {
 
 	template<class T>
-	std::shared_ptr<T> StreamSubIter<T>::next() {
+	T const&
+	StreamSubIter<T>::next() {
 		if(!sub_iter_.has_next()) {
 			std::shared_ptr<T> mat = stream_iter_.next();
 			removed_ = -1;
@@ -30,16 +31,19 @@ namespace cluster {
 			sub_iter_ = SubmatrixIterator<T>(*mat);
 		}
 		++removed_;
-		return std::move(sub_iter_.next());
+		return sub_iter_.next();
 	}
 
 	template<class T>
-	typename StreamSubIter<T>::MatrixSub StreamSubIter<T>::next_info() {
-		MatrixSub result;
-		result.submatrix = next();
-		result.matrix = matrix_;
-		result.removed = removed_;
-		return std::move(result);
+	void
+	StreamSubIter<T>::next_info(MatrixSub& info) {
+		if(info.submatrix) {
+			info.submatrix->set_matrix(next());
+		} else {
+			info.submatrix = std::make_shared<T>(next());
+		}
+		info.matrix = matrix_;
+		info.removed = removed_;
 	}
 
 	template<class T>

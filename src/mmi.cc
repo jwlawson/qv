@@ -41,10 +41,9 @@ namespace cluster {
 				}
 			} 
 			SubmatrixIterator<QuiverMatrix> iter(matrix);
-			typedef std::shared_ptr<QuiverMatrix> MatPtr;
 			while(iter.has_next()) {
-				MatPtr n = std::move(iter.next());
-				if(fastinf::is_infinite(*n)){
+				QuiverMatrix const& n = iter.next();
+				if(fastinf::is_infinite(n)){
 					return false;
 				}
 			}
@@ -62,15 +61,14 @@ namespace cluster {
 				}
 			}
 			/* Now check submatrices. */
-			typedef std::shared_ptr<QuiverMatrix> MatPtr;
 			SubmatrixIterator<QuiverMatrix> iter(matrix);
 			while(iter.has_next()) {
-				MatPtr n = std::move(iter.next());
-				if(fastinf::is_infinite(*n)){
+				QuiverMatrix const& n = iter.next();
+				if(fastinf::is_infinite(n)){
 					return false;
 				}
 				/* Probably finite. */
-				EquivQuiverMatrix e(*n);
+				EquivQuiverMatrix e(n);
 				if(!chk.is_finite(e)) {
 					/* Actually infinite. */
 					return false;

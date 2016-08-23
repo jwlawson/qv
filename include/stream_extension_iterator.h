@@ -26,20 +26,16 @@
 namespace cluster {
 	template<class T>
 	class StreamExtIterator {
-		private:
-			typedef std::shared_ptr<T> MatrixPtr;
 		public:
 			StreamExtIterator();
 			StreamExtIterator(std::istream& istream);
 
-			MatrixPtr next();
+			T const& next();
 			bool has_next();
-			void progress(bool prog);
 
 		private:
 			StreamIterator<T> stream_iter_;
 			ExtensionIterator<T> ext_iter_;
-			bool progress_;
 	};
 }
 

@@ -40,8 +40,8 @@ namespace cluster {
 
 		int w[] = {1,2,3,2,4,5,6,2,7,8,9,2,-2,-2,-2,0};
 		QuiverMatrix exp(4, 4, w);
-		std::shared_ptr<QuiverMatrix> n = iter.next();
-		EXPECT_TRUE(exp.equals(*n));
+		QuiverMatrix n = iter.next();
+		EXPECT_TRUE(exp.equals(n));
 		EXPECT_TRUE(iter.has_next());
 	}
 

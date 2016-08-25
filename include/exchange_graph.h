@@ -214,7 +214,7 @@ typename __ExchangeGraph<M,C>::_GraphLoader &
 __ExchangeGraph<M,C>::_GraphLoader::operator++(){
 	MatrixPtr mat = _graph._queue.front();
 	_graph._queue.pop_front();
-	for (std::size_t i = 0; i < _size && !_end; ++i) {
+	for (std::size_t i = 0; !_end && i < _size; ++i) {
 		if (mutate_at(mat, i)) {
 			MatrixPtr new_matrix = new_instance();
 			mat->mutate(i, *new_matrix);
@@ -222,16 +222,13 @@ __ExchangeGraph<M,C>::_GraphLoader::operator++(){
 				seen_matrix(new_matrix, mat, i);
 				delete new_matrix;
 			} else {
-				if (should_stop(new_matrix)) {
-					_end = true;
-				}
+				// up to this point _end is always false
+				_end = should_stop(new_matrix);
 				unseen_matrix(new_matrix, mat, i);
 			}
 		}
 	}
-	if(_graph._queue.empty()){
-		_end = true;
-	}
+	_end = _end || _graph._queue.empty();
 	return *this;
 }
 template<class M, class C>
@@ -250,9 +247,12 @@ template<class M, class C>
 inline
 bool
 __ExchangeGraph<M,C>::_GraphLoader::mutate_at(MatrixPtr old_mat, int vertex) {
-	bool result = _should_continue(old_mat, vertex)
-		&& _graph._map.find(old_mat) != _graph._map.end()
-		&& _graph._map[old_mat][vertex] == nullptr;
+	bool result = _should_continue(old_mat, vertex);
+	if (result) {
+		auto position = _graph._map.find(old_mat);
+		result = position != _graph._map.end()
+			&& position->second[vertex] == nullptr;
+	}
 	return result;
 }
 template<class M, class C>
@@ -262,10 +262,11 @@ __ExchangeGraph<M,C>::_GraphLoader::seen_matrix(MatrixPtr new_mat,
 		MatrixPtr old_mat, int vertex) {
 	auto ref = _graph._map.find(new_mat);
 	if(ref != _graph._map.end() && is_exactly(new_mat, ref->first)) {
-		_graph._map[new_mat][vertex] = old_mat;
+		ref->second[vertex] = old_mat;
 	}
-	if(_graph._map[old_mat][vertex] == nullptr) {
-		_graph._map[old_mat][vertex] = ref->first;
+	auto & old_matrix_vertex_link = _graph._map[old_mat][vertex];
+	if(old_matrix_vertex_link == nullptr) {
+		old_matrix_vertex_link = ref->first;
 	}
 }
 template<class M, class C>
@@ -331,7 +332,8 @@ template<class Matrix, class Check> template<class M>
 inline
 typename std::enable_if<std::is_base_of<QuiverMatrix, M>::value, bool>::type
 __ExchangeGraph<Matrix, Check>::_GraphLoader::should_stop(MatrixPtr new_matrix) {
-	return new_matrix->is_infinite();
+	size_t num = _graph._map.size();
+	return num > _graph._max_num || new_matrix->is_infinite();
 }
 template<class Matrix, class Check> template<class M>
 inline

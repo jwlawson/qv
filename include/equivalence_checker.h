@@ -20,6 +20,7 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <map>
 #include <vector>
 #include <utility>
@@ -27,9 +28,6 @@
 #include "equiv_quiver_matrix.h"
 
 namespace cluster {
-	/* Forward declaration required. */
-	class EquivQuiverMatrix;
-
 	class EquivalenceChecker {
 	private:
 		typedef EquivQuiverMatrix M;
@@ -61,7 +59,7 @@ namespace cluster {
 		are_equivalent(const M &lhs, const M &rhs);
 		/** Get the mapping used in last equals check. */
 		const Permutation &
-		last_row_map() { return last_row_map_; }
+		last_row_map() const;
 		/**
 		 * Get all valid permutations from lhs to rhs.
 		 *
@@ -74,11 +72,6 @@ namespace cluster {
 		 */
 		PermVecPtr
 		valid_row_maps(const M& lhs, const M& rhs);
-		/**
-		 * Allocation operator.
-		 */
-		EquivalenceChecker&
-		operator=(EquivalenceChecker const& mat) = default;
 
 	 private:
 		/**
@@ -86,18 +79,16 @@ namespace cluster {
 		 */
 		class Mapping {
 			public:
-				Mapping(int size)
-					: row_mappings(size) {}
-				void reset() {
-					for(std::size_t i = 0; i < row_mappings.size(); ++i) {
-						row_mappings[i].resize(0);
-					}
-				}
-				void update_row_mapping(const int a_index, const int b_index){
-					row_mappings[a_index].push_back(b_index);
-				}
-				Mapping& operator=(Mapping const&) = default;
-
+				Mapping(int size) : row_mappings(size) {}
+				/**
+				 * Reset all mapping information.
+				 */
+				void reset();
+				/**
+				 * Update the mapping at a_index to include a link to b_index.
+				 */
+				void update_row_mapping(const int a_index, const int b_index);
+				/** Actual mapping data */
 				std::vector<std::vector<int>> row_mappings;
 		};
 		/** Size of matrices to check. */
@@ -106,22 +97,10 @@ namespace cluster {
 		Mapping maps_;
 		/** Mapping used in last equals check run. */
 		std::vector<int> last_row_map_;
-		std::vector<int> a_row_vals_;
-		std::vector<int> b_row_vals_;
 
 		/** Check whether the rows of the matrices match. */
 		bool
 		do_rows_match(const M& a, const M& b);
-		/** Check whether the row/column sums match. */
-		bool
-		sums_equivalent(const M& a, const M& b) const;
-		/** 
-		 * Convenience method to check if two int vectors contain the same numbers
-		 * in different orders.
-		 */
-		bool
-		arrays_equivalent(const std::vector<int>& a,
-				const std::vector<int>& b) const;
 		/**
 		 * Check whether the two matrices are permutations by considering the
 		 * mappings calculated earlier. Uses recursion on the index.
@@ -136,5 +115,22 @@ namespace cluster {
 		all_perms(Permutation & row_map, int index, const M& a, const M& b,
 				PermVecPtr perms);
 	};
+	inline
+	const EquivalenceChecker::Permutation &
+	EquivalenceChecker::last_row_map() const {
+		return last_row_map_;
+	}
+	inline
+	void
+	EquivalenceChecker::Mapping::reset() {
+		std::for_each(row_mappings.begin(), row_mappings.end(),
+				[](std::vector<int>& v){ v.resize(0); });
+	}
+	inline
+	void
+	EquivalenceChecker::Mapping::update_row_mapping(const int a_index,
+			const int b_index) {
+		row_mappings[a_index].push_back(b_index);
+	}
 }
 

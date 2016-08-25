@@ -358,6 +358,12 @@ namespace cluster {
 		}
 		return hashcode_;
 	}
+	inline
+	int
+	IntMatrix::get_index(const int row, const int col) const {
+		return row * num_cols_ + col;
+	}
+
 }
 namespace std {
 	/* Add hash function to the std::hash struct. */

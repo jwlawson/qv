@@ -43,7 +43,7 @@ namespace cluster {
 	IntMatrix::IntMatrix(const int rows, const int cols)
 		: num_rows_(rows),
 			num_cols_(cols),
-			data_(rows *cols, 0),
+			data_(rows * cols, 0),
 			hashcode_(113),
 			recompute_hash_{true}
 	{}
@@ -51,12 +51,10 @@ namespace cluster {
 	IntMatrix::IntMatrix(const int rows, const int cols, const int values[])
 		: num_rows_(rows),
 			num_cols_(cols),
-			data_(rows *cols),
+			data_(values, values + rows * cols),
 			hashcode_(0),
 			recompute_hash_{true}
-	{
-		std::memcpy(data_.data(), values, rows * cols * sizeof(int));
-	}
+	{}
 
 	IntMatrix::IntMatrix(std::string const& str)
 		:	hashcode_{0},
@@ -161,7 +159,6 @@ namespace cluster {
 		return lhs.data_ == rhs.data_;
 	}
 
-
 	void IntMatrix::submatrix(const int row, const int col,
 			IntMatrix &result) const {
 		int resInd = 0;
@@ -262,10 +259,6 @@ namespace cluster {
 
 	/* Private methods */
 
-	int IntMatrix::get_index(const int row, const int col) const {
-		return row * num_cols_ + col;
-	}
-
 	std::size_t IntMatrix::compute_hash() const {
 		std::size_t hash = 113;
 		int_fast16_t max =  num_rows_ * num_cols_;
@@ -275,7 +268,6 @@ namespace cluster {
 		}
 		return hash;
 	}
-
 
 	void IntMatrix::mult(const IntMatrix &left, const IntMatrix &right,
 			IntMatrix &result) const {

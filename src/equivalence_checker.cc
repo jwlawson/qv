@@ -22,16 +22,17 @@
 #include "array_utils.h"
 
 namespace cluster {
-	std::weak_ptr<EquivalenceChecker> EquivalenceChecker::instance_ = 
-		std::make_shared<EquivalenceChecker>();
 
-	std::shared_ptr<EquivalenceChecker> EquivalenceChecker::Get(const int size) {
-		std::shared_ptr<EquivalenceChecker> result = instance_.lock();
-		if (!result || result->size_ != size) {
-			result.reset(new EquivalenceChecker(size));
-			instance_ = result;
+	std::shared_ptr<EquivalenceChecker>
+	EquivalenceChecker::Get(const int size) {
+		static std::map<int, std::shared_ptr<EquivalenceChecker>> instance_map{};
+		auto position = instance_map.find(size);
+		if(position == instance_map.end()) {
+			auto inserted = instance_map.emplace(size,
+					std::make_shared<EquivalenceChecker>(size));
+			position = inserted.first;
 		}
-		return result;
+		return position->second;
 	}
 
 	EquivalenceChecker::EquivalenceChecker()
@@ -89,11 +90,6 @@ namespace cluster {
 		}
 		all_perms(last_row_map_, 0, lhs, rhs, result);
 		return result;
-	}
-	EquivalenceChecker &
-	EquivalenceChecker::operator=(EquivalenceChecker mat) {
-		swap(*this, mat);
-		return *this;
 	}
 
 	/* Private methods */
@@ -202,15 +198,6 @@ namespace cluster {
 				}
 			}
 		}
-	}
-	void
-	swap(EquivalenceChecker& f, EquivalenceChecker& s) {
-		using std::swap;
-		swap(f.last_row_map_, s.last_row_map_);
-		swap(f.a_row_vals_  , s.a_row_vals_  );
-		swap(f.b_row_vals_  , s.b_row_vals_  );
-		swap(f.size_, s.size_);
-		swap(f.maps_, s.maps_);
 	}
 }
 

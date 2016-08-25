@@ -20,6 +20,7 @@
  */
 #pragma once
 
+#include <map>
 #include <vector>
 #include <utility>
 
@@ -77,16 +78,9 @@ namespace cluster {
 		 * Allocation operator.
 		 */
 		EquivalenceChecker&
-		operator=(EquivalenceChecker mat);
-		/**
-		 * Swap function used in allocating. Swaps each of the private data members.
-		 */
-		friend void swap(EquivalenceChecker& f, EquivalenceChecker& s);
+		operator=(EquivalenceChecker const& mat) = default;
 
 	 private:
-		/** Cached singleton instance. */
-		static std::weak_ptr<EquivalenceChecker> instance_;
-
 		/**
 		 * Stores information about possible mappings between the matrices.
 		 */
@@ -102,10 +96,7 @@ namespace cluster {
 				void update_row_mapping(const int a_index, const int b_index){
 					row_mappings[a_index].push_back(b_index);
 				}
-				friend void swap(Mapping& a, Mapping& b) {
-					using std::swap;
-					swap(a.row_mappings, b.row_mappings);
-				}
+				Mapping& operator=(Mapping const&) = default;
 
 				std::vector<std::vector<int>> row_mappings;
 		};

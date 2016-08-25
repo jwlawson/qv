@@ -378,66 +378,18 @@ __ExchangeGraph<Matrix, Check>::_GraphLoader::is_exactly(
 	return IntMatrix::are_equal(*lhs, *rhs);
 }
 
-
-
-namespace _EGContinueChecks {
+namespace _EGContinue {
 struct AlwaysContinue {
 	bool operator()(void * /* ignored */, int /* ignored */) const {
 		return true;
 	}
 };
-struct InfiniteTypeSink {
-	bool operator()(QuiverMatrix const * const mptr, int /*vertex*/) const {
-		for(int i = 0; i < mptr->num_rows(); ++i) {
-			_vertex_cache[i].clear();
-		}
-		const int * row = mptr->data();
-		for(int c = 0, r = 0; r < mptr->num_rows(); ++r) {
-			for(c = 0; c < mptr->num_cols(); ++c) {
-				if(*(row++) > 1) {
-					_vertex_cache[r].push_back(c);
-				}
-			}
-		}
-		for(auto pair : _vertex_cache) {
-			for(int next_vert : pair.second) {
-				for(int third_vert : _vertex_cache[next_vert]) {
-					if(std::find(_vertex_cache[third_vert].begin(),
-								_vertex_cache[third_vert].end(), pair.first) !=
-							_vertex_cache[third_vert].end()) {
-						return false;
-					}
-				}
-			}
-		}
-		/*
-		const int * row_start = mptr->data() + (vertex*mptr->num_cols());
-		for(int i = 0; i < mptr->num_cols(); ++i) {
-			if(row_start[i] < -1) return false;
-		}
-		*/
-		return true;
-	}
-	bool operator()(Seed const * const sptr, int vertex) const {
-		return operator()(&(sptr->matrix()), vertex);
-	}
-	bool operator()(LabelledSeed const * const sptr, int vertex) const {
-		return operator()(&(sptr->matrix()), vertex);
-	}
-	mutable std::map<int, std::vector<int>> _vertex_cache;
-};
+template <class M>
+using  _EGAlways = __ExchangeGraph<M, AlwaysContinue>;
 }
-template <class M>
-using  _EGAlways = __ExchangeGraph<M, _EGContinueChecks::AlwaysContinue>;
-template <class M>
-using  _EGGreen = __ExchangeGraph<M, _EGContinueChecks::InfiniteTypeSink>;
-typedef _EGAlways<Seed> ExchangeGraph;
-typedef _EGAlways<LabelledSeed> LabelledExchangeGraph;
-typedef _EGAlways<QuiverMatrix> LabelledQuiverGraph;
-typedef _EGAlways<EquivQuiverMatrix> QuiverGraph;
-typedef _EGGreen<Seed> GreenExchangeGraph;
-typedef _EGGreen<LabelledSeed> GreenLabelledExchangeGraph;
-typedef _EGGreen<QuiverMatrix> GreenLabelledQuiverGraph;
-typedef _EGGreen<EquivQuiverMatrix> GreenQuiverGraph;
+typedef _EGContinue::_EGAlways<Seed> ExchangeGraph;
+typedef _EGContinue::_EGAlways<LabelledSeed> LabelledExchangeGraph;
+typedef _EGContinue::_EGAlways<QuiverMatrix> LabelledQuiverGraph;
+typedef _EGContinue::_EGAlways<EquivQuiverMatrix> QuiverGraph;
 }
 

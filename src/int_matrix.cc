@@ -132,9 +132,6 @@ namespace cluster {
 			count += num_cols_;
 		}
 	}
-	void IntMatrix::set_matrix(const IntMatrix& mat) {
-		operator=(mat);
-	}
 	int IntMatrix::zero_row() const {
 		bool isZero = false;
 		int row = -1;

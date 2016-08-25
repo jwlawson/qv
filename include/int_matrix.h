@@ -321,6 +321,11 @@ namespace cluster {
 	}
 	inline
 	void
+	IntMatrix::set_matrix(const IntMatrix& mat) {
+		operator=(mat);
+	}
+	inline
+	void
 	IntMatrix::reset() {
 		recompute_hash_ = true;
 	}

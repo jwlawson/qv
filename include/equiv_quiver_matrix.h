@@ -22,7 +22,6 @@
 #pragma once
 
 #include "quiver_matrix.h"
-#include "equivalence_checker.h"
 
 namespace cluster {
 	/* Need to forward reference to prevent circular references. */

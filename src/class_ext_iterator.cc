@@ -26,11 +26,12 @@ namespace cluster {
 		: class_(mat),
 			iter_() {}
 
-	EquivMutClassExtIterator::MatrixPtr EquivMutClassExtIterator::next() {
+	QuiverMatrix const&
+	EquivMutClassExtIterator::next() {
 		if(!iter_.has_next()) {
 			iter_ = ExtensionIterator<QuiverMatrix>(class_.next());
 		}
-		return std::make_shared<Matrix>(iter_.next());
+		return iter_.next();
 	}
 
 	bool EquivMutClassExtIterator::has_next() {

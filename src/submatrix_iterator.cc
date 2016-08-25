@@ -28,15 +28,17 @@ namespace cluster {
 
 	template<class T>
 	SubmatrixIterator<T>::SubmatrixIterator(const T& matrix)
-		: matrix_(matrix), count_(0), max_(matrix.num_rows()) {}
+		: matrix_(matrix)
+		, submatrix_(matrix_.num_rows() - 1, matrix_.num_cols() - 1)
+		, count_(0)
+		, max_(matrix.num_rows()) {}
 
 	template<class T>
-	std::shared_ptr<T> SubmatrixIterator<T>::next() {
-		std::shared_ptr<T> result = std::make_shared<T>(matrix_.num_rows() - 1,
-				matrix_.num_cols() - 1);
-		matrix_.subquiver(count_, *result);
+	T const&
+	SubmatrixIterator<T>::next() {
+		matrix_.subquiver(count_, submatrix_);
 		++count_;
-		return std::move(result);
+		return submatrix_;
 	}
 
 	template<class T>

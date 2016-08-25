@@ -24,13 +24,21 @@
 
 #include "equiv_quiver_matrix.h"
 
+#ifdef QV_USE_GINAC
 #include "ginac/ginac.h"
+#endif
+
+#include <cmath>
 
 namespace cluster {
 template<class Mat>
 class __Seed {
 public:
+#ifdef QV_USE_GINAC
 	typedef std::vector<GiNaC::ex> Cluster;
+#else
+	typedef std::vector<int> Cluster;
+#endif
 	typedef Mat Matrix;
 
 	/** Construct 'empty' instance with specified size. */
@@ -91,7 +99,7 @@ __Seed<Matrix>::__Seed(const IntMatrix & mat, const Cluster & cluster)
 }
 template<class Matrix>
 __Seed<Matrix>::__Seed(IntMatrix && mat, Cluster && cluster)
-: size_(mat.num_rows()), matrix_(mat), cluster_(cluster) {
+: size_(mat.num_rows()), matrix_(std::move(mat)), cluster_(cluster) {
 	reset();
 }
 template<class Matrix>
@@ -136,8 +144,14 @@ __Seed<Matrix>::cluster() const {
 template<class Matrix>
 void
 __Seed<Matrix>::mutate_cluster(const int k, Cluster & result) const {
+	using std::pow;
+#ifdef QV_USE_GINAC
 	GiNaC::ex pos = 1;
 	GiNaC::ex neg = 1;
+#else
+	int pos = 1;
+	int neg = 1;
+#endif
 	/* Get pointer to mutating column in matrix */
 	const int* data = matrix_.data() + k;
 
@@ -153,7 +167,11 @@ __Seed<Matrix>::mutate_cluster(const int k, Cluster & result) const {
 	for(size_t i = 0; i < size_; ++i) {
 		result[i] = cluster_[i];
 	}
+#ifdef QV_USE_GINAC
 	result[k] = ((pos+neg)/cluster_[k]).normal();
+#else
+	result[k] = ((pos+neg)/cluster_[k]);
+#endif
 }
 template<class Matrix>
 std::ostream &
@@ -168,5 +186,65 @@ operator<<(std::ostream & os, const __Seed<Matrix> & seed) {
 
 typedef __Seed<EquivQuiverMatrix> Seed;
 typedef __Seed<QuiverMatrix> LabelledSeed;
+
+template<>
+inline
+size_t
+Seed::compute_hash() const {
+	size_t result = matrix_.hash();
+	size_t exp = 31;
+	for(size_t i = 0; i < size_; ++i) {
+#ifdef QV_USE_GINAC
+		result += exp * (cluster_[i].gethash());
+#else
+		result += exp * (cluster_[i]);
+#endif
+	}
+	return result;
+}
+template<>
+inline
+size_t
+LabelledSeed::compute_hash() const {
+	size_t result = matrix_.hash();
+	size_t exp = 1;
+	size_t pow = 31;
+	for(size_t i = 0; i < size_; ++i) {
+		exp *= pow;
+#ifdef QV_USE_GINAC
+		result += exp * (cluster_[i].gethash());
+#else
+		result += exp * (cluster_[i]);
+#endif
+	}
+	return result;
+}
+template<>
+inline
+bool
+Seed::equals(const Seed & seed) const {
+	bool result = hash() == seed.hash() && matrix_.equals(seed.matrix_);
+	if(result) {
+		EquivQuiverMatrix::PermVecPtr pv = matrix_.all_permutations(seed.matrix_);
+		result = false;
+		for(auto it = pv->begin(); !result && it != pv->end(); ++it) {
+			EquivQuiverMatrix::Permutation & perm = *it;
+			bool p_res = true;
+			for(size_t i = 0; p_res && i < perm.size(); ++i) {
+				p_res = cluster_[i] == seed.cluster_[perm[i]];
+			}
+			result = p_res;
+		}
+	}
+	return result;
+}
+template<>
+inline
+bool
+LabelledSeed::equals(const LabelledSeed & seed) const {
+	return hash() == seed.hash() &&
+		matrix_.equals(seed.matrix_) &&
+		cluster_ == seed.cluster_;
+}
 }
 

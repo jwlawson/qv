@@ -39,8 +39,9 @@ namespace cluster {
 				int removed;
 			};
 
-			std::shared_ptr<T> next();
+			T const& next();
 			MatrixSub next_info();
+			void next_info(MatrixSub& info);
 			bool has_next();
 
 		private:
@@ -49,5 +50,13 @@ namespace cluster {
 			MatrixPtr matrix_;
 			int removed_;
 	};
+	template<class T>
+	inline
+	typename StreamSubIter<T>::MatrixSub
+	StreamSubIter<T>::next_info() {
+		MatrixSub result {nullptr, nullptr, 0};
+		next_info(result);
+		return result;
+	}
 }
 

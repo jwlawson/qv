@@ -16,64 +16,50 @@
  */
 #include "equivalence_checker.h"
 
-#include <algorithm>
-#include <cassert>
-
-#include "array_utils.h"
+#include <numeric>
 
 namespace cluster {
-	std::weak_ptr<EquivalenceChecker> EquivalenceChecker::instance_ = 
-		std::make_shared<EquivalenceChecker>();
 
-	std::shared_ptr<EquivalenceChecker> EquivalenceChecker::Get(const int size) {
-		std::shared_ptr<EquivalenceChecker> result = instance_.lock();
-		if (!result || result->size_ != size) {
-			result.reset(new EquivalenceChecker(size));
-			instance_ = result;
+	std::shared_ptr<EquivalenceChecker>
+	EquivalenceChecker::Get(const int size) {
+		static std::map<int, std::shared_ptr<EquivalenceChecker>> instance_map{};
+		auto position = instance_map.find(size);
+		if(position == instance_map.end()) {
+			auto inserted = instance_map.emplace(size,
+					std::make_shared<EquivalenceChecker>(size));
+			position = inserted.first;
 		}
-		return result;
+		return position->second;
 	}
 
 	EquivalenceChecker::EquivalenceChecker()
 		:
 			size_(0),
 			maps_(0),
-			last_row_map_(size_),
-			a_row_vals_(size_),
-			b_row_vals_(size_){}
+			last_row_map_(size_) {}
 
 	EquivalenceChecker::EquivalenceChecker(const int size)
 		:
 			size_(size),
 			maps_(size),
-			last_row_map_(size_),
-			a_row_vals_(size_),
-			b_row_vals_(size_){}
+			last_row_map_(size_) {}
 
 	bool
 	EquivalenceChecker::are_equivalent(const M& a, const M& b) {
-		if(a.num_rows() != b.num_rows() ) {
+		if(a.num_rows() != b.num_rows() || a.num_cols() != b.num_cols() ) {
 			return false;
 		}
-		if(a.num_cols() != b.num_cols() ) {
-			return false;
-		}
+		/* Zero size check needs to come *after* the row and column checks,
+		 * otherwise we could be comparing a matrix with non-zero size to one of
+		 * zero size using a non-zero equivalence checker. */
 		if(size_ == 0) {
 			return true;
 		}
 		if (IntMatrix::are_equal(a, b)) {
-			for(size_t i = 0; i < last_row_map_.size(); i++) {
-				last_row_map_[i] = i;
-			}
+			std::iota(last_row_map_.begin(), last_row_map_.end(), 0);
 			return true;
 		}
-		if (!sums_equivalent(a, b)) {
-			return false;
-		}
-		maps_.reset();
-
-		bool rows_match = do_rows_match(a, b);
-		if (!rows_match) {
+		if (!do_rows_match(a, b)) {
 			return false;
 		}
 		bool result = check_perm(last_row_map_, 0, a, b);
@@ -82,7 +68,6 @@ namespace cluster {
 	EquivalenceChecker::PermVecPtr
 	EquivalenceChecker::valid_row_maps(const M& lhs, const M& rhs){
 		PermVecPtr result = std::make_shared<std::vector<Permutation>>();
-		maps_.reset();
 		bool rows_match = do_rows_match(lhs, rhs);
 		if (!rows_match) {
 			return result;
@@ -90,43 +75,37 @@ namespace cluster {
 		all_perms(last_row_map_, 0, lhs, rhs, result);
 		return result;
 	}
-	EquivalenceChecker &
-	EquivalenceChecker::operator=(EquivalenceChecker mat) {
-		swap(*this, mat);
-		return *this;
-	}
 
 	/* Private methods */
 	bool
 	EquivalenceChecker::do_rows_match(const M& a, const M& b) {
+		maps_.reset();
 		bool rows_match = true;
-		for (int a_ind = 0; a_ind < size_ && rows_match; a_ind++) {
-			int inRow = std::count(b.rows_.begin(), b.rows_.end(), a.rows_[a_ind]);
-			int index = -1;
-			a.get_row(a_ind, a_row_vals_);
+		auto b_start_rows = b.rows_.begin();
+		auto b_end_rows = b.rows_.end();
+		int const * const a_data = a.data();
+		int const * const b_data = b.data();
+		for (int a_ind = 0; rows_match && a_ind < size_; a_ind++) {
 			bool equiv = false;
-			for (int i = 0; i < inRow; i++) {
-				index = arrays::next_index_of(b.rows_, a.rows_[a_ind], index);
-				b.get_row(index, b_row_vals_);
-				if (arrays_equivalent(a_row_vals_, b_row_vals_)) {
+			int const* a_row = a_data + a_ind * size_;
+			// Go through each row of B which matches the row of A at index a_ind.
+			auto next_row = std::find(b_start_rows, b_end_rows, a.rows_[a_ind]);
+			while(next_row != b_end_rows) {
+				// std::find returns an iterator, but we want the row index
+				int index = std::distance(b_start_rows, next_row);
+				int const* b_row = b_data + index * size_;
+				if (std::is_permutation(a_row, a_row + size_, b_row)) {
 					equiv = true;
 					maps_.update_row_mapping(a_ind, index);
 				}
+				++next_row;
+				next_row = std::find(next_row, b_end_rows, a.rows_[a_ind]);
 			}
 			if (!equiv) {
 				rows_match = false;
 			}
 		}
 		return rows_match;
-	}
-	bool
-	EquivalenceChecker::sums_equivalent(const M& a, const M& b) const {
-		return std::is_permutation(a.rows_.begin(), a.rows_.end(), b.rows_.begin());
-	}
-	bool
-	EquivalenceChecker::arrays_equivalent(const std::vector<int>& a,
-	    const std::vector<int>& b) const {
-		return std::is_permutation(a.begin(), a.end(), b.begin());
 	}
 	bool
 	EquivalenceChecker::check_perm(Permutation & row_map, int index,
@@ -202,15 +181,6 @@ namespace cluster {
 				}
 			}
 		}
-	}
-	void
-	swap(EquivalenceChecker& f, EquivalenceChecker& s) {
-		using std::swap;
-		swap(f.last_row_map_, s.last_row_map_);
-		swap(f.a_row_vals_  , s.a_row_vals_  );
-		swap(f.b_row_vals_  , s.b_row_vals_  );
-		swap(f.size_, s.size_);
-		swap(f.maps_, s.maps_);
 	}
 }
 

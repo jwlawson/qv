@@ -321,6 +321,11 @@ namespace cluster {
 	}
 	inline
 	void
+	IntMatrix::set_matrix(const IntMatrix& mat) {
+		operator=(mat);
+	}
+	inline
+	void
 	IntMatrix::reset() {
 		recompute_hash_ = true;
 	}
@@ -353,6 +358,12 @@ namespace cluster {
 		}
 		return hashcode_;
 	}
+	inline
+	int
+	IntMatrix::get_index(const int row, const int col) const {
+		return row * num_cols_ + col;
+	}
+
 }
 namespace std {
 	/* Add hash function to the std::hash struct. */

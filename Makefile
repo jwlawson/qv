@@ -1,17 +1,17 @@
 NAME = qv
 MAJOR = 0
-MINOR = 13
+MINOR = 16
 VERSION = $(MAJOR).$(MINOR)
 
 # Using cygwin -std=gnu++11 should be used rather than -std=c++11
 ifeq ($(CXX),g++)
-CXXFLAGS += -Wall -Wextra -Werror -march=native
-CXXFLAGS += -fno-signed-zeros -fno-math-errno -fno-rounding-math
-CXXFLAGS += -fno-signaling-nans -fno-trapping-math
-CXXFLAGS += -ffinite-math-only
+override CXXFLAGS += -Wall -Wextra -Werror -march=native\
+	-fno-signed-zeros -fno-math-errno -fno-rounding-math\
+	-fno-signaling-nans -fno-trapping-math\
+	-ffinite-math-only
 OPT = -Ofast
 else
-CXXFLAGS = -Wall -std=c++11 -xHOST
+override CXXFLAGS = -Wall -std=c++11 -xHOST
 OPT = -O3 -ipo -no-prec-div
 B_OPT = $(OPT)
 AR = xiar
@@ -22,10 +22,10 @@ uname_M := $(shell sh -c 'uname -m 2>/dev/null || echo not')
 uname_O := $(shell sh -c 'uname -o 2>/dev/null || echo not')
 
 ifeq ($(uname_O),Cygwin)
-	CXXFLAGS += -std=gnu++11 -DCYGWIN_STOI
+	override CXXFLAGS += -std=gnu++11 -DCYGWIN_STOI
 endif
 ifeq ($(uname_S),Linux)
-	CXXFLAGS += -std=gnu++11 -fPIC
+	override CXXFLAGS += -std=gnu++11 -fPIC
 endif
 
 LIB = lib$(NAME).so.$(VERSION)
@@ -94,6 +94,7 @@ all:	$(LIB)
 $(TEST): $(OBJS) $(TEST_OBJS)
 	$(CXX) $(CXXFLAGS) $(B_OPT) $(INCLUDES) -o $(TEST) $(TEST_OBJS) $(OBJS) $(LFLAGS) $(TEST_LIBS)
 
+test: CXXFLAGS += -DQV_USE_GINAC
 test: $(TEST)
 	@echo Running tests
 	@./$(TEST)

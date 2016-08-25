@@ -134,13 +134,14 @@ namespace cluster {
 	inline
 	void QuiverMatrix::subquiver(const int k, T& result) const {
 		submatrix(k, k, result);
-		int zero = result.zero_row();
+/*		int zero = result.zero_row();
 		if (zero != -1) {
 			T tmp(result.num_rows() - 1, result.num_cols() - 1);
 			result.subquiver(zero, tmp);
 			result=std::move(tmp);
 		}
 		result.reset();
+*/
 	}
 }
 

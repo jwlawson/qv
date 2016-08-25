@@ -20,6 +20,7 @@
 #include <boost/functional/hash.hpp>
 
 #include "array_utils.h"
+#include "equivalence_checker.h"
 
 namespace cluster {
 	EquivQuiverMatrix::EquivQuiverMatrix()

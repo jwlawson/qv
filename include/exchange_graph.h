@@ -1,5 +1,5 @@
 /*
- * quiver_graph.h
+ * exchange_graph.h
  * Copyright 2014-2015 John Lawson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,9 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <deque>
+#include <map>
 #include <memory>
 #include <unordered_map>
 #include <vector>
@@ -30,10 +32,9 @@
 
 namespace cluster {
 
-template<class Mat>
+template<class Matrix, class ContinueMatrix>
 class __ExchangeGraph {
 public:
-	typedef Mat Matrix;
 	typedef Matrix * MatrixPtr;
 private:
 	class _GraphLoader;
@@ -76,7 +77,13 @@ private:
 	 * This is one of the methods which might need to be specialised, depending
 	 * on the Matrix used.
 	 */
-	size_t size(const Matrix & m) const;
+	template<class M = Matrix>
+	typename std::enable_if<std::is_same<M, Seed>::value
+		|| std::is_same<M, LabelledSeed>::value, size_t>::type
+	size(const M& m) const;
+	template<class M = Matrix>
+	typename std::enable_if<std::is_base_of<QuiverMatrix, M>::value, size_t>::type
+	size(const M& m) const;
 	/** 
 	 * GraphLoader actually computes the whole graph. The Graph ctor loops on
 	 * the ::operator++ until ::end() returns true.
@@ -94,6 +101,7 @@ private:
 		__ExchangeGraph & _graph;
 		bool _end = false;
 		size_t _size;
+		ContinueMatrix _should_continue;
 
 		bool have_seen(MatrixPtr new_mat);
 		bool mutate_at(MatrixPtr old_mat, int vertex);
@@ -105,11 +113,30 @@ private:
 		 * e.g. Seeds may need to be handled differently than Quivers.
 		 */
 		/** Return true if the two Matrices are the same (not up to permutation) */
-		bool is_exactly(MatrixPtr lhs, MatrixPtr rhs);
+		template<class M = Matrix>
+		typename std::enable_if<std::is_same<M, Seed>::value, bool>::type
+		is_exactly(MatrixPtr lhs, MatrixPtr rhs);
+		template<class M = Matrix>
+		typename std::enable_if<std::is_same<M, LabelledSeed>::value ||
+				std::is_same<QuiverMatrix, M>::value, bool>::type
+		is_exactly(MatrixPtr lhs, MatrixPtr rhs);
+		template<class M = Matrix>
+		typename std::enable_if<std::is_same<EquivQuiverMatrix, M>::value, bool>::type
+		is_exactly(MatrixPtr lhs, MatrixPtr rhs);
 		/** Create a new Matrix to use in mutation. */
-		MatrixPtr new_instance();
+		template<class M = Matrix>
+		typename std::enable_if<std::is_same<M, Seed>::value || std::is_same<M, LabelledSeed>::value, M*>::type
+		new_instance();
+		template<class M = Matrix>
+		typename std::enable_if<std::is_base_of<QuiverMatrix, M>::value, M*>::type
+		new_instance();
 		/** Check whether to stop computing further Matrices in the graph. */
-		bool should_stop(MatrixPtr new_matrix);
+		template<class M = Matrix>
+		typename std::enable_if<!std::is_base_of<QuiverMatrix, M>::value, bool>::type
+		should_stop(MatrixPtr new_matrix);
+		template<class M = Matrix>
+		typename std::enable_if<std::is_base_of<QuiverMatrix, M>::value, bool>::type
+		should_stop(MatrixPtr new_matrix);
 	};
 	/**
 	 * Link stores the edges adjacent to its matrix.
@@ -132,18 +159,21 @@ private:
 	};
 };
 /* ExchangeGraph */
-template<class M>
+template<class M, class C>
+inline
 bool
-__ExchangeGraph<M>::PtrEqual::operator()(MatrixPtr lhs, MatrixPtr rhs) const {
+__ExchangeGraph<M,C>::PtrEqual::operator()(MatrixPtr lhs, MatrixPtr rhs) const {
 	return lhs->equals(*rhs);
 }
-template<class M>
+template<class M, class C>
+inline
 size_t
-__ExchangeGraph<M>::PtrHash::operator()(MatrixPtr ptr) const {
+__ExchangeGraph<M,C>::PtrHash::operator()(MatrixPtr ptr) const {
 return ptr->hash();
 }
-template<class M>
-__ExchangeGraph<M>::__ExchangeGraph(const M & mat, size_t max_num)
+template<class M, class C>
+inline
+__ExchangeGraph<M,C>::__ExchangeGraph(const M & mat, size_t max_num)
 : _matrix(mat), _matrix_size(size(mat)), _max_num(max_num) {
 	MatrixPtr m(new M(mat));
 	_queue.push_back(m);
@@ -153,32 +183,38 @@ __ExchangeGraph<M>::__ExchangeGraph(const M & mat, size_t max_num)
 		++l;
 	}
 }
-template<class M>
-__ExchangeGraph<M>::~__ExchangeGraph() {
-		for(auto it = _map.begin(); it != _map.end(); ++it) {
-			delete it->first;
-		}
+template<class M, class C>
+inline
+__ExchangeGraph<M,C>::~__ExchangeGraph() {
+	for(auto it = _map.begin(); it != _map.end(); ++it) {
+		delete it->first;
 	}
-template<class M>
-const typename __ExchangeGraph<M>::GraphMap::const_iterator
-__ExchangeGraph<M>::begin() const {
+}
+template<class M, class C>
+inline
+const typename __ExchangeGraph<M,C>::GraphMap::const_iterator
+__ExchangeGraph<M,C>::begin() const {
 	return _map.begin();
 }
-template<class M>
-const typename __ExchangeGraph<M>::GraphMap::const_iterator
-__ExchangeGraph<M>::end() const {
+template<class M, class C>
+inline
+const typename __ExchangeGraph<M,C>::GraphMap::const_iterator
+__ExchangeGraph<M,C>::end() const {
 	return _map.end();
 }
 /* _GraphLoader */
-template<class M>
-__ExchangeGraph<M>::_GraphLoader::_GraphLoader(__ExchangeGraph & graph)
+template<class M, class C>
+inline
+__ExchangeGraph<M,C>::_GraphLoader::_GraphLoader(__ExchangeGraph & graph)
 : _graph(graph), _size(graph._matrix_size) {}
-template<class M>
-typename __ExchangeGraph<M>::_GraphLoader &
-__ExchangeGraph<M>::_GraphLoader::operator++(){
+
+template<class M, class C>
+inline
+typename __ExchangeGraph<M,C>::_GraphLoader &
+__ExchangeGraph<M,C>::_GraphLoader::operator++(){
 	MatrixPtr mat = _graph._queue.front();
 	_graph._queue.pop_front();
-	for (std::size_t i = 0; i < _size && !_end; ++i) {
+	for (std::size_t i = 0; !_end && i < _size; ++i) {
 		if (mutate_at(mat, i)) {
 			MatrixPtr new_matrix = new_instance();
 			mat->mutate(i, *new_matrix);
@@ -186,86 +222,176 @@ __ExchangeGraph<M>::_GraphLoader::operator++(){
 				seen_matrix(new_matrix, mat, i);
 				delete new_matrix;
 			} else {
-				if (should_stop(new_matrix)) {
-					_end = true;
-				}
+				// up to this point _end is always false
+				_end = should_stop(new_matrix);
 				unseen_matrix(new_matrix, mat, i);
 			}
 		}
 	}
-	if(_graph._queue.empty()){
-		_end = true;
-	}
+	_end = _end || _graph._queue.empty();
 	return *this;
 }
-template<class M>
+template<class M, class C>
+inline
 bool
-__ExchangeGraph<M>::_GraphLoader::end() const {
+__ExchangeGraph<M,C>::_GraphLoader::end() const {
 	return _end;
 }
-template<class M>
+template<class M, class C>
+inline
 bool
-__ExchangeGraph<M>::_GraphLoader::have_seen(MatrixPtr new_mat) {
+__ExchangeGraph<M,C>::_GraphLoader::have_seen(MatrixPtr new_mat) {
 	return _graph._map.find(new_mat) != _graph._map.end();
 }
-template<class M>
+template<class M, class C>
+inline
 bool
-__ExchangeGraph<M>::_GraphLoader::mutate_at(MatrixPtr old_mat, int vertex) {
-	bool result = _graph._map.find(old_mat) != _graph._map.end() 
-		&& _graph._map[old_mat][vertex] == nullptr;
+__ExchangeGraph<M,C>::_GraphLoader::mutate_at(MatrixPtr old_mat, int vertex) {
+	bool result = _should_continue(old_mat, vertex);
+	if (result) {
+		auto position = _graph._map.find(old_mat);
+		result = position != _graph._map.end()
+			&& position->second[vertex] == nullptr;
+	}
 	return result;
 }
-template<class M>
+template<class M, class C>
+inline
 void
-__ExchangeGraph<M>::_GraphLoader::seen_matrix(MatrixPtr new_mat,
+__ExchangeGraph<M,C>::_GraphLoader::seen_matrix(MatrixPtr new_mat,
 		MatrixPtr old_mat, int vertex) {
 	auto ref = _graph._map.find(new_mat);
 	if(ref != _graph._map.end() && is_exactly(new_mat, ref->first)) {
-		_graph._map[new_mat][vertex] = old_mat;
+		ref->second[vertex] = old_mat;
 	}
-	if(_graph._map[old_mat][vertex] == nullptr) {
-		_graph._map[old_mat][vertex] = ref->first;
+	auto & old_matrix_vertex_link = _graph._map[old_mat][vertex];
+	if(old_matrix_vertex_link == nullptr) {
+		old_matrix_vertex_link = ref->first;
 	}
 }
-template<class M>
+template<class M, class C>
+inline
 void
-__ExchangeGraph<M>::_GraphLoader::unseen_matrix(MatrixPtr new_mat,
+__ExchangeGraph<M,C>::_GraphLoader::unseen_matrix(MatrixPtr new_mat,
 		MatrixPtr old_mat, int vertex) {
 	_graph._map.emplace(new_mat, _Link(new_mat, _size));
 	_graph._map[new_mat][vertex] = old_mat;
 	_graph._map[old_mat][vertex] = new_mat;
 	_graph._queue.push_back(new_mat);
 }
-template<class M>
-bool
-__ExchangeGraph<M>::_GraphLoader::should_stop(MatrixPtr /*ignored*/) {
+/* _Link */
+template<class M, class C>
+inline
+__ExchangeGraph<M,C>::_Link::_Link() :_matrix(nullptr) {}
+
+template<class M, class C>
+inline
+__ExchangeGraph<M,C>::_Link::_Link(MatrixPtr matrix, int size)
+: _matrix(matrix), _links(size, nullptr){}
+
+template<class M, class C>
+inline
+typename __ExchangeGraph<M,C>::MatrixPtr &
+__ExchangeGraph<M,C>::_Link::operator[](int i) {
+	return _links[i];
+}
+template<class M, class C>
+inline
+const typename __ExchangeGraph<M,C>::_Link::LinkVec::const_iterator
+__ExchangeGraph<M,C>::_Link::begin() const {
+	return _links.begin();
+}
+template<class M, class C>
+inline
+const typename __ExchangeGraph<M,C>::_Link::LinkVec::const_iterator
+__ExchangeGraph<M,C>::_Link::end() const {
+	return _links.end();
+}
+
+template<class Matrix, class Check> template<class M>
+inline
+typename std::enable_if<std::is_same<M, Seed>::value
+		|| std::is_same<M, LabelledSeed>::value, M*>::type
+__ExchangeGraph<Matrix, Check>::_GraphLoader::new_instance() {
+	return new M(_size);
+}
+template<class Matrix, class Check> template<class M>
+inline
+typename std::enable_if<std::is_base_of<QuiverMatrix, M>::value, M*>::type
+__ExchangeGraph<Matrix, Check>::_GraphLoader::new_instance() {
+	return new M(_size, _size);
+}
+template<class Matrix, class Check> template<class M>
+inline
+typename std::enable_if<!std::is_base_of<QuiverMatrix, M>::value, bool>::type
+__ExchangeGraph<Matrix, Check>::_GraphLoader::should_stop(MatrixPtr /*ignored*/) {
 	size_t num = _graph._map.size();
 	return num > _graph._max_num;
 }
-/* _Link */
-template<class M>
-__ExchangeGraph<M>::_Link::_Link() :_matrix(nullptr) {}
-template<class M>
-__ExchangeGraph<M>::_Link::_Link(MatrixPtr matrix, int size)
-: _matrix(matrix), _links(size, nullptr){}
-template<class M>
-typename __ExchangeGraph<M>::MatrixPtr & 
-__ExchangeGraph<M>::_Link::operator[](int i) {
-	return _links[i];
+template<class Matrix, class Check> template<class M>
+inline
+typename std::enable_if<std::is_base_of<QuiverMatrix, M>::value, bool>::type
+__ExchangeGraph<Matrix, Check>::_GraphLoader::should_stop(MatrixPtr new_matrix) {
+	size_t num = _graph._map.size();
+	return num > _graph._max_num || new_matrix->is_infinite();
 }
-template<class M>
-const typename __ExchangeGraph<M>::_Link::LinkVec::const_iterator
-__ExchangeGraph<M>::_Link::begin() const {
-	return _links.begin();
+template<class Matrix, class Check> template<class M>
+inline
+typename std::enable_if<std::is_same<M, Seed>::value
+		|| std::is_same<M, LabelledSeed>::value, size_t>::type
+__ExchangeGraph<Matrix, Check>::size(const M& m) const {
+	return m.size();
 }
-template<class M>
-const typename __ExchangeGraph<M>::_Link::LinkVec::const_iterator
-__ExchangeGraph<M>::_Link::end() const {
-	return _links.end();
+template<class Matrix, class Check> template<class M>
+inline
+typename std::enable_if<std::is_base_of<QuiverMatrix, M>::value, size_t>::type
+__ExchangeGraph<Matrix, Check>::size(const M& m) const {
+	return m.num_rows();
 }
-typedef __ExchangeGraph<Seed> ExchangeGraph;
-typedef __ExchangeGraph<LabelledSeed> LabelledExchangeGraph;
-typedef __ExchangeGraph<QuiverMatrix> LabelledQuiverGraph;
-typedef __ExchangeGraph<EquivQuiverMatrix> QuiverGraph;
+template<class Matrix, class Check> template<class M>
+inline
+typename std::enable_if<std::is_same<M, Seed>::value, bool>::type
+__ExchangeGraph<Matrix, Check>::_GraphLoader::is_exactly(
+		MatrixPtr lhs,
+		MatrixPtr rhs) {
+	return IntMatrix::are_equal(lhs->matrix(), rhs->matrix())
+		&& (lhs->cluster() == rhs->cluster());
+}
+template<class Matrix, class Check> template<class M>
+inline
+typename std::enable_if<std::is_same<M, LabelledSeed>::value ||
+		std::is_same<QuiverMatrix, M>::value, bool>::type
+__ExchangeGraph<Matrix, Check>::_GraphLoader::is_exactly(
+		MatrixPtr /*ignored*/,
+		MatrixPtr /*ignored*/) {
+	/* 
+	 * This is only used to see whether two quivers which are considered "equal" are
+	 * in fact exactly the same. As QuiverMatrices are always exactly the same if
+	 * considered equal we can short cut this method.
+	 */
+	return true;
+}
+template<class Matrix, class Check> template<class M>
+inline
+typename std::enable_if<std::is_same<EquivQuiverMatrix, M>::value, bool>::type
+__ExchangeGraph<Matrix, Check>::_GraphLoader::is_exactly(
+		MatrixPtr lhs,
+		MatrixPtr rhs) {
+	return IntMatrix::are_equal(*lhs, *rhs);
+}
+
+namespace _EGContinue {
+struct AlwaysContinue {
+	bool operator()(void * /* ignored */, int /* ignored */) const {
+		return true;
+	}
+};
+template <class M>
+using  _EGAlways = __ExchangeGraph<M, AlwaysContinue>;
+}
+typedef _EGContinue::_EGAlways<Seed> ExchangeGraph;
+typedef _EGContinue::_EGAlways<LabelledSeed> LabelledExchangeGraph;
+typedef _EGContinue::_EGAlways<QuiverMatrix> LabelledQuiverGraph;
+typedef _EGContinue::_EGAlways<EquivQuiverMatrix> QuiverGraph;
 }
 

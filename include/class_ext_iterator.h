@@ -29,10 +29,6 @@
 namespace cluster {
 	class EquivMutClassExtIterator {
 
-		private:
-			typedef EquivQuiverMatrix Matrix;
-			typedef std::shared_ptr<Matrix> MatrixPtr;
-
 		public:
 			/**
 			 * Default constructor. Does nothing much.
@@ -49,7 +45,7 @@ namespace cluster {
 			/**
 			 * Get the next matrix from the iterator.
 			 */
-			MatrixPtr next();
+			QuiverMatrix const& next();
 			/**
 			 * Check whether the iterator has another matrix to return.
 			 * @return true if next will return a valid matrix

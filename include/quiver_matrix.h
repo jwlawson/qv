@@ -23,6 +23,7 @@
 #pragma once
 #include "int_matrix.h"
 #include <cstdlib> /* std::abs */
+#include <cstring>
 
 namespace cluster {
 	class QuiverMatrix : public IntMatrix {
@@ -103,29 +104,79 @@ namespace cluster {
 		 */
 		template<class T>
 		void subquiver(const int k, T& result) const;
-	 private:
-		/** Cached col vector to write mutation data to. */
-		static std::vector<int> k_abs_row_;
 	};
 	template<class T>
 	inline
 	void QuiverMatrix::mutate(const int k, T& result) const {
-		int const * k_row = data_.data() + k * num_cols_;
-		k_abs_row_.reserve(num_cols_);
-		for(int i = 0; i < num_cols_; ++i) {
-			k_abs_row_[i] = std::abs(k_row[i]);
-		}
-		int const * this_data = data_.data();
-		int * result_data = result.data_.data();
-		for(int i = 0; i < num_rows_; ++i) {
-			for(int j = 0; j < num_cols_; ++j, ++this_data, ++result_data) {
-				if(i == k || j == k) {
-					*result_data= -(*this_data);
-				} else {
-				*result_data = *this_data +
-					(k_abs_row_[i] * k_row[j] - k_row[i] * k_abs_row_[j]) / 2;
-					/*(k_row[i] < 0 ? -1 : 1) * std::min(k_row[i] * k_row[j], 0);*/
+		int const * input = data_.data();
+		int * output = result.data_.data();
+		int const *k_row = input + k * num_cols_;
+		std::memcpy(output, input, num_cols_ * num_rows_ * sizeof(int));
+
+		int index = 0;
+		for (int i = 0; i < k; ++i) {
+			if (k_row[i] < 0) {
+				for (int j = 0; j < k; ++j, ++index) {
+					if (k_row[j] > 0) {
+						output[index] -= k_row[i] * k_row[j];
+					}
 				}
+				output[index] = -output[index];
+				++index;
+				for (int j = k + 1; j < num_cols_; ++j, ++index) {
+					if (k_row[j] > 0) {
+						output[index] -= k_row[i] * k_row[j];
+					}
+				}
+			} else if (k_row[i] > 0) {
+				for (int j = 0; j < k; ++j, ++index) {
+					if (k_row[j] < 0) {
+						output[index] += k_row[i] * k_row[j];
+					}
+				}
+				output[index] = -output[index];
+				++index;
+				for (int j = k + 1; j < num_cols_; ++j, ++index) {
+					if (k_row[j] < 0) {
+						output[index] += k_row[i] * k_row[j];
+					}
+				}
+			} else {
+				index += num_cols_;
+			}
+		}
+		for (int j = 0; j < num_cols_; ++j, ++index) {
+			output[index] = -output[index];
+		}
+		for (int i = k + 1; i < num_rows_; ++i) {
+			if (k_row[i] < 0) {
+				for (int j = 0; j < k; ++j, ++index) {
+					if (k_row[j] > 0) {
+						output[index] -= k_row[i] * k_row[j];
+					}
+				}
+				output[index] = -output[index];
+				++index;
+				for (int j = k + 1; j < num_cols_; ++j, ++index) {
+					if (k_row[j] > 0) {
+						output[index] -= k_row[i] * k_row[j];
+					}
+				}
+			} else if (k_row[i] > 0) {
+				for (int j = 0; j < k; ++j, ++index) {
+					if (k_row[j] < 0) {
+						output[index] += k_row[i] * k_row[j];
+					}
+				}
+				output[index] = -output[index];
+				++index;
+				for (int j = k + 1; j < num_cols_; ++j, ++index) {
+					if (k_row[j] < 0) {
+						output[index] += k_row[i] * k_row[j];
+					}
+				}
+			} else {
+				index += num_cols_;
 			}
 		}
 		result.reset();

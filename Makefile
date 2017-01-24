@@ -1,20 +1,27 @@
 NAME = qv
 MAJOR = 0
-MINOR = 16
+MINOR = 17
 VERSION = $(MAJOR).$(MINOR)
 
 # Using cygwin -std=gnu++11 should be used rather than -std=c++11
+ifeq ($(CXX),icpc)
+override CXXFLAGS = -Wall -std=c++11 -xHOST
+OPT = -O3 -ipo -no-prec-div
+B_OPT = $(OPT)
+AR = xiar
+endif
+ifeq ($(CXX),clang++)
+override CXXFLAGS += -Wall -Wextra -Werror -march=native
+OPT = -Ofast
+AR = ar
+endif
 ifeq ($(CXX),g++)
 override CXXFLAGS += -Wall -Wextra -Werror -march=native\
 	-fno-signed-zeros -fno-math-errno -fno-rounding-math\
 	-fno-signaling-nans -fno-trapping-math\
 	-ffinite-math-only
 OPT = -Ofast
-else
-override CXXFLAGS = -Wall -std=c++11 -xHOST
-OPT = -O3 -ipo -no-prec-div
-B_OPT = $(OPT)
-AR = xiar
+AR = gcc-ar
 endif
 
 uname_S := $(shell sh -c 'uname -s 2>/dev/null || echo not')
@@ -25,12 +32,13 @@ ifeq ($(uname_O),Cygwin)
 	override CXXFLAGS += -std=gnu++11 -DCYGWIN_STOI
 endif
 ifeq ($(uname_S),Linux)
-	override CXXFLAGS += -std=gnu++11 -fPIC
+	override CXXFLAGS += -std=gnu++11
 endif
 
 LIB = lib$(NAME).so.$(VERSION)
 STATIC = lib$(NAME).a
 TEST = testqv
+BENCH = benchqv
 
 LDFLAGS = -shared -Wl,-soname,$(LIB)
 
@@ -42,6 +50,7 @@ SRC_DIR = $(BASE_DIR)/src
 
 # Specify test directory
 TEST_DIR = $(BASE_DIR)/test
+BENCH_DIR = $(BASE_DIR)/bench
 
 # define the output directory for .o
 OBJ_DIR = $(BASE_DIR)/build
@@ -65,10 +74,12 @@ LFLAGS = -L$(HOME)/lib -L$(BASE_DIR)/lib
 #   if I want to link in libraries (libx.so or libx.a) use -lx
 LIBS = -lginac
 TEST_LIBS = -lgtest -lgtest_main -lginac -pthread
+BENCH_LIBS = -lbenchmark -pthread
 
 # define the C source files
 SRCS = $(wildcard $(SRC_DIR)/*.cc)
 TEST_SRCS = $(wildcard $(TEST_DIR)/*.cc)
+BENCH_SRCS = $(wildcard $(BENCH_DIR)/*.cc)
 
 # define the C object files
 #
@@ -80,11 +91,12 @@ TEST_SRCS = $(wildcard $(TEST_DIR)/*.cc)
 #
 _OBJS = $(SRCS:.cc=.o)
 _TEST_OBJS = $(TEST_SRCS:.cc=.o)
+_BENCH_OBJS = $(BENCH_SRCS:.cc=.o)
 
 # Puts objs in obj_dir
 OBJS = $(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%,$(_OBJS))
 TEST_OBJS = $(patsubst $(TEST_DIR)/%,$(OBJ_DIR)/%,$(_TEST_OBJS))
-
+BENCH_OBJS = $(patsubst $(BENCH_DIR)/%,$(OBJ_DIR)/%,$(_BENCH_OBJS))
 
 
 .PHONY: clean
@@ -99,12 +111,20 @@ test: $(TEST)
 	@echo Running tests
 	@./$(TEST)
 
+$(BENCH): $(OBJS) $(BENCH_OBJS)
+	$(CXX) $(CXXFLAGS) $(B_OPT) $(INCLUDES) -o $(BENCH) $(BENCH_OBJS) $(OBJS) $(LFLAGS) $(BENCH_LIBS)
+
+bench: $(BENCH)
+	@./$(BENCH)
+
 lib:	$(LIB)
 static:	$(STATIC)
 
+$(LIB): CXXFLAGS+=-fPIC
 $(LIB):	$(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $^
 
+$(STATIC): OPT += -flto -fuse-linker-plugin -ffat-lto-objects
 $(STATIC): $(OBJS)
 	$(AR) rcs $(STATIC) $(OBJS)
 
@@ -128,6 +148,9 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc $(INC_DIR)/%.h
 	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -c $< -o $@
 
 $(OBJ_DIR)/%.o: $(TEST_DIR)/%.cc
+	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(BENCH_DIR)/%.cc
 	$(CXX) $(CXXFLAGS) $(OPT) $(INCLUDES) -c $< -o $@
 
 $(OBJS): | $(OBJ_DIR)

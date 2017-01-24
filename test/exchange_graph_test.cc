@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 #include "gtest/gtest.h"
-#include "exchange_graph.h"
+#include "template_exchange_graph.h"
 
 #include "ginac_util.h"
 #include "seed.h"
@@ -30,7 +30,7 @@ default_cluster(size_t size) {
 	for(size_t i = 0; i < size; ++i) {
 		result[i] = cluster::ginac::symbol(var + std::to_string(i));
 	}
-	return std::move(result);
+	return result;
 }
 }
 namespace cluster {
@@ -39,7 +39,7 @@ TEST(ExchangeGraph, Pentagon) {
 	auto c = default_cluster(2);
 	Seed s(std::move(m), std::move(c));
 
-	ExchangeGraph g(s);
+	ExchangeGraph g(s, 2);
 	uint num_seeds = 0;
 	for(auto it = g.begin(); it != g.end(); ++it) {
 		++num_seeds;
@@ -54,7 +54,7 @@ TEST(LabelledExchangeGraph, Decagon) {
 	auto c = default_cluster(2);
 	LSeed s(std::move(m), std::move(c));
 
-	LabelledExchangeGraph g(s);
+	LabelledExchangeGraph g(s, 2);
 	uint num_seeds = 0;
 	for(auto it = g.begin(); it != g.end(); ++it) {
 		++num_seeds;
@@ -67,7 +67,7 @@ TEST(LabelledExchangeGraph, Decagon) {
 TEST(LabelledQuiverGraph, Pentagon) {
 	QuiverMatrix m("{ { 0 1  0 } { -1 0 1 } { 0 -1 0 } }");
 
-	LabelledQuiverGraph g(m);
+	LabelledQuiverGraph g(m, 3);
 	uint num_seeds = 0;
 	for(auto it = g.begin(); it != g.end(); ++it) {
 		++num_seeds;
@@ -80,7 +80,7 @@ TEST(LabelledQuiverGraph, Pentagon) {
 TEST(QuiverGraph, Pentagon) {
 	EquivQuiverMatrix m("{ { 0 1  0 } { -1 0 1 } { 0 -1 0 } }");
 
-	QuiverGraph g(m);
+	QuiverGraph g(m, 3);
 	uint num_seeds = 0;
 	for(auto it = g.begin(); it != g.end(); ++it) {
 		++num_seeds;

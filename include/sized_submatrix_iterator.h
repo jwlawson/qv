@@ -53,8 +53,6 @@ namespace cluster {
 		private:
 		/** Initial matrix to take submatrices of. */
 		const IntMatrix& m_;
-		/** Size of all submatrices to return. */
-		size_t size_;
 		/** Size of smallest dimension of m_ */
 		int max_val_;
 		/** Vector of which rows and columns were in the last returned submatrix. */

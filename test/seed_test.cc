@@ -36,7 +36,7 @@ default_cluster(size_t size) {
 namespace cluster {
 TEST(Seed, Rank2Symmetric) {
 	EquivQuiverMatrix m("{ { 0 1 } { -1 0 } }");
-	Seed s(std::move(m), std::move(default_cluster(2)));
+	Seed s(std::move(m), default_cluster(2));
 	Seed res(2);
 	s.mutate(1, res);
 
@@ -49,7 +49,7 @@ TEST(Seed, Rank2Symmetric) {
 }
 TEST(Seed, Rank2SymmetricPermuted) {
 	EquivQuiverMatrix m("{ { 0 1 } { -1 0 } }");
-	Seed s(std::move(m), std::move(default_cluster(2)));
+	Seed s(std::move(m), default_cluster(2));
 	Seed res(2);
 	s.mutate(1, res);
 
@@ -58,7 +58,7 @@ TEST(Seed, Rank2SymmetricPermuted) {
 	GiNaC::ex a = (1 + c[0]) / c[1];
 	c[1] = c[0];
 	c[0] = a;
-	Seed exp(n, c);
+	Seed exp(n, std::move(c));
 	EXPECT_TRUE(res.equals(exp));
 	EXPECT_TRUE(exp.equals(res));
 }
@@ -77,20 +77,20 @@ TEST(Seed, PermutedEquals) {
 }
 TEST(LSeed, Rank2Symmetric) {
 	EquivQuiverMatrix m("{ { 0 1 } { -1 0 } }");
-	LabelledSeed s(std::move(m), std::move(default_cluster(2)));
+	LabelledSeed s(std::move(m), default_cluster(2));
 	LabelledSeed res(2);
 	s.mutate(1, res);
 
 	EquivQuiverMatrix n("{ { 0 -1 } { 1 0 } }");
 	Seed::Cluster c = default_cluster(2);
 	c[1] = (1 + c[0]) / c[1];
-	LabelledSeed exp(n, c);
+	LabelledSeed exp(n, std::move(c));
 	EXPECT_TRUE(res.equals(exp));
 	EXPECT_TRUE(exp.equals(res));
 }
 TEST(LSeed, Rank2SymmetricPermuted) {
 	EquivQuiverMatrix m("{ { 0 1 } { -1 0 } }");
-	LSeed s(std::move(m), std::move(default_cluster(2)));
+	LSeed s(std::move(m), default_cluster(2));
 	LSeed res(2);
 	s.mutate(1, res);
 
@@ -99,13 +99,13 @@ TEST(LSeed, Rank2SymmetricPermuted) {
 	GiNaC::ex a = (1 + c[0]) / c[1];
 	c[1] = c[0];
 	c[0] = a;
-	LSeed exp(n, c);
+	LSeed exp(n, std::move(c));
 	EXPECT_FALSE(res.equals(exp));
 	EXPECT_FALSE(exp.equals(res));
 }
 TEST(Seed, B2Type) {
 	EquivQuiverMatrix m("{ { 0 1 } { -2 0 } }");
-	Seed s(std::move(m), std::move(default_cluster(2)));
+	Seed s(std::move(m), default_cluster(2));
 	Seed res(2);
 	s.mutate(0, res);
 	EquivQuiverMatrix n("{ { 0 -1 } { 2 0 } }");

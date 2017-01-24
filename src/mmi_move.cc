@@ -142,7 +142,7 @@ namespace cluster {
 				}
 			}
 		}
-		return std::move(result);
+		return result;
 	}
 	bool MMIMove::check_connections(const mmi_conn::Submatrix& submatrix) const {
 		bool valid = true;

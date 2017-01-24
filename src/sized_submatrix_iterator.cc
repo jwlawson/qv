@@ -19,7 +19,6 @@
 namespace cluster {
 	SizedSubmatrixIterator::SizedSubmatrixIterator(int size, const IntMatrix& matrix)
 		: m_(matrix),
-			size_(size),
 			max_val_(std::min(matrix.num_rows(), matrix.num_cols()) - 1),
 			last_rows_(size),
 			rows_(size),

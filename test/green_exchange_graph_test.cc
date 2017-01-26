@@ -21,7 +21,7 @@
 
 namespace cluster {
 namespace {
-typedef _green_exchange::InfiniteTypeSink GCheck;
+typedef green_exchange::MultiArrowTriangleCheck GCheck;
 
 cluster::Seed::Cluster
 default_cluster(size_t size) {

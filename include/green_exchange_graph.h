@@ -20,58 +20,73 @@
  */
 #pragma once
 
-#include "exchange_graph.h"
+#include "template_exchange_graph.h"
 
 namespace cluster {
-namespace _green_exchange {
-struct InfiniteTypeSink {
-	bool operator()(QuiverMatrix const * const mptr, int /*vertex*/) const {
-		for(int i = 0; i < mptr->num_rows(); ++i) {
-			_vertex_cache[i].clear();
-		}
-		const int * row = mptr->data();
-		const int nrows = mptr->num_rows();
-		const int ncols = mptr->num_cols();
-		for(int c = 0, r = 0; r < nrows; ++r) {
-			for(c = 0; c < ncols; ++c) {
-				if(*(row++) > 1) {
-					_vertex_cache[r].push_back(c);
-				}
-			}
-		}
-		for(auto pair : _vertex_cache) {
-			for(int next_vert : pair.second) {
-				for(int third_vert : _vertex_cache[next_vert]) {
-					if(std::find(_vertex_cache[third_vert].begin(),
-								_vertex_cache[third_vert].end(), pair.first) !=
-							_vertex_cache[third_vert].end()) {
-						return false;
-					}
-				}
-			}
-		}
-		/*
-		const int * row_start = mptr->data() + (vertex*mptr->num_cols());
-		for(int i = 0; i < mptr->num_cols(); ++i) {
-			if(row_start[i] < -1) return false;
-		}
-		*/
-		return true;
-	}
-	bool operator()(Seed const * const sptr, int vertex) const {
-		return operator()(&(sptr->matrix()), vertex);
-	}
-	bool operator()(LabelledSeed const * const sptr, int vertex) const {
-		return operator()(&(sptr->matrix()), vertex);
-	}
-	mutable std::map<int, std::vector<int>> _vertex_cache;
+namespace green_exchange {
+/**
+ * A quiver which contains a cyclic triangle, where all the edges are multiple
+ * arrows, cannot have a maximal green sequence. This checks whether the given
+ * quiver contains such a triangle and returns true if it does not.
+ */
+/* Initially we read the matrix to determine which vertices are the sources of
+ * multiple weight arrows, and then we can use this cache to try and determine
+ * whether they form a triangle.
+ *
+ * The triangle check is done for each vertex. At one vertex we can follow an
+ * arrow to get a second vertex, from which we can follow one of its arrows to
+ * get a third vertex. In order to get a triangle this third vertex must then
+ * have an arrow in its cache which leads back to the initial vertex.
+ */
+struct MultiArrowTriangleCheck {
+  bool operator()(QuiverMatrix const* const mptr, int /*vertex*/) const {
+    const int nrows = mptr->num_rows();
+    const int ncols = mptr->num_cols();
+		_vertex_cache.resize(nrows);
+    for (int i = 0; i < nrows; ++i) {
+      _vertex_cache[i].clear();
+    }
+    const int* row = mptr->data();
+    for (int r = 0; r < nrows; ++r) {
+      for (int c = 0; c < ncols; ++c) {
+        if (*(row++) > 1) {
+          _vertex_cache[r].push_back(c);
+        }
+      }
+    }
+    for (int i = 0; i < nrows; ++i ) {
+			auto ith_vertex = _vertex_cache[i];
+      for (int next_vert : ith_vertex) {
+        for (int third_vert : _vertex_cache[next_vert]) {
+          if (std::find(_vertex_cache[third_vert].begin(),
+                        _vertex_cache[third_vert].end(),
+                        i) != _vertex_cache[third_vert].end()) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+  bool operator()(Seed const* const sptr, int vertex) const {
+    return operator()(&(sptr->matrix()), vertex);
+  }
+  bool operator()(LabelledSeed const* const sptr, int vertex) const {
+    return operator()(&(sptr->matrix()), vertex);
+  }
+  mutable std::vector<std::vector<int>> _vertex_cache;
 };
+using GreenGraphInfo =
+    exchange_graph::detail::GraphInfo<MultiArrowTriangleCheck,
+                                      exchange_graph::detail::NeverStop>;
 template <class M>
-using  _EGGreen = __ExchangeGraph<M, _green_exchange::InfiniteTypeSink>;
+using GreenVertexInfo = exchange_graph::detail::QuiverVertex<M>;
+template <class M>
+using GreenGraph =
+    exchange_graph::Graph<GreenVertexInfo<M>, GreenGraphInfo>;
 }
-typedef _green_exchange::_EGGreen<Seed> GreenExchangeGraph;
-typedef _green_exchange::_EGGreen<LabelledSeed> GreenLabelledExchangeGraph;
-typedef _green_exchange::_EGGreen<QuiverMatrix> GreenLabelledQuiverGraph;
-typedef _green_exchange::_EGGreen<EquivQuiverMatrix> GreenQuiverGraph;
+typedef green_exchange::GreenGraph<Seed> GreenExchangeGraph;
+typedef green_exchange::GreenGraph<LabelledSeed> GreenLabelledExchangeGraph;
+typedef green_exchange::GreenGraph<QuiverMatrix> GreenLabelledQuiverGraph;
+typedef green_exchange::GreenGraph<EquivQuiverMatrix> GreenQuiverGraph;
 }
-

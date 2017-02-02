@@ -34,19 +34,19 @@ namespace cluster {
 template<class Matrix>
 class MoveGraph {
 		typedef Matrix* MatrixPtr;
-		typedef MatrixPtr UMatrixPtr;
+		typedef Matrix const * CMatrixPtr;
 	private:
 		class _GraphLoader;
 		class _Link;
 		/** Checks whether the matrices are equal, rather than the pointers */
 		struct PtrEqual {
-			bool operator()( const UMatrixPtr & lhs, const UMatrixPtr & rhs) const {
+			bool operator()( CMatrixPtr const& lhs, CMatrixPtr const& rhs) const {
 				return lhs->equals(*rhs);
 			}
 		};
 		/** Gets the matrix hash */
 		struct PtrHash {
-			size_t operator()(const UMatrixPtr & ptr) const {
+			size_t operator()(CMatrixPtr const& ptr) const {
 				return ptr->hash();
 			}
 		};
@@ -55,7 +55,7 @@ class MoveGraph {
 		typedef _Link Link;
 		typedef std::pair<Matrix, Link> value_type;
 		typedef std::vector<MMIMove> MoveVec;
-		typedef std::unordered_map<UMatrixPtr, Link, PtrHash,
+		typedef std::unordered_map<CMatrixPtr, Link, PtrHash,
 							PtrEqual> GraphMap;
 
 		/**
@@ -89,8 +89,8 @@ class MoveGraph {
 		/** Vector of all moves to use to compute the class. */
 		MoveVec _moves;
 
-		UMatrixPtr ss_move_equiv(UMatrixPtr mat);
-		void add_ss_equiv(UMatrixPtr mat);
+		CMatrixPtr ss_move_equiv(CMatrixPtr mat);
+		void add_ss_equiv(CMatrixPtr mat);
 
 		/** 
 		 * Class which actually computes the class. cf MutationClassLoader
@@ -117,8 +117,8 @@ class MoveGraph {
 				bool _end = false;
 				int _size;
 
-				void seen_matrix(UMatrixPtr new_mat, UMatrixPtr old_mat);
-				void unseen_matrix(const UMatrixPtr & new_mat, MatrixPtr old_mat);
+				void seen_matrix(CMatrixPtr new_mat, CMatrixPtr old_mat);
+				void unseen_matrix(CMatrixPtr const& new_mat, CMatrixPtr old_mat);
 		};
 		/**
 		 * Stores the edges between vertices in the graph.
@@ -128,14 +128,14 @@ class MoveGraph {
 		 */
 		class _Link {
 			private:
-				typedef std::unordered_set<MatrixPtr, PtrHash, PtrEqual> Set;
+				typedef std::unordered_set<CMatrixPtr, PtrHash, PtrEqual> Set;
 			public:
 				_Link() : _matrix(nullptr) {};
-				_Link(MatrixPtr matrix) : _matrix(matrix) {}
+				_Link(CMatrixPtr matrix) : _matrix(matrix) {}
 				/** Initial matrix */
-				const MatrixPtr _matrix;
+				const CMatrixPtr _matrix;
 				/** Add matrix which is linked to the initial matrix. */
-				void add_link(MatrixPtr matrix) {
+				void add_link(CMatrixPtr matrix) {
 					_links.insert(matrix);
 				}
 				const typename Set::const_iterator begin() const { return _links.begin(); }

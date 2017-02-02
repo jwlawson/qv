@@ -29,12 +29,13 @@ namespace cluster {
 
 class SSMove {
 	private:
-		typedef std::shared_ptr<IntMatrix> MatrixPtr;
+		typedef const std::shared_ptr<const IntMatrix> CMatrixPtr;
+		typedef const std::shared_ptr<IntMatrix> MatrixPtr;
 	public:
 		struct Applicable {
-			Applicable(int row, MatrixPtr ptr) : row_(row), matrix_(ptr) {}
+			Applicable(int row, CMatrixPtr ptr) : row_(row), matrix_(ptr) {}
 			int row_;
-			MatrixPtr matrix_;
+			CMatrixPtr matrix_;
 		};
 		/**
 		 * Check whether the supplied matrix contains any sink or source vertices.
@@ -42,7 +43,7 @@ class SSMove {
 		 * each possible sink-source mutation.
 		 */
 		std::vector<Applicable> applicable_submatrices(const IntMatrix& m) const;
-		std::vector<Applicable> applicable_submatrices(MatrixPtr m) const;
+		std::vector<Applicable> applicable_submatrices(CMatrixPtr m) const;
 		/** Perform the applicable sink-source mutation. */
 		void move(const Applicable& app, IntMatrix& result) const;
 };

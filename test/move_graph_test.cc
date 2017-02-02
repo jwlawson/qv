@@ -31,7 +31,7 @@ MMIMove make_move(const std::string& a,
 }
 struct graph_contains {
 	graph_contains(const EquivQuiverMatrix & m) : _matrix(m) {}
-	bool operator()(const std::pair<cluster::EquivQuiverMatrix* const,
+	bool operator()(const std::pair<cluster::EquivQuiverMatrix const* const,
 			cluster::MoveGraph<cluster::EquivQuiverMatrix>::Link> pair) {
 		return _matrix.equals(*pair.first);
 	}

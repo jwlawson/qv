@@ -22,15 +22,15 @@ typedef std::vector<SSMove::Applicable> AppVec;
 }
 
 AppVec SSMove::applicable_submatrices(const IntMatrix& m) const {
-	return applicable_submatrices(std::make_shared<IntMatrix>(m));
+	return applicable_submatrices(std::make_shared<const IntMatrix>(m));
 }
 /**
  * Check whether there is a row that only contains zeros, or values with the
  * same sign. That is every arrow at the vertex is pointing the same way.
  */
-AppVec SSMove::applicable_submatrices(MatrixPtr m) const {
+AppVec SSMove::applicable_submatrices(CMatrixPtr m) const {
 	AppVec result;
-	int* r = m->data();
+	int const* r = m->data();
 	int row = 0;
 	int col = 0;
 	int ind = 0;

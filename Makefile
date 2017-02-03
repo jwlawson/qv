@@ -132,12 +132,12 @@ install:	$(LIB)
 	cp $(LIB) $(PREFIX)/lib
 	ldconfig -v -n $(PREFIX)/lib
 	ln -fs $(PREFIX)/lib/$(LIB) $(PREFIX)/lib/lib$(NAME).so
-	mkdir -p $(PREFIX)/include/qv
-	cp -ru include/* $(PREFIX)/include/qv/
+	mkdir -p $(PREFIX)/include/$(NAME)
+	cp -ru include/* $(PREFIX)/include/$(NAME)/
 
 uninstall:
 	rm $(PREFIX)/lib/lib$(NAME).*
-	rm -r $(PREFIX)/include/qv
+	rm -r $(PREFIX)/include/$(NAME)
 
 # this is a suffix replacement rule for building .o's from .c's
 # it uses automatic variables $<: the name of the prerequisite of

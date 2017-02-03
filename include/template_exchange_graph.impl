@@ -20,6 +20,11 @@ inline Graph<V, G>::~Graph() {
   }
 }
 template <class V, class G>
+inline typename Graph<V, G>::GraphMap const& Graph<V, G>::underlying_map()
+    const {
+  return _map;
+}
+template <class V, class G>
 inline const typename Graph<V, G>::GraphMap::const_iterator Graph<V, G>::begin()
     const {
   return _map.begin();

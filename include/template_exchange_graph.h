@@ -116,6 +116,8 @@ class Graph {
   ~Graph();
   const typename GraphMap::const_iterator begin() const;
   const typename GraphMap::const_iterator end() const;
+	/** Get a reference to the underlying map which holds the graph. */
+	GraphMap const& underlying_map() const;
 
  private:
   /** Size of matrix. */

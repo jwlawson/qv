@@ -52,8 +52,8 @@ inline void Graph<V, G>::_GraphLoader::load_next() {
         delete new_matrix;
       } else {
         // up to this point _end is always false
-        _end = should_stop(new_matrix);
         unseen_matrix(new_matrix, mat, i);
+        _end = (_graph._map.size() >= _graph._max_num) || should_stop(new_matrix);
       }
     }
   }
@@ -70,13 +70,13 @@ inline bool Graph<V, G>::_GraphLoader::have_seen(CVertexPtr new_mat) {
 template <class V, class G>
 inline bool Graph<V, G>::_GraphLoader::mutate_at(CVertexPtr old_mat,
                                                  int vertex) {
-  bool result = should_continue(old_mat, vertex);
-  if (result) {
+  bool should_mutate = should_continue(old_mat, vertex);
+  if (should_mutate) {
     auto position = _graph._map.find(old_mat);
-    result =
+    should_mutate =
         position != _graph._map.end() && position->second[vertex] == nullptr;
   }
-  return result;
+  return should_mutate;
 }
 template <class V, class G>
 inline void Graph<V, G>::_GraphLoader::seen_matrix(CVertexPtr new_mat,

@@ -49,6 +49,19 @@ TEST(ExchangeGraph, Pentagon) {
 	}
 	EXPECT_EQ(static_cast<std::size_t>(5), num_seeds);
 }
+TEST(ExchangeGraph, MaxNumStopsGraph) {
+	EquivQuiverMatrix m("{ { 0 1 } { -1 0 } }");
+	Seed s{std::move(m), default_cluster(2)};
+
+	std::size_t max_num = 3;
+	ExchangeGraph g{s, 2, max_num};
+	uint num_seeds = 0;
+	for(auto it = g.begin(); it != g.end(); ++it) {
+		++num_seeds;
+	}
+	EXPECT_EQ(max_num, num_seeds);
+	EXPECT_EQ(max_num, g.underlying_map().size());
+}
 TEST(LabelledExchangeGraph, Decagon) {
 	QuiverMatrix m("{ { 0 1 } { -1 0 } }");
 	auto c = default_cluster(2);

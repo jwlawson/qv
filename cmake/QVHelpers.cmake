@@ -14,6 +14,7 @@ function(qv_target)
     cxx_defaulted_functions
     cxx_deleted_functions
   )
+  target_compile_options(${QV_TARGET_TARGET} PRIVATE ${QV_WARNING_FLAGS})
   target_link_libraries(${QV_TARGET_TARGET}
     PUBLIC  ${QV_TARGET_PUBLIC_LIBRARIES}
     PRIVATE ${QV_TARGET_PRIVATE_LIBRARIES}

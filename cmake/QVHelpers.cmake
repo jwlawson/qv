@@ -1,6 +1,14 @@
 
+macro(forward_option OUT_VAR PREFIX OPTION_NAME)
+  if(${${PREFIX}_${OPTION_NAME}})
+    set(${OUT_VAR} "${OPTION_NAME}")
+  else()
+    set(${OUT_VAR} "")
+  endif()
+endmacro()
+
 function(qv_target)
-  set(_options)
+  set(_options INCLUDE_BINARY_DIR)
   set(_one_value_args TARGET)
   set(_multi_value_args PUBLIC_LIBRARIES
                         PRIVATE_LIBRARIES)
@@ -9,7 +17,14 @@ function(qv_target)
                                   "${_multi_value_args}"
                                   ${ARGN})
   target_include_directories(${QV_TARGET_TARGET}
-    PRIVATE ${qv_SOURCE_DIR}/include)
+    PUBLIC $<BUILD_INTERFACE:${qv_SOURCE_DIR}/include>
+           $<INSTALL_INTERFACE:>
+  )
+  if(QV_TARGET_INCLUDE_BINARY_DIR)
+    target_include_directories(${QV_TARGET_TARGET}
+      PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+    )
+  endif()
   target_compile_features(${QV_TARGET_TARGET} PRIVATE
     cxx_defaulted_functions
     cxx_deleted_functions
@@ -22,7 +37,7 @@ function(qv_target)
 endfunction()
 
 function(qv_library)
-  set(_options)
+  set(_options INCLUDE_BINARY_DIR)
   set(_one_value_args TARGET)
   set(_multi_value_args SOURCES
                         PUBLIC_LIBRARIES
@@ -32,7 +47,9 @@ function(qv_library)
                                 "${_multi_value_args}"
                                 ${ARGN})
   add_library(${QV_LIB_TARGET} ${QV_LIB_SOURCES})
+  forward_option(_include_binary_dir QV_LIB INCLUDE_BINARY_DIR)
   qv_target(TARGET            ${QV_LIB_TARGET}
+            ${_include_binary_dir}
             PUBLIC_LIBRARIES  ${QV_LIB_PUBLIC_LIBRARIES}
             PRIVATE_LIBRARIES ${QV_LIB_PRIVATE_LIBRARIES})
 endfunction()

@@ -22,6 +22,7 @@
  */
 #pragma once
 #include "int_matrix.h"
+#include "qv_export.h"
 #include <cstdlib> /* std::abs */
 #include <cstring>
 

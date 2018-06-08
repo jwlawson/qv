@@ -20,9 +20,6 @@ qv_test(TARGET equiv_quiver_matrix_test
 qv_test(TARGET equiv_underlying_graph_test
         SOURCES equiv_underlying_graph_test.cc
 )
-qv_test(TARGET exchange_graph_test
-        SOURCES exchange_graph_test.cc
-)
 qv_test(TARGET extension_iterator_test
         SOURCES extension_iterator_test.cc
 )
@@ -31,9 +28,6 @@ qv_test(TARGET fast_infinite_test
 )
 qv_test(TARGET fast_mmi_test
         SOURCES fast_mmi_test.cc
-)
-qv_test(TARGET green_exchange_graph_test
-        SOURCES green_exchange_graph_test.cc
 )
 qv_test(TARGET int_matrix_test
         SOURCES int_matrix_test.cc
@@ -65,12 +59,6 @@ qv_test(TARGET oriented_cycle_info_test
 qv_test(TARGET quiver_matrix_test
         SOURCES quiver_matrix_test.cc
 )
-qv_test(TARGET seed_test
-        SOURCES seed_test.cc
-)
-qv_test(TARGET sink_source_graph_test
-        SOURCES sink_source_graph_test.cc
-)
 qv_test(TARGET sized_submatrix_iterator_test
         SOURCES sized_submatrix_iterator_test.cc
 )
@@ -89,8 +77,6 @@ qv_test(TARGET stream_extension_iterator_test
 qv_test(TARGET stream_iterator_test
         SOURCES stream_iterator_test.cc
 )
-# stream_iterator_test requires an empty file to open
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/empty "")
 qv_test(TARGET stream_submatrix_iterator_test
         SOURCES stream_submatrix_iterator_test.cc
 )
@@ -100,3 +86,21 @@ qv_test(TARGET submatrix_iterator_test
 qv_test(TARGET underlying_graph_test
         SOURCES underlying_graph_test.cc
 )
+if(QV_TEST_GINAC)
+  qv_test(TARGET exchange_graph_test
+          SOURCES exchange_graph_test.cc
+          PRIVATE_LIBRARIES GiNaC::GiNaC
+  )
+  qv_test(TARGET green_exchange_graph_test
+          SOURCES green_exchange_graph_test.cc
+          PRIVATE_LIBRARIES GiNaC::GiNaC
+  )
+  qv_test(TARGET seed_test
+          SOURCES seed_test.cc
+          PRIVATE_LIBRARIES GiNaC::GiNaC
+  )
+  qv_test(TARGET sink_source_graph_test
+          SOURCES sink_source_graph_test.cc
+          PRIVATE_LIBRARIES GiNaC::GiNaC
+  )
+endif()

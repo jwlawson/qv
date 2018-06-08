@@ -41,11 +41,8 @@ namespace cluster {
 	}
 
 	TEST(StreamIterator, Empty) {
-		std::ifstream file;
-		file.open("test/empty");
-		ASSERT_TRUE(file.is_open());
-
-		StreamIterator<QuiverMatrix> iter(file);
+		std::stringstream empty;
+		StreamIterator<QuiverMatrix> iter(empty);
 
 		EXPECT_FALSE(iter.has_next());
 	}

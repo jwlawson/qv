@@ -1,3 +1,4 @@
+
 qv_library(
   TARGET  qv
   SOURCES array_utils.cc
@@ -32,6 +33,5 @@ qv_library(
           stream_submatrix_iterator.cc
           submatrix_iterator.cc
           underlying_graph.cc
-  PUBLIC_LIBRARIES GiNaC::GiNaC
-                   Boost::boost
+  PUBLIC_LIBRARIES Boost::boost
 )

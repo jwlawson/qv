@@ -21,7 +21,7 @@ namespace cluster {
 /* Default ctr does nothing really. */
 Cycle::Cycle() : cycle_() {}
 
-Cycle::Cycle(const std::vector<int> &vec) : cycle_() {
+Cycle::Cycle(const std::vector<int>& vec) : cycle_() {
   using std::size_t;
   cycle_.reserve(vec.size());
   size_t index = smallest_index(vec);
@@ -33,7 +33,7 @@ Cycle::Cycle(const std::vector<int> &vec) : cycle_() {
   }
 }
 
-Cycle::Cycle(const std::vector<int> &vec, const int size) : cycle_() {
+Cycle::Cycle(const std::vector<int>& vec, const int size) : cycle_() {
   using std::size_t;
   cycle_.reserve(size);
   size_t index = smallest_index(vec, size);
@@ -45,10 +45,13 @@ Cycle::Cycle(const std::vector<int> &vec, const int size) : cycle_() {
   }
 }
 
-bool Cycle::equals(const Cycle &rhs) const { return cycle_ == rhs.cycle_; }
+bool
+Cycle::equals(const Cycle& rhs) const {
+  return cycle_ == rhs.cycle_;
+}
 
-bool Cycle::equals(const Cycle &rhs,
-                   const std::vector<int> &permutation) const {
+bool
+Cycle::equals(const Cycle& rhs, const std::vector<int>& permutation) const {
   if (cycle_.size() != rhs.cycle_.size()) {
     return false;
   }
@@ -61,7 +64,8 @@ bool Cycle::equals(const Cycle &rhs,
   return equals(tmp);
 }
 
-std::size_t Cycle::hash() const {
+std::size_t
+Cycle::hash() const {
   using std::size_t;
   size_t hash = 1;
   for (size_t i = 0; i < cycle_.size(); ++i) {
@@ -71,9 +75,13 @@ std::size_t Cycle::hash() const {
   return hash;
 }
 
-std::size_t Cycle::size() const { return cycle_.size(); }
+std::size_t
+Cycle::size() const {
+  return cycle_.size();
+}
 
-bool Cycle::contains(const int value) const {
+bool
+Cycle::contains(const int value) const {
   using std::size_t;
   for (size_t i = 0; i < cycle_.size(); ++i) {
     if (cycle_[i] == value) {
@@ -83,7 +91,8 @@ bool Cycle::contains(const int value) const {
   return false;
 }
 
-bool Cycle::contains(const std::pair<int, int> &pair) const {
+bool
+Cycle::contains(const std::pair<int, int>& pair) const {
   using std::size_t;
   if (cycle_.empty()) {
     return false;
@@ -100,7 +109,8 @@ bool Cycle::contains(const std::pair<int, int> &pair) const {
   return false;
 }
 
-std::size_t Cycle::smallest_index(const std::vector<int> &vec) {
+std::size_t
+Cycle::smallest_index(const std::vector<int>& vec) {
   using std::size_t;
   int smallest = vec[0];
   size_t index = 0;
@@ -113,7 +123,8 @@ std::size_t Cycle::smallest_index(const std::vector<int> &vec) {
   return index;
 }
 
-std::size_t Cycle::smallest_index(const std::vector<int> &vec, const int size) {
+std::size_t
+Cycle::smallest_index(const std::vector<int>& vec, const int size) {
   using std::size_t;
   int smallest = vec[0];
   size_t index = 0;
@@ -126,11 +137,12 @@ std::size_t Cycle::smallest_index(const std::vector<int> &vec, const int size) {
   return index;
 }
 
-std::ostream &operator<<(std::ostream &os, const Cycle &cycle) {
+std::ostream&
+operator<<(std::ostream& os, const Cycle& cycle) {
   for (std::size_t i = 0; i < cycle.cycle_.size(); ++i) {
     os << cycle.cycle_[i] << " ";
   }
   return os;
 }
 
-} // namespace cluster
+}  // namespace cluster

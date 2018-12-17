@@ -24,14 +24,14 @@
 #include "submatrix_iterator.h"
 
 namespace cluster {
-template <class T> class StreamSubIter {
-
-private:
+template <class T>
+class StreamSubIter {
+ private:
   typedef std::shared_ptr<T> MatrixPtr;
 
-public:
+ public:
   StreamSubIter() : stream_iter_() {}
-  StreamSubIter(std::istream &stream) : stream_iter_(stream) {}
+  StreamSubIter(std::istream& stream) : stream_iter_(stream) {}
 
   struct MatrixSub {
     MatrixPtr matrix;
@@ -39,21 +39,22 @@ public:
     int removed;
   };
 
-  T const &next();
+  T const& next();
   MatrixSub next_info();
-  void next_info(MatrixSub &info);
+  void next_info(MatrixSub& info);
   bool has_next();
 
-private:
+ private:
   StreamIterator<T> stream_iter_;
   SubmatrixIterator<T> sub_iter_;
   MatrixPtr matrix_;
   int removed_;
 };
 template <class T>
-inline typename StreamSubIter<T>::MatrixSub StreamSubIter<T>::next_info() {
+inline typename StreamSubIter<T>::MatrixSub
+StreamSubIter<T>::next_info() {
   MatrixSub result{nullptr, nullptr, 0};
   next_info(result);
   return result;
 }
-} // namespace cluster
+}  // namespace cluster

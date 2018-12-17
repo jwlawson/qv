@@ -14,35 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "gtest/gtest.h"
 #include "equiv_underlying_graph.h"
 #include "dynkin.h"
+#include "gtest/gtest.h"
 
 namespace cluster {
 
-	TEST(EquivUnderlying, Simple) {
+TEST(EquivUnderlying, Simple) {
+  QuiverMatrix a3 = dynkin::A3;
 
-		QuiverMatrix a3 = dynkin::A3;
+  EquivUnderlyingGraph res(a3);
 
-		EquivUnderlyingGraph res(a3);
+  int v[] = {0, 1, 0, 1, 0, 1, 0, 1, 0};
+  IntMatrix exp(3, 3, v);
 
-		int v[] = {0, 1, 0, 1, 0, 1, 0, 1, 0};
-		IntMatrix exp(3, 3, v);
-
-		EXPECT_TRUE(IntMatrix::are_equal(exp, res));
-
-	}
-
-	TEST(EquivUnderlying, Equivalence) {
-
-		QuiverMatrix a4 = dynkin::A4;
-		EquivUnderlyingGraph res(a4);
-
-		int v[] = {0,0,1,1, 0,0,0,1, 1,0,0,0, 1,1,0,0};
-		EquivQuiverMatrix exp(4, 4, v);
-
-		EXPECT_TRUE(exp.equals(res));
-
-	}
-
+  EXPECT_TRUE(IntMatrix::are_equal(exp, res));
 }
+
+TEST(EquivUnderlying, Equivalence) {
+  QuiverMatrix a4 = dynkin::A4;
+  EquivUnderlyingGraph res(a4);
+
+  int v[] = {0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0};
+  EquivQuiverMatrix exp(4, 4, v);
+
+  EXPECT_TRUE(exp.equals(res));
+}
+
+}  // namespace cluster

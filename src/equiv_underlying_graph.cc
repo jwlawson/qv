@@ -22,9 +22,9 @@ namespace cluster {
 
 namespace {
 typedef std::vector<std::pair<int, int>> PairVec;
-} // namespace
+}  // namespace
 
-EquivUnderlyingGraph::EquivUnderlyingGraph(const IntMatrix &mat)
+EquivUnderlyingGraph::EquivUnderlyingGraph(const IntMatrix& mat)
     : EquivQuiverMatrix(mat.num_rows(), mat.num_cols()) {
   for (int i = 0; i < mat.num_rows() * mat.num_cols(); ++i) {
     data_[i] = std::abs(mat.data()[i]);
@@ -32,7 +32,8 @@ EquivUnderlyingGraph::EquivUnderlyingGraph(const IntMatrix &mat)
   reset();
 }
 
-void EquivUnderlyingGraph::set_matrix(const IntMatrix &mat) {
+void
+EquivUnderlyingGraph::set_matrix(const IntMatrix& mat) {
   if (mat.num_rows() != num_rows_) {
     rows_ = PairVec(mat.num_rows(), std::make_pair(0, 0));
   }
@@ -44,11 +45,11 @@ void EquivUnderlyingGraph::set_matrix(const IntMatrix &mat) {
   } else {
     data_ = IntVector(mat.vector());
     std::for_each(data_.begin(), data_.end(),
-                  [](int &a) -> void { a = a < 0 ? -a : a; });
+                  [](int& a) -> void { a = a < 0 ? -a : a; });
     num_rows_ = mat.num_rows();
     num_cols_ = mat.num_cols();
   }
   reset();
 }
 
-} // namespace cluster
+}  // namespace cluster

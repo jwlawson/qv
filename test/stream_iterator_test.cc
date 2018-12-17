@@ -22,50 +22,49 @@
 
 #include "gtest/gtest.h"
 
-#include "quiver_matrix.h"
 #include "equiv_quiver_matrix.h"
+#include "quiver_matrix.h"
 
 namespace cluster {
 
-	TEST(StreamIterator, First) {
-		std::stringstream ss;
-		int v[] = {1,2,3,4,5,6,7,8,9};
-		QuiverMatrix mat(3,3,v);
-		ss << mat;
+TEST(StreamIterator, First) {
+  std::stringstream ss;
+  int v[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+  QuiverMatrix mat(3, 3, v);
+  ss << mat;
 
-		StreamIterator<QuiverMatrix> iter(ss);
+  StreamIterator<QuiverMatrix> iter(ss);
 
-		ASSERT_TRUE(iter.has_next());
-		EXPECT_TRUE(mat.equals(*(iter.next())));
-		EXPECT_FALSE(iter.has_next());
-	}
-
-	TEST(StreamIterator, Empty) {
-		std::stringstream empty;
-		StreamIterator<QuiverMatrix> iter(empty);
-
-		EXPECT_FALSE(iter.has_next());
-	}
-
-	/*
-	 * Adding 30,000 matrices to the set takes 5 hours.
-	 *
-	TEST(StreamIterator, Huge) {
-		std::ifstream file;
-		file.open("/home/grads/njcz19/result/finite/9_fin");
-		ASSERT_TRUE(file.is_open());
-
-		StreamIterator<EquivQuiverMatrix> iter(file);
-		std::unordered_set<std::shared_ptr<EquivQuiverMatrix>> set;
-
-		EXPECT_TRUE(iter.has_next());
-		int count = 0;
-		while(iter.has_next()) {
-			set.insert(iter.next());
-			count++;
-		}
-		EXPECT_EQ(count, 30167);
-	}
-	*/
+  ASSERT_TRUE(iter.has_next());
+  EXPECT_TRUE(mat.equals(*(iter.next())));
+  EXPECT_FALSE(iter.has_next());
 }
 
+TEST(StreamIterator, Empty) {
+  std::stringstream empty;
+  StreamIterator<QuiverMatrix> iter(empty);
+
+  EXPECT_FALSE(iter.has_next());
+}
+
+/*
+ * Adding 30,000 matrices to the set takes 5 hours.
+ *
+TEST(StreamIterator, Huge) {
+        std::ifstream file;
+        file.open("/home/grads/njcz19/result/finite/9_fin");
+        ASSERT_TRUE(file.is_open());
+
+        StreamIterator<EquivQuiverMatrix> iter(file);
+        std::unordered_set<std::shared_ptr<EquivQuiverMatrix>> set;
+
+        EXPECT_TRUE(iter.has_next());
+        int count = 0;
+        while(iter.has_next()) {
+                set.insert(iter.next());
+                count++;
+        }
+        EXPECT_EQ(count, 30167);
+}
+*/
+}  // namespace cluster

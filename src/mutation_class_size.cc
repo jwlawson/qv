@@ -20,7 +20,8 @@
 namespace cluster {
 namespace classsize {
 
-int Size(const QuiverMatrix &matrix) {
+int
+Size(const QuiverMatrix& matrix) {
   MutationClassLoader<QuiverMatrix> c(matrix);
   int result = 0;
   while (c.has_next()) {
@@ -32,5 +33,5 @@ int Size(const QuiverMatrix &matrix) {
   return result;
 }
 
-} // namespace classsize
-} // namespace cluster
+}  // namespace classsize
+}  // namespace cluster

@@ -22,7 +22,7 @@
 
 namespace cluster {
 
-MutationClass::MutationClass(const IntMatrix &initial) : set_(), finite_(true) {
+MutationClass::MutationClass(const IntMatrix& initial) : set_(), finite_(true) {
   EquivQuiverMatrix mat(initial);
   EquivMutationClassLoader loader(mat);
   while (loader.has_next()) {
@@ -38,7 +38,7 @@ MutationClass::MutationClass(const IntMatrix &initial) : set_(), finite_(true) {
 /*
  * Don't need to create a new EquivQuiverMatrix if that is what is supplied.
  */
-MutationClass::MutationClass(const EquivQuiverMatrix &initial)
+MutationClass::MutationClass(const EquivQuiverMatrix& initial)
     : set_(), finite_(true) {
   EquivMutationClassLoader loader(initial);
   while (loader.has_next()) {
@@ -51,18 +51,29 @@ MutationClass::MutationClass(const EquivQuiverMatrix &initial)
   }
 }
 
-bool MutationClass::contains(std::shared_ptr<M> matrix) const {
+bool
+MutationClass::contains(std::shared_ptr<M> matrix) const {
   return set_.find(matrix) != set_.end();
 }
 
-bool MutationClass::is_finite() const { return finite_; }
+bool
+MutationClass::is_finite() const {
+  return finite_;
+}
 
-std::size_t MutationClass::size() const { return set_.size(); }
+std::size_t
+MutationClass::size() const {
+  return set_.size();
+}
 
-typename MutationClass::Iter MutationClass::begin() const {
+typename MutationClass::Iter
+MutationClass::begin() const {
   return set_.begin();
 }
 
-typename MutationClass::Iter MutationClass::end() const { return set_.end(); }
+typename MutationClass::Iter
+MutationClass::end() const {
+  return set_.end();
+}
 
-} // namespace cluster
+}  // namespace cluster

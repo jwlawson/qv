@@ -24,56 +24,56 @@ typedef cluster::LabelledSeed LSeed;
 
 cluster::Seed::Cluster
 default_cluster(size_t size) {
-	cluster::Seed::Cluster result(size);
-	std::string var = "x";
-	for(size_t i = 0; i < size; ++i) {
-		result[i] = cluster::ginac::symbol(var + std::to_string(i));
-	}
-	return result;
+  cluster::Seed::Cluster result(size);
+  std::string var = "x";
+  for (size_t i = 0; i < size; ++i) {
+    result[i] = cluster::ginac::symbol(var + std::to_string(i));
+  }
+  return result;
 }
-}
+}  // namespace
 
 namespace cluster {
 TEST(SSGraph, A2) {
-	QuiverMatrix a( "{ { 0 1 } { -1 0 } }");
-	SinkSourceGraph<QuiverMatrix> graph(a);
+  QuiverMatrix a("{ { 0 1 } { -1 0 } }");
+  SinkSourceGraph<QuiverMatrix> graph(a);
 
-	int count { 0 };
-	for(auto it = graph.begin(), end = graph.end(); it != end; ++it) {
-		++count;
-	}
-	EXPECT_EQ(2, count);
+  int count{0};
+  for (auto it = graph.begin(), end = graph.end(); it != end; ++it) {
+    ++count;
+  }
+  EXPECT_EQ(2, count);
 }
 TEST(SSGraph, A3) {
-	EquivQuiverMatrix a( "{ { 0 1 0 } { -1 0 1 } { 0 -1 0 } }");
-	SinkSourceGraph<EquivQuiverMatrix> graph(a);
+  EquivQuiverMatrix a("{ { 0 1 0 } { -1 0 1 } { 0 -1 0 } }");
+  SinkSourceGraph<EquivQuiverMatrix> graph(a);
 
-	int count { 0 };
-	for(auto it = graph.begin(), end = graph.end(); it != end; ++it) {
-		++count;
-	}
-	EXPECT_EQ(3, count);
+  int count{0};
+  for (auto it = graph.begin(), end = graph.end(); it != end; ++it) {
+    ++count;
+  }
+  EXPECT_EQ(3, count);
 }
 TEST(SSGraph, A2Seed) {
-	EquivQuiverMatrix a( "{ { 0 1 } { -1 0 } }");
-	Seed s(a, default_cluster(2));
-	SinkSourceGraph<Seed> graph(s);
+  EquivQuiverMatrix a("{ { 0 1 } { -1 0 } }");
+  Seed s(a, default_cluster(2));
+  SinkSourceGraph<Seed> graph(s);
 
-	int count { 0 };
-	for(auto it = graph.begin(), end = graph.end(); it != end; ++it) {
-		++count;
-	}
-	EXPECT_EQ(5, count);
+  int count{0};
+  for (auto it = graph.begin(), end = graph.end(); it != end; ++it) {
+    ++count;
+  }
+  EXPECT_EQ(5, count);
 }
 TEST(SSGraph, A2LabelledSeed) {
-	EquivQuiverMatrix a( "{ { 0 1 } { -1 0 } }");
-	LabelledSeed s(a, default_cluster(2));
-	SinkSourceGraph<LabelledSeed> graph(s);
+  EquivQuiverMatrix a("{ { 0 1 } { -1 0 } }");
+  LabelledSeed s(a, default_cluster(2));
+  SinkSourceGraph<LabelledSeed> graph(s);
 
-	int count { 0 };
-	for(auto it = graph.begin(), end = graph.end(); it != end; ++it) {
-		++count;
-	}
-	EXPECT_EQ(10, count);
+  int count{0};
+  for (auto it = graph.begin(), end = graph.end(); it != end; ++it) {
+    ++count;
+  }
+  EXPECT_EQ(10, count);
 }
-}
+}  // namespace cluster

@@ -20,7 +20,8 @@
 
 namespace cluster {
 
-std::shared_ptr<EquivalenceChecker> EquivalenceChecker::Get(const int size) {
+std::shared_ptr<EquivalenceChecker>
+EquivalenceChecker::Get(const int size) {
   static std::map<int, std::shared_ptr<EquivalenceChecker>> instance_map{};
   auto position = instance_map.find(size);
   if (position == instance_map.end()) {
@@ -37,7 +38,8 @@ EquivalenceChecker::EquivalenceChecker()
 EquivalenceChecker::EquivalenceChecker(const int size)
     : size_(size), maps_(size), last_row_map_(size_) {}
 
-bool EquivalenceChecker::are_equivalent(const M &a, const M &b) {
+bool
+EquivalenceChecker::are_equivalent(const M& a, const M& b) {
   if (a.num_rows() != b.num_rows() || a.num_cols() != b.num_cols()) {
     return false;
   }
@@ -59,7 +61,7 @@ bool EquivalenceChecker::are_equivalent(const M &a, const M &b) {
 }
 
 EquivalenceChecker::PermVecPtr
-EquivalenceChecker::valid_row_maps(const M &lhs, const M &rhs) {
+EquivalenceChecker::valid_row_maps(const M& lhs, const M& rhs) {
   PermVecPtr result = std::make_shared<std::vector<Permutation>>();
   bool rows_match = do_rows_match(lhs, rhs);
   if (!rows_match) {
@@ -70,22 +72,23 @@ EquivalenceChecker::valid_row_maps(const M &lhs, const M &rhs) {
 }
 
 /* Private methods */
-bool EquivalenceChecker::do_rows_match(const M &a, const M &b) {
+bool
+EquivalenceChecker::do_rows_match(const M& a, const M& b) {
   maps_.reset();
   bool rows_match = true;
   auto b_start_rows = b.rows_.begin();
   auto b_end_rows = b.rows_.end();
-  int const *const a_data = a.data();
-  int const *const b_data = b.data();
+  int const* const a_data = a.data();
+  int const* const b_data = b.data();
   for (int a_ind = 0; rows_match && a_ind < size_; a_ind++) {
     bool equiv = false;
-    int const *a_row = a_data + a_ind * size_;
+    int const* a_row = a_data + a_ind * size_;
     // Go through each row of B which matches the row of A at index a_ind.
     auto next_row = std::find(b_start_rows, b_end_rows, a.rows_[a_ind]);
     while (next_row != b_end_rows) {
       // std::find returns an iterator, but we want the row index
       int index = std::distance(b_start_rows, next_row);
-      int const *b_row = b_data + index * size_;
+      int const* b_row = b_data + index * size_;
       if (std::is_permutation(a_row, a_row + size_, b_row)) {
         equiv = true;
         maps_.update_row_mapping(a_ind, index);
@@ -100,8 +103,9 @@ bool EquivalenceChecker::do_rows_match(const M &a, const M &b) {
   return rows_match;
 }
 
-bool EquivalenceChecker::check_perm(Permutation &row_map, int index, const M &a,
-                                    const M &b) {
+bool
+EquivalenceChecker::check_perm(Permutation& row_map, int index, const M& a,
+                               const M& b) {
   bool result = false;
   if (index == size_) {
     /* Row_map contains a complete permutation, that is each index
@@ -131,8 +135,8 @@ bool EquivalenceChecker::check_perm(Permutation &row_map, int index, const M &a,
         /* Check that adding the perm index -> val would give a good
          * permutation, using what has been constructed so far. */
         bool skip = false;
-        int const *a_data = a.data() + index * size_;
-        int const *b_row_data = b.data() + val * size_;
+        int const* a_data = a.data() + index * size_;
+        int const* b_row_data = b.data() + val * size_;
         for (int j = 0; !skip && j < index; ++j, ++a_data) {
           skip = (*a_data != b_row_data[row_map[j]]);
         }
@@ -146,8 +150,9 @@ bool EquivalenceChecker::check_perm(Permutation &row_map, int index, const M &a,
   return result;
 }
 
-void EquivalenceChecker::all_perms(Permutation &row_map, int index, const M &a,
-                                   const M &b, PermVecPtr perms) {
+void
+EquivalenceChecker::all_perms(Permutation& row_map, int index, const M& a,
+                              const M& b, PermVecPtr perms) {
   if (index == size_) {
     perms->push_back(row_map);
   } else {
@@ -161,8 +166,8 @@ void EquivalenceChecker::all_perms(Permutation &row_map, int index, const M &a,
         /* Check that adding the perm index -> val would give a good
          * permutation, using what has been constructed so far. */
         bool skip = false;
-        int const *a_data = a.data() + index * size_;
-        int const *b_row_data = b.data() + val * size_;
+        int const* a_data = a.data() + index * size_;
+        int const* b_row_data = b.data() + val * size_;
         for (int j = 0; !skip && j < index; ++j, ++a_data) {
           skip = (*a_data != b_row_data[row_map[j]]);
         }
@@ -175,4 +180,4 @@ void EquivalenceChecker::all_perms(Permutation &row_map, int index, const M &a,
   }
 }
 
-} // namespace cluster
+}  // namespace cluster

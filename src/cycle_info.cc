@@ -20,15 +20,18 @@ namespace cluster {
 
 CycleInfo::CycleInfo() : size_(), cycles_(), num_cycles_(), edges_() {}
 
-CycleInfo::CycleInfo(const QuiverMatrix &matrix)
-    : size_(std::min(matrix.num_rows(), matrix.num_cols())), cycles_(),
-      num_cycles_(size_, 0), edges_() {
+CycleInfo::CycleInfo(const QuiverMatrix& matrix)
+    : size_(std::min(matrix.num_rows(), matrix.num_cols()))
+    , cycles_()
+    , num_cycles_(size_, 0)
+    , edges_() {
   comp_cycles(matrix);
   find_double_edges(matrix);
 }
 
-bool CycleInfo::cycle_contains(const int vertex) const {
-  for (auto &cycle : cycles_) {
+bool
+CycleInfo::cycle_contains(const int vertex) const {
+  for (auto& cycle : cycles_) {
     if (cycle.contains(vertex)) {
       return true;
     }
@@ -47,7 +50,8 @@ bool CycleInfo::cycle_contains(const int vertex) const {
  * zeros in the vector for larger cycles which might not appear in smaller
  * matrices.
  */
-std::size_t CycleInfo::hash() const {
+std::size_t
+CycleInfo::hash() const {
   std::size_t hash = 1;
   bool started = false;
   for (auto iter = num_cycles_.end(); iter != num_cycles_.begin();) {
@@ -66,7 +70,8 @@ std::size_t CycleInfo::hash() const {
   return hash;
 }
 
-bool CycleInfo::equals(const CycleInfo &rhs) const {
+bool
+CycleInfo::equals(const CycleInfo& rhs) const {
   if (cycles_.size() != rhs.cycles_.size()) {
     return false;
   }
@@ -81,12 +86,12 @@ bool CycleInfo::equals(const CycleInfo &rhs) const {
   }
   std::vector<int> dedge_start;
   std::vector<int> dedge_end;
-  for (const DEdge &edge : rhs.edges_) {
+  for (const DEdge& edge : rhs.edges_) {
     dedge_start.push_back(edge.first);
     dedge_end.push_back(edge.second);
   }
   std::vector<std::vector<int>> edge_maps(rhs.size_);
-  for (const DEdge &edge : edges_) {
+  for (const DEdge& edge : edges_) {
     for (int i : dedge_start) {
       edge_maps[i].push_back(edge.first);
     }
@@ -95,7 +100,7 @@ bool CycleInfo::equals(const CycleInfo &rhs) const {
     }
   }
   std::vector<int> count(size_);
-  for (auto &cycle : cycles_) {
+  for (auto& cycle : cycles_) {
     for (int i = 0; i < size_; ++i) {
       if (cycle.contains(i)) {
         count[i]++;
@@ -104,7 +109,7 @@ bool CycleInfo::equals(const CycleInfo &rhs) const {
   }
 
   std::vector<int> r_count(rhs.size_);
-  for (auto &cycle : rhs.cycles_) {
+  for (auto& cycle : rhs.cycles_) {
     for (int i = 0; i < rhs.size_; ++i) {
       if (cycle.contains(i)) {
         r_count[i]++;
@@ -137,7 +142,8 @@ bool CycleInfo::equals(const CycleInfo &rhs) const {
   return perm_equals(maps, rhs, mapping, 0);
 }
 
-void CycleInfo::comp_cycles(const QuiverMatrix &matrix) {
+void
+CycleInfo::comp_cycles(const QuiverMatrix& matrix) {
   std::vector<int> cycles;
   cycles.reserve(matrix.num_cols());
   for (int i = 0; i < matrix.num_rows(); ++i) {
@@ -145,14 +151,15 @@ void CycleInfo::comp_cycles(const QuiverMatrix &matrix) {
   }
 }
 
-void CycleInfo::find_double_edges(const QuiverMatrix &matrix) {
-  const int *data = matrix.data();
+void
+CycleInfo::find_double_edges(const QuiverMatrix& matrix) {
+  const int* data = matrix.data();
   for (int i = 0; i < matrix.num_rows() * matrix.num_cols(); ++i) {
     if (data[i] == 2) {
       int col = i % matrix.num_cols();
       int row = (i - col) / matrix.num_cols();
       DEdge dedge = std::make_pair(row, col);
-      for (auto &cycle : cycles_) {
+      for (auto& cycle : cycles_) {
         if (cycle.contains(dedge)) {
           edges_.insert(std::move(dedge));
           break;
@@ -175,8 +182,9 @@ void CycleInfo::find_double_edges(const QuiverMatrix &matrix) {
  * how many elements have been assigned, so this method cannot be used, nor
  * can vector.empty.
  */
-void CycleInfo::cycles_from(int vertex, std::vector<int> &cycle, int index,
-                            const QuiverMatrix &matrix) {
+void
+CycleInfo::cycles_from(int vertex, std::vector<int>& cycle, int index,
+                       const QuiverMatrix& matrix) {
   if (index != 0 && index != 2 && vertex == cycle[0]) {
     /* Loop complete, so insert into set. Note that if the cycle has been
      * found before the suplicate will not be inserted, which is exactly the
@@ -203,8 +211,9 @@ void CycleInfo::cycles_from(int vertex, std::vector<int> &cycle, int index,
   }
 }
 
-bool CycleInfo::vector_contains(const std::vector<int> &vec, const int value,
-                                const int size) {
+bool
+CycleInfo::vector_contains(const std::vector<int>& vec, const int value,
+                           const int size) {
   for (int i = 0; i < size; ++i) {
     if (vec[i] == value) {
       return true;
@@ -213,15 +222,16 @@ bool CycleInfo::vector_contains(const std::vector<int> &vec, const int value,
   return false;
 }
 
-bool CycleInfo::perm_equals(const std::vector<std::vector<int>> &maps,
-                            const CycleInfo &rhs, std::vector<int> &so_far,
-                            int index) const {
+bool
+CycleInfo::perm_equals(const std::vector<std::vector<int>>& maps,
+                       const CycleInfo& rhs, std::vector<int>& so_far,
+                       int index) const {
   if (index == rhs.size_) {
     /* Mapping complete. */
     bool result = true;
-    for (auto &cycle : cycles_) {
+    for (auto& cycle : cycles_) {
       bool eq = false;
-      for (auto &rc : rhs.cycles_) {
+      for (auto& rc : rhs.cycles_) {
         if (cycle.equals(rc, so_far)) {
           eq = true;
           break;
@@ -253,4 +263,4 @@ bool CycleInfo::perm_equals(const std::vector<std::vector<int>> &maps,
   }
   return result;
 }
-} // namespace cluster
+}  // namespace cluster

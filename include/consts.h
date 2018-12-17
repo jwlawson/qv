@@ -35,5 +35,5 @@ extern std::unordered_set<std::shared_ptr<cluster::EquivQuiverMatrix>> Reps;
 extern std::unordered_set<std::shared_ptr<cluster::EquivUnderlyingGraph>>
     Graphs;
 
-} // namespace consts
-} // namespace qv
+}  // namespace consts
+}  // namespace qv

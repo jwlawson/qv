@@ -24,14 +24,15 @@ EquivMutationClassLoader::EquivMutationClassLoader()
     : MutationClassLoader<EquivQuiverMatrix>(), set_() {}
 
 EquivMutationClassLoader::EquivMutationClassLoader(
-    const EquivQuiverMatrix &matrix)
+    const EquivQuiverMatrix& matrix)
     : MutationClassLoader<EquivQuiverMatrix>(matrix), set_() {
   set_.insert(matrix_);
 }
 
-void EquivMutationClassLoader::seen_matrix(std::shared_ptr<M> mat,
-                                           std::shared_ptr<M> previous,
-                                           const int vertex) {
+void
+EquivMutationClassLoader::seen_matrix(std::shared_ptr<M> mat,
+                                      std::shared_ptr<M> previous,
+                                      const int vertex) {
   map_[previous].link(vertex);
   if (map_.count(mat) > 0) {
     /*
@@ -55,15 +56,17 @@ void EquivMutationClassLoader::seen_matrix(std::shared_ptr<M> mat,
   }
 }
 
-void EquivMutationClassLoader::unseen_matrix(std::shared_ptr<M> mat,
-                                             std::shared_ptr<M> previous,
-                                             const int vertex) {
+void
+EquivMutationClassLoader::unseen_matrix(std::shared_ptr<M> mat,
+                                        std::shared_ptr<M> previous,
+                                        const int vertex) {
   set_.insert(mat);
   MutationClassLoader<EquivQuiverMatrix>::unseen_matrix(mat, previous, vertex);
 }
 
-bool EquivMutationClassLoader::have_seen(std::shared_ptr<M> matrix) {
+bool
+EquivMutationClassLoader::have_seen(std::shared_ptr<M> matrix) {
   return set_.count(matrix) > 0;
 }
 
-} // namespace cluster
+}  // namespace cluster

@@ -34,27 +34,27 @@
 
 namespace cluster {
 class MoveClassLoader {
-public:
+ public:
   struct Depth {
     Depth() : moves_(0), sinksource_(0) {}
     Depth(int moves, int ss) : moves_(moves), sinksource_(ss) {}
     int moves_;
     int sinksource_;
     /* https://gcc.gnu.org/onlinedocs/libstdc++/manual/pairs.html */
-    bool operator<(const Depth &d) const {
+    bool operator<(const Depth& d) const {
       return moves_ < d.moves_ ||
              (!(d.moves_ < moves_) && sinksource_ < d.sinksource_);
     }
   };
 
-private:
+ private:
   typedef EquivQuiverMatrix M;
   typedef std::shared_ptr<M> MPtr;
   typedef std::shared_ptr<MMIMove> MovePtr;
   typedef std::multimap<Depth, MPtr> Queue;
   typedef std::unordered_map<MPtr, Depth> Map;
 
-public:
+ public:
   typedef std::vector<MovePtr> MoveVec;
   /**
    * Create a new Loader which will start with the specified matrix and
@@ -62,12 +62,12 @@ public:
    * @param matrix Pointer to the initial matrix.
    * @param moves Vector of moves to check.
    */
-  MoveClassLoader(const MPtr matrix, const MoveVec &moves,
+  MoveClassLoader(const MPtr matrix, const MoveVec& moves,
                   bool sinksource = true);
-  MoveClassLoader(MoveClassLoader &) = delete;
-  MoveClassLoader(MoveClassLoader &&) = delete;
-  MoveClassLoader &operator=(MoveClassLoader &) = delete;
-  MoveClassLoader &operator=(MoveClassLoader &&) = delete;
+  MoveClassLoader(MoveClassLoader&) = delete;
+  MoveClassLoader(MoveClassLoader&&) = delete;
+  MoveClassLoader& operator=(MoveClassLoader&) = delete;
+  MoveClassLoader& operator=(MoveClassLoader&&) = delete;
   /**
    * Check whether the next call to next() will be valid.
    * @return true if next() will return a valid matrix.
@@ -84,11 +84,11 @@ public:
    */
   Depth depth() { return depth_; }
 
-private:
+ private:
   /** Size of the matrix the moves are being applied to. */
   const int size_;
   /** Vector of the moves to check and apply. */
-  const MoveVec &moves_;
+  const MoveVec& moves_;
   /** Sink source move. */
   const SSMove ssmove_;
   /** Queue of matrices to check moves against. */
@@ -103,4 +103,4 @@ private:
   /** True if should use sink source moves. */
   const bool sinksource_;
 };
-} // namespace cluster
+}  // namespace cluster

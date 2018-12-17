@@ -25,83 +25,82 @@ typedef cluster::LabelledSeed LSeed;
 
 cluster::Seed::Cluster
 default_cluster(size_t size) {
-	cluster::Seed::Cluster result(size);
-	std::string var = "x";
-	for(size_t i = 0; i < size; ++i) {
-		result[i] = cluster::ginac::symbol(var + std::to_string(i));
-	}
-	return result;
+  cluster::Seed::Cluster result(size);
+  std::string var = "x";
+  for (size_t i = 0; i < size; ++i) {
+    result[i] = cluster::ginac::symbol(var + std::to_string(i));
+  }
+  return result;
 }
-}
+}  // namespace
 namespace cluster {
 TEST(ExchangeGraph, Pentagon) {
-	EquivQuiverMatrix m("{ { 0 1 } { -1 0 } }");
-	auto c = default_cluster(2);
-	Seed s(std::move(m), std::move(c));
+  EquivQuiverMatrix m("{ { 0 1 } { -1 0 } }");
+  auto c = default_cluster(2);
+  Seed s(std::move(m), std::move(c));
 
-	ExchangeGraph g(s, 2);
-	uint num_seeds = 0;
-	for(auto it = g.begin(); it != g.end(); ++it) {
-		++num_seeds;
-		for(auto l_it = it->second.begin(); l_it != it->second.end(); ++l_it) {
-			EXPECT_NE(*l_it, nullptr);
-		}
-	}
-	EXPECT_EQ(static_cast<std::size_t>(5), num_seeds);
+  ExchangeGraph g(s, 2);
+  uint num_seeds = 0;
+  for (auto it = g.begin(); it != g.end(); ++it) {
+    ++num_seeds;
+    for (auto l_it = it->second.begin(); l_it != it->second.end(); ++l_it) {
+      EXPECT_NE(*l_it, nullptr);
+    }
+  }
+  EXPECT_EQ(static_cast<std::size_t>(5), num_seeds);
 }
 TEST(ExchangeGraph, MaxNumStopsGraph) {
-	EquivQuiverMatrix m("{ { 0 1 } { -1 0 } }");
-	Seed s{std::move(m), default_cluster(2)};
+  EquivQuiverMatrix m("{ { 0 1 } { -1 0 } }");
+  Seed s{std::move(m), default_cluster(2)};
 
-	std::size_t max_num = 3;
-	ExchangeGraph g{s, 2, max_num};
-	uint num_seeds = 0;
-	for(auto it = g.begin(); it != g.end(); ++it) {
-		++num_seeds;
-	}
-	EXPECT_EQ(max_num, num_seeds);
-	EXPECT_EQ(max_num, g.underlying_map().size());
+  std::size_t max_num = 3;
+  ExchangeGraph g{s, 2, max_num};
+  uint num_seeds = 0;
+  for (auto it = g.begin(); it != g.end(); ++it) {
+    ++num_seeds;
+  }
+  EXPECT_EQ(max_num, num_seeds);
+  EXPECT_EQ(max_num, g.underlying_map().size());
 }
 TEST(LabelledExchangeGraph, Decagon) {
-	QuiverMatrix m("{ { 0 1 } { -1 0 } }");
-	auto c = default_cluster(2);
-	LSeed s(std::move(m), std::move(c));
+  QuiverMatrix m("{ { 0 1 } { -1 0 } }");
+  auto c = default_cluster(2);
+  LSeed s(std::move(m), std::move(c));
 
-	LabelledExchangeGraph g(s, 2);
-	uint num_seeds = 0;
-	for(auto it = g.begin(); it != g.end(); ++it) {
-		++num_seeds;
-		for(auto l_it = it->second.begin(); l_it != it->second.end(); ++l_it) {
-			EXPECT_NE(*l_it, nullptr);
-		}
-	}
-	EXPECT_EQ(static_cast<std::size_t>(10), num_seeds);
+  LabelledExchangeGraph g(s, 2);
+  uint num_seeds = 0;
+  for (auto it = g.begin(); it != g.end(); ++it) {
+    ++num_seeds;
+    for (auto l_it = it->second.begin(); l_it != it->second.end(); ++l_it) {
+      EXPECT_NE(*l_it, nullptr);
+    }
+  }
+  EXPECT_EQ(static_cast<std::size_t>(10), num_seeds);
 }
 TEST(LabelledQuiverGraph, Pentagon) {
-	QuiverMatrix m("{ { 0 1  0 } { -1 0 1 } { 0 -1 0 } }");
+  QuiverMatrix m("{ { 0 1  0 } { -1 0 1 } { 0 -1 0 } }");
 
-	LabelledQuiverGraph g(m, 3);
-	uint num_seeds = 0;
-	for(auto it = g.begin(); it != g.end(); ++it) {
-		++num_seeds;
-		for(auto l_it = it->second.begin(); l_it != it->second.end(); ++l_it) {
-			EXPECT_NE(*l_it, nullptr);
-		}
-	}
-	EXPECT_EQ(static_cast<std::size_t>(14), num_seeds);
+  LabelledQuiverGraph g(m, 3);
+  uint num_seeds = 0;
+  for (auto it = g.begin(); it != g.end(); ++it) {
+    ++num_seeds;
+    for (auto l_it = it->second.begin(); l_it != it->second.end(); ++l_it) {
+      EXPECT_NE(*l_it, nullptr);
+    }
+  }
+  EXPECT_EQ(static_cast<std::size_t>(14), num_seeds);
 }
 TEST(QuiverGraph, Pentagon) {
-	EquivQuiverMatrix m("{ { 0 1  0 } { -1 0 1 } { 0 -1 0 } }");
+  EquivQuiverMatrix m("{ { 0 1  0 } { -1 0 1 } { 0 -1 0 } }");
 
-	QuiverGraph g(m, 3);
-	uint num_seeds = 0;
-	for(auto it = g.begin(); it != g.end(); ++it) {
-		++num_seeds;
-		for(auto l_it = it->second.begin(); l_it != it->second.end(); ++l_it) {
-			EXPECT_NE(*l_it, nullptr);
-		}
-	}
-	EXPECT_EQ(static_cast<std::size_t>(4), num_seeds);
+  QuiverGraph g(m, 3);
+  uint num_seeds = 0;
+  for (auto it = g.begin(); it != g.end(); ++it) {
+    ++num_seeds;
+    for (auto l_it = it->second.begin(); l_it != it->second.end(); ++l_it) {
+      EXPECT_NE(*l_it, nullptr);
+    }
+  }
+  EXPECT_EQ(static_cast<std::size_t>(4), num_seeds);
 }
-}
-
+}  // namespace cluster

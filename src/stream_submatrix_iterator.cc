@@ -21,7 +21,9 @@
 
 namespace cluster {
 
-template <class T> T const &StreamSubIter<T>::next() {
+template <class T>
+T const&
+StreamSubIter<T>::next() {
   if (!sub_iter_.has_next()) {
     std::shared_ptr<T> mat = stream_iter_.next();
     removed_ = -1;
@@ -32,7 +34,9 @@ template <class T> T const &StreamSubIter<T>::next() {
   return sub_iter_.next();
 }
 
-template <class T> void StreamSubIter<T>::next_info(MatrixSub &info) {
+template <class T>
+void
+StreamSubIter<T>::next_info(MatrixSub& info) {
   if (info.submatrix) {
     info.submatrix->set_matrix(next());
   } else {
@@ -42,10 +46,12 @@ template <class T> void StreamSubIter<T>::next_info(MatrixSub &info) {
   info.removed = removed_;
 }
 
-template <class T> bool StreamSubIter<T>::has_next() {
+template <class T>
+bool
+StreamSubIter<T>::has_next() {
   return sub_iter_.has_next() || stream_iter_.has_next();
 }
 
 template class StreamSubIter<QuiverMatrix>;
 template class StreamSubIter<EquivQuiverMatrix>;
-} // namespace cluster
+}  // namespace cluster

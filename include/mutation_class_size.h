@@ -28,7 +28,7 @@ namespace classsize {
  * @param matrix Matrix to check
  * @return The size of the mutation class
  */
-int Size(const QuiverMatrix &matrix);
+int Size(const QuiverMatrix& matrix);
 
-} // namespace classsize
-} // namespace cluster
+}  // namespace classsize
+}  // namespace cluster

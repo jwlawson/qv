@@ -26,12 +26,11 @@
 
 namespace cluster {
 class SkewSymmetricIterator {
-
-private:
+ private:
   typedef EquivQuiverMatrix M;
   typedef typename std::shared_ptr<M> MPtr;
 
-public:
+ public:
   /**
    * Create a new iterator which provides all skew-symmetri matrices of the
    * specified size.
@@ -49,7 +48,7 @@ public:
    */
   MPtr next();
 
-private:
+ private:
   /** Matrix holding the next to return. */
   IntMatrix matrix_;
   /** Index that the col index cannot exceed. */
@@ -66,4 +65,4 @@ private:
   /** Calculate the number of variables in the matrix. */
   int num_vars(int size) const;
 };
-} // namespace cluster
+}  // namespace cluster

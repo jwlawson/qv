@@ -26,27 +26,28 @@ namespace {
 typedef std::vector<int> Perm;
 typedef std::vector<Perm> PermVec;
 typedef std::shared_ptr<PermVec> PermVecPtr;
-} // namespace
+}  // namespace
 
-MMIMove::MMIMove(const IntMatrix &mata, const IntMatrix &matb,
-                 const std::vector<int> &connections)
+MMIMove::MMIMove(const IntMatrix& mata, const IntMatrix& matb,
+                 const std::vector<int>& connections)
     : mata_(mata), matb_(matb), size_(mata.num_rows()), conn_() {
   for (auto i = connections.begin(); i != connections.end(); ++i) {
     conn_.insert(std::make_pair(*i, mmi_conn::Unconnected()));
   }
 }
 
-MMIMove::MMIMove(const IntMatrix &mata, const IntMatrix &matb,
-                 const std::vector<int> &conn, const std::vector<ConnReq> &req)
+MMIMove::MMIMove(const IntMatrix& mata, const IntMatrix& matb,
+                 const std::vector<int>& conn, const std::vector<ConnReq>& req)
     : mata_(mata), matb_(matb), size_(mata.num_rows()), conn_() {
   for (size_t i = 0; i < conn.size(); ++i) {
     conn_.insert(std::make_pair(conn[i], req[i]));
   }
 }
 
-void MMIMove::move(const Applicable &app, IntMatrix &result) {
-  const int *m = app.matrix_->data();
-  int *r = result.data();
+void
+MMIMove::move(const Applicable& app, IntMatrix& result) {
+  const int* m = app.matrix_->data();
+  int* r = result.data();
 
   int ind = 0;
   int row = 0;
@@ -94,7 +95,7 @@ void MMIMove::move(const Applicable &app, IntMatrix &result) {
 }
 
 std::vector<MMIMove::Applicable>
-MMIMove::applicable_submatrices(const IntMatrix &matrix) {
+MMIMove::applicable_submatrices(const IntMatrix& matrix) {
   MatrixPtr mp = std::make_shared<IntMatrix>(matrix);
   return applicable_submatrices(mp);
 }
@@ -149,7 +150,8 @@ MMIMove::applicable_submatrices(const MatrixPtr matrix) {
   return result;
 }
 
-bool MMIMove::check_connections(const mmi_conn::Submatrix &submatrix) const {
+bool
+MMIMove::check_connections(const mmi_conn::Submatrix& submatrix) const {
   bool valid = true;
   /* i is the index of the row in the submatrix, s the index of the row in the
    * main matrix. */
@@ -180,7 +182,8 @@ bool MMIMove::check_connections(const mmi_conn::Submatrix &submatrix) const {
 
 namespace mmi_conn {
 
-bool Unconnected::operator()(const Submatrix &sub, int connection) {
+bool
+Unconnected::operator()(const Submatrix& sub, int connection) {
   bool result = true;
   seen_.resize(sub.matrix_->num_cols());
   seen_[0] = connection;
@@ -198,7 +201,8 @@ bool Unconnected::operator()(const Submatrix &sub, int connection) {
   return result;
 }
 
-bool Unconnected::isUnconnected(const Submatrix &sub, int size, int next) {
+bool
+Unconnected::isUnconnected(const Submatrix& sub, int size, int next) {
   bool result = true;
   for (int i = 0; i < sub.matrix_->num_cols() && result; i++) {
     if (std::find(seen_.begin(), seen_.begin() + size, i) !=
@@ -222,7 +226,8 @@ bool Unconnected::isUnconnected(const Submatrix &sub, int size, int next) {
   return result;
 }
 
-bool Line::operator()(const Submatrix &sub, int connection) const {
+bool
+Line::operator()(const Submatrix& sub, int connection) const {
   int next = -1;
   for (int i = 0; i < sub.matrix_->num_cols(); i++) {
     if (std::find(sub.submatrix_->begin(), sub.submatrix_->end(), i) !=
@@ -245,7 +250,8 @@ bool Line::operator()(const Submatrix &sub, int connection) const {
   return isLine(sub, next, connection);
 }
 
-bool Line::isLine(const Submatrix &sub, int next, int prev) const {
+bool
+Line::isLine(const Submatrix& sub, int next, int prev) const {
   int n = -1;
   for (int i = 0; i < sub.matrix_->num_cols(); i++) {
     if (i == prev) {
@@ -265,7 +271,8 @@ bool Line::isLine(const Submatrix &sub, int next, int prev) const {
   return isLine(sub, n, next);
 }
 
-bool ConnectedTo::operator()(const Submatrix &sub, int connection) {
+bool
+ConnectedTo::operator()(const Submatrix& sub, int connection) {
   for (size_t i = 0; i < conn_.size(); ++i) {
     for (size_t j = 0; j < sub.perm_->size(); ++j) {
       if ((*sub.perm_)[j] == conn_[i]) {
@@ -291,7 +298,8 @@ bool ConnectedTo::operator()(const Submatrix &sub, int connection) {
   return result;
 }
 
-bool ConnectedTo::isConnected(const Submatrix &sub, int size, int next) {
+bool
+ConnectedTo::isConnected(const Submatrix& sub, int size, int next) {
   bool result = true;
   for (int i = 0; i < sub.matrix_->num_cols() && result; i++) {
     if (std::find(seen_.begin(), seen_.begin() + size, i) !=
@@ -317,7 +325,8 @@ bool ConnectedTo::isConnected(const Submatrix &sub, int size, int next) {
   return result;
 }
 
-bool LineTo::operator()(const Submatrix &sub, int connection) {
+bool
+LineTo::operator()(const Submatrix& sub, int connection) {
   int next = -1;
   for (size_t i = 0; i < sub.perm_->size(); ++i) {
     if ((*sub.perm_)[i] == conn_) {
@@ -348,7 +357,8 @@ bool LineTo::operator()(const Submatrix &sub, int connection) {
   return isLine(sub, next, connection);
 }
 
-bool LineTo::isLine(const Submatrix &sub, int next, int prev) const {
+bool
+LineTo::isLine(const Submatrix& sub, int next, int prev) const {
   int n = -1;
   for (int i = 0; i < sub.matrix_->num_cols(); i++) {
     if (i == prev) {
@@ -376,5 +386,5 @@ bool LineTo::isLine(const Submatrix &sub, int next, int prev) const {
   return isLine(sub, n, next);
 }
 
-} // namespace mmi_conn
-} // namespace cluster
+}  // namespace mmi_conn
+}  // namespace cluster

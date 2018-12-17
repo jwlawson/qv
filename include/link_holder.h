@@ -26,9 +26,9 @@
 #include <vector>
 
 namespace cluster {
-template <class T> class LinkHolder {
-
-public:
+template <class T>
+class LinkHolder {
+ public:
   LinkHolder();
   LinkHolder(const int k);
   ~LinkHolder();
@@ -39,9 +39,9 @@ public:
   bool has_link(const int k) const;
   bool is_complete() const;
 
-private:
+ private:
   std::shared_ptr<T> matrix_;
   std::vector<bool> links_;
   int size_;
 };
-} // namespace cluster
+}  // namespace cluster

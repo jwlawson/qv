@@ -39,6 +39,6 @@ namespace equivsize {
  * @param matrix Matrix to sed the mutation class with
  * @return Size of the mutation class
  */
-int Size(const EquivQuiverMatrix &matrix);
-} // namespace equivsize
-} // namespace cluster
+int Size(const EquivQuiverMatrix& matrix);
+}  // namespace equivsize
+}  // namespace cluster

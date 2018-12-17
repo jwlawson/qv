@@ -25,9 +25,10 @@ namespace {
 std::default_random_engine gen;
 std::vector<QuiverMatrix> mutated(2, QuiverMatrix());
 std::uniform_int_distribution<int> dist;
-} // namespace
+}  // namespace
 
-bool is_infinite(const QuiverMatrix &matrix) {
+bool
+is_infinite(const QuiverMatrix& matrix) {
   // All 2x2 matrices are mutation finite
   if (matrix.num_rows() <= 2 && matrix.num_cols() <= 2) {
     return false;
@@ -62,5 +63,5 @@ bool is_infinite(const QuiverMatrix &matrix) {
   return false;
 }
 
-} // namespace fastinf
-} // namespace cluster
+}  // namespace fastinf
+}  // namespace cluster

@@ -29,9 +29,9 @@
 #include "link_holder.h"
 
 namespace cluster {
-template <class T> class MutationClassLoader {
-
-public:
+template <class T>
+class MutationClassLoader {
+ public:
   /**
    * Matrix which is returned if the mutation class is found to be infinite.
    */
@@ -48,7 +48,7 @@ public:
    * in the mutation class.
    * @param initial Matrix to seed the mutation class
    */
-  MutationClassLoader(const T &initial);
+  MutationClassLoader(const T& initial);
   /**
    * Get the next unique matrix in the mutation class.
    *
@@ -81,7 +81,7 @@ public:
    */
   void calc_more(const bool calc);
 
-protected:
+ protected:
   /**
    * Initial matrix used to seed the mutation class.
    */
@@ -127,7 +127,7 @@ protected:
    */
   virtual bool have_seen(std::shared_ptr<T> matrix);
 
-private:
+ private:
   /**
    * True if more matrices should be calculated each time a new matrix is
    * taken from the iterator.
@@ -170,4 +170,4 @@ private:
    */
   bool mutate_at(std::shared_ptr<T> matrix, const int i);
 };
-} // namespace cluster
+}  // namespace cluster

@@ -19,13 +19,18 @@
 namespace cluster {
 
 MoveClassLoader::MoveClassLoader(const MPtr matrix,
-                                 const std::vector<MovePtr> &moves,
+                                 const std::vector<MovePtr>& moves,
                                  bool sinksource)
-    : size_(matrix->num_rows()), moves_(moves), ssmove_(),
-      queue_({{Depth(), matrix}}), map_({{matrix, Depth()}}), depth_(),
-      sinksource_(sinksource) {}
+    : size_(matrix->num_rows())
+    , moves_(moves)
+    , ssmove_()
+    , queue_({{Depth(), matrix}})
+    , map_({{matrix, Depth()}})
+    , depth_()
+    , sinksource_(sinksource) {}
 
-std::shared_ptr<EquivQuiverMatrix> MoveClassLoader::next() {
+std::shared_ptr<EquivQuiverMatrix>
+MoveClassLoader::next() {
   typedef MMIMove::Applicable MMIApp;
   typedef std::vector<MMIApp> MMIAppVec;
   typedef SSMove::Applicable SSApp;
@@ -62,4 +67,4 @@ std::shared_ptr<EquivQuiverMatrix> MoveClassLoader::next() {
   return result;
 }
 
-} // namespace cluster
+}  // namespace cluster

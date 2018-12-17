@@ -22,16 +22,19 @@
 namespace cluster {
 namespace arrays {
 
-int *sort(int *arr, const int size) {
+int*
+sort(int* arr, const int size) {
   std::sort(arr, arr + size);
   return arr;
 }
 
-std::size_t hash(const int *arr, const int size) {
+std::size_t
+hash(const int* arr, const int size) {
   return boost::hash_range(arr, arr + size);
 }
 
-std::size_t hash(const std::vector<std::pair<int, int>> &vec) {
+std::size_t
+hash(const std::vector<std::pair<int, int>>& vec) {
   size_t hash{47};
   for (size_t i = 0; i < vec.size(); ++i) {
     hash *= 31;
@@ -44,7 +47,8 @@ std::size_t hash(const std::vector<std::pair<int, int>> &vec) {
   return hash;
 }
 
-int number_in(const std::vector<int> &arr, const int val) {
+int
+number_in(const std::vector<int>& arr, const int val) {
   int count = 0;
   for (size_t i = 0; i < arr.size(); i++) {
     if (arr[i] == val) {
@@ -54,7 +58,8 @@ int number_in(const std::vector<int> &arr, const int val) {
   return count;
 }
 
-bool equal(const std::vector<int> &a, const std::vector<int> &b) {
+bool
+equal(const std::vector<int>& a, const std::vector<int>& b) {
   if (a.size() != b.size()) {
     return false;
   }
@@ -66,5 +71,5 @@ bool equal(const std::vector<int> &a, const std::vector<int> &b) {
   return true;
 }
 
-} // namespace arrays
-} // namespace cluster
+}  // namespace arrays
+}  // namespace cluster

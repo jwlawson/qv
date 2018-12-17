@@ -24,44 +24,43 @@
 
 namespace cluster {
 
-	TEST(StreamSubIterator, First) {
-		std::stringstream ss;
-		int v[] = {1,2,3,4,5,6,7,8,9};
-		QuiverMatrix mat(3,3,v);
-		ss << mat;
-		int w[] = {5,6,8,9};
-		QuiverMatrix exp1(2,2,w);
+TEST(StreamSubIterator, First) {
+  std::stringstream ss;
+  int v[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+  QuiverMatrix mat(3, 3, v);
+  ss << mat;
+  int w[] = {5, 6, 8, 9};
+  QuiverMatrix exp1(2, 2, w);
 
-		int x[] = {1,3,7,9};
-		QuiverMatrix exp2(2,2,x);
+  int x[] = {1, 3, 7, 9};
+  QuiverMatrix exp2(2, 2, x);
 
-		StreamSubIter<QuiverMatrix> iter(ss);
+  StreamSubIter<QuiverMatrix> iter(ss);
 
-		ASSERT_TRUE(iter.has_next());
-		EXPECT_TRUE(exp1.equals(iter.next()));
-		EXPECT_TRUE(exp2.equals(iter.next()));
-	}
-
-	TEST(StreamSubIterator, Info) {
-		std::stringstream ss;
-		int v[] = {1,2,3,4,5,6,7,8,9};
-		QuiverMatrix mat(3,3,v);
-		ss << mat;
-		int w[] = {5,6,8,9};
-		QuiverMatrix exp1(2,2,w);
-
-		int x[] = {1,3,7,9};
-		QuiverMatrix exp2(2,2,x);
-
-		StreamSubIter<QuiverMatrix> iter(ss);
-
-		ASSERT_TRUE(iter.has_next());
-
-		StreamSubIter<QuiverMatrix>::MatrixSub res = iter.next_info();
-
-		EXPECT_TRUE(exp1.equals(*res.submatrix));
-		EXPECT_TRUE(mat.equals(*res.matrix));
-		EXPECT_TRUE(0 == res.removed);
-	}
+  ASSERT_TRUE(iter.has_next());
+  EXPECT_TRUE(exp1.equals(iter.next()));
+  EXPECT_TRUE(exp2.equals(iter.next()));
 }
 
+TEST(StreamSubIterator, Info) {
+  std::stringstream ss;
+  int v[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+  QuiverMatrix mat(3, 3, v);
+  ss << mat;
+  int w[] = {5, 6, 8, 9};
+  QuiverMatrix exp1(2, 2, w);
+
+  int x[] = {1, 3, 7, 9};
+  QuiverMatrix exp2(2, 2, x);
+
+  StreamSubIter<QuiverMatrix> iter(ss);
+
+  ASSERT_TRUE(iter.has_next());
+
+  StreamSubIter<QuiverMatrix>::MatrixSub res = iter.next_info();
+
+  EXPECT_TRUE(exp1.equals(*res.submatrix));
+  EXPECT_TRUE(mat.equals(*res.matrix));
+  EXPECT_TRUE(0 == res.removed);
+}
+}  // namespace cluster

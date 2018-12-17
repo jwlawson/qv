@@ -21,15 +21,15 @@
  * ensures that the quiver returned does not contain any disconnected vertices.
  */
 #pragma once
-#include "int_matrix.h"
-#include "qv_export.h"
 #include <cstdlib> /* std::abs */
 #include <cstring>
+#include "int_matrix.h"
+#include "qv_export.h"
 
 namespace cluster {
 
 class QuiverMatrix : public IntMatrix {
-public:
+ public:
   /** Construct a default QuiverMatrix of size 0. */
   QuiverMatrix();
 
@@ -54,20 +54,20 @@ public:
    * Copy constructor. Copies all data from the specified matrix.
    * @param mat Matrix to copy
    */
-  QuiverMatrix(const QuiverMatrix &mat) = default;
+  QuiverMatrix(const QuiverMatrix& mat) = default;
 
   /**
    * Similar to the copy constructor, this method takes a matrix which the
    * compiler has already copied and sets this matrix to that.
    * @param matrix Matrix to copy
    */
-  QuiverMatrix(IntMatrix const &matrix);
+  QuiverMatrix(IntMatrix const& matrix);
 
   /**
    * Move constructor.
    * @param matrix Matrix to move into this one
    */
-  QuiverMatrix(QuiverMatrix &&) = default;
+  QuiverMatrix(QuiverMatrix&&) = default;
 
   /**
    * Create a QuiverMatrix from a string. The string is expected to be
@@ -76,7 +76,7 @@ public:
    * @see IntMatrix#IntMatrix(std::String)
    * @param str String containing matrix information
    */
-  QuiverMatrix(std::string const &str);
+  QuiverMatrix(std::string const& str);
 
   virtual ~QuiverMatrix(){};
   /**
@@ -91,8 +91,8 @@ public:
    * Assignment operator.
    * @param mat Matrix to set this to
    */
-  QuiverMatrix &operator=(QuiverMatrix const &mat) = default;
-  QuiverMatrix &operator=(QuiverMatrix &&mat) = default;
+  QuiverMatrix& operator=(QuiverMatrix const& mat) = default;
+  QuiverMatrix& operator=(QuiverMatrix&& mat) = default;
 
   /**
    * Mutate this matrix at the specified vertex. The resulting matrix is
@@ -100,7 +100,8 @@ public:
    * @param k Vertex to mutate at
    * @param result Matrix to store result in
    */
-  template <class T> void mutate(const int k, T &result) const;
+  template <class T>
+  void mutate(const int k, T& result) const;
 
   /**
    * Find the subquiver by removing the vertex specified.
@@ -112,14 +113,16 @@ public:
    * @param k Vertex to remove
    * @param result Matrix to store result in
    */
-  template <class T> void subquiver(const int k, T &result) const;
+  template <class T>
+  void subquiver(const int k, T& result) const;
 };
 
 template <class T>
-inline void QuiverMatrix::mutate(const int k, T &result) const {
-  int const *input = data_.data();
-  int *output = result.data_.data();
-  int const *k_row = input + k * num_cols_;
+inline void
+QuiverMatrix::mutate(const int k, T& result) const {
+  int const* input = data_.data();
+  int* output = result.data_.data();
+  int const* k_row = input + k * num_cols_;
   std::memcpy(output, input, num_cols_ * num_rows_ * sizeof(int));
 
   int index = 0;
@@ -192,7 +195,8 @@ inline void QuiverMatrix::mutate(const int k, T &result) const {
 }
 
 template <class T>
-inline void QuiverMatrix::subquiver(const int k, T &result) const {
+inline void
+QuiverMatrix::subquiver(const int k, T& result) const {
   submatrix(k, k, result);
   /*		int zero = result.zero_row();
                   if (zero != -1) {
@@ -204,34 +208,38 @@ inline void QuiverMatrix::subquiver(const int k, T &result) const {
   */
 }
 
-} // namespace cluster
+}  // namespace cluster
 
 namespace std {
 
 /* Add hash function to the std::hash struct. */
-template <> struct hash<cluster::QuiverMatrix> {
-  size_t operator()(const cluster::QuiverMatrix &x) const { return x.hash(); }
+template <>
+struct hash<cluster::QuiverMatrix> {
+  size_t operator()(const cluster::QuiverMatrix& x) const { return x.hash(); }
 };
 
-template <> struct hash<std::shared_ptr<cluster::QuiverMatrix>> {
-  size_t operator()(const std::shared_ptr<cluster::QuiverMatrix> &x) const {
+template <>
+struct hash<std::shared_ptr<cluster::QuiverMatrix>> {
+  size_t operator()(const std::shared_ptr<cluster::QuiverMatrix>& x) const {
     return x->hash();
   }
 };
 
 /* Add equals function to std::equal_to */
-template <> struct equal_to<cluster::QuiverMatrix> {
-  bool operator()(const cluster::QuiverMatrix &lhs,
-                  const cluster::QuiverMatrix &rhs) const {
+template <>
+struct equal_to<cluster::QuiverMatrix> {
+  bool operator()(const cluster::QuiverMatrix& lhs,
+                  const cluster::QuiverMatrix& rhs) const {
     return lhs.equals(rhs);
   }
 };
 
-template <> struct equal_to<std::shared_ptr<cluster::QuiverMatrix>> {
-  bool operator()(const std::shared_ptr<cluster::QuiverMatrix> &lhs,
-                  const std::shared_ptr<cluster::QuiverMatrix> &rhs) const {
+template <>
+struct equal_to<std::shared_ptr<cluster::QuiverMatrix>> {
+  bool operator()(const std::shared_ptr<cluster::QuiverMatrix>& lhs,
+                  const std::shared_ptr<cluster::QuiverMatrix>& rhs) const {
     return lhs->equals(*rhs);
   }
 };
 
-} // namespace std
+}  // namespace std

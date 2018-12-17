@@ -24,16 +24,17 @@
 #include "stream_iterator.h"
 
 namespace cluster {
-template <class T> class StreamExtIterator {
-public:
+template <class T>
+class StreamExtIterator {
+ public:
   StreamExtIterator();
-  StreamExtIterator(std::istream &istream);
+  StreamExtIterator(std::istream& istream);
 
-  T const &next();
+  T const& next();
   bool has_next();
 
-private:
+ private:
   StreamIterator<T> stream_iter_;
   ExtensionIterator<T> ext_iter_;
 };
-} // namespace cluster
+}  // namespace cluster

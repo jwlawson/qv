@@ -32,8 +32,7 @@
 namespace cluster {
 
 class CycleInfo {
-
-private:
+ private:
   /**
    * Double edges in the quivers need to be tracked, so keep them as pairs
    * with the first int the index of the initial vertex, the second is the
@@ -44,12 +43,12 @@ private:
   typedef std::pair<int, int> DEdge;
 
   struct PairHash {
-    std::size_t operator()(const DEdge &key) const {
+    std::size_t operator()(const DEdge& key) const {
       return 31 * (key.first + 31 * key.second);
     }
   };
 
-public:
+ public:
   /**
    * Default constructor.
    */
@@ -60,7 +59,7 @@ public:
    * matrix.
    * @param matrix The matrix to extract cycle information from
    */
-  CycleInfo(const QuiverMatrix &matrix);
+  CycleInfo(const QuiverMatrix& matrix);
 
   /**
    * Check whether any cycles contain the specified vertex.
@@ -75,7 +74,7 @@ public:
    * @param rhs CycleInfo instance to check
    * @return true if the cycles are the same
    */
-  bool equals(const CycleInfo &rhs) const;
+  bool equals(const CycleInfo& rhs) const;
 
   /**
    * Calculate the hashcode.
@@ -83,7 +82,7 @@ public:
    */
   std::size_t hash() const;
 
-private:
+ private:
   /** Number of vertices in the quiver. */
   const int size_;
 
@@ -103,13 +102,13 @@ private:
    * Calculate all cycles in the matrix.
    * @param matrix Matrix to check.
    */
-  void comp_cycles(const QuiverMatrix &matrix);
+  void comp_cycles(const QuiverMatrix& matrix);
 
   /**
    * Find all double edges in the cycles.
    * @param matrix Matrix to check.
    */
-  void find_double_edges(const QuiverMatrix &matrix);
+  void find_double_edges(const QuiverMatrix& matrix);
 
   /**
    * Find all the cycles in the matrix.
@@ -121,8 +120,8 @@ private:
    * @param index Index where vertex is in the cycle
    * @param matrix Matrix to check for cycles
    */
-  void cycles_from(int vertex, std::vector<int> &cycle, int index,
-                   const QuiverMatrix &matrix);
+  void cycles_from(int vertex, std::vector<int>& cycle, int index,
+                   const QuiverMatrix& matrix);
 
   /**
    * Check whether the vector contains the specified value in the first size
@@ -132,36 +131,40 @@ private:
    * @param size Number of indices from the start to check
    * @return true if the calue is in the vector
    */
-  static bool vector_contains(const std::vector<int> &vec, const int value,
+  static bool vector_contains(const std::vector<int>& vec, const int value,
                               const int size);
 
-  bool perm_equals(const std::vector<std::vector<int>> &maps,
-                   const CycleInfo &rhs, std::vector<int> &so_far,
+  bool perm_equals(const std::vector<std::vector<int>>& maps,
+                   const CycleInfo& rhs, std::vector<int>& so_far,
                    int index) const;
 };
-} // namespace cluster
+}  // namespace cluster
 
 namespace std {
 /* Add hash function to the std::hash struct. */
-template <> struct hash<cluster::CycleInfo> {
-  size_t operator()(const cluster::CycleInfo &x) const { return x.hash(); }
+template <>
+struct hash<cluster::CycleInfo> {
+  size_t operator()(const cluster::CycleInfo& x) const { return x.hash(); }
 };
-template <> struct hash<std::shared_ptr<cluster::CycleInfo>> {
-  size_t operator()(const std::shared_ptr<cluster::CycleInfo> &x) const {
+template <>
+struct hash<std::shared_ptr<cluster::CycleInfo>> {
+  size_t operator()(const std::shared_ptr<cluster::CycleInfo>& x) const {
     return x->hash();
   }
 };
 /* Add equals function to std::equal_to */
-template <> struct equal_to<cluster::CycleInfo> {
-  bool operator()(const cluster::CycleInfo &lhs,
-                  const cluster::CycleInfo &rhs) const {
+template <>
+struct equal_to<cluster::CycleInfo> {
+  bool operator()(const cluster::CycleInfo& lhs,
+                  const cluster::CycleInfo& rhs) const {
     return lhs.equals(rhs);
   }
 };
-template <> struct equal_to<std::shared_ptr<cluster::CycleInfo>> {
-  bool operator()(const std::shared_ptr<cluster::CycleInfo> &lhs,
-                  const std::shared_ptr<cluster::CycleInfo> &rhs) const {
+template <>
+struct equal_to<std::shared_ptr<cluster::CycleInfo>> {
+  bool operator()(const std::shared_ptr<cluster::CycleInfo>& lhs,
+                  const std::shared_ptr<cluster::CycleInfo>& rhs) const {
     return lhs->equals(*rhs);
   }
 };
-} // namespace std
+}  // namespace std

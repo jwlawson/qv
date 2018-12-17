@@ -30,7 +30,7 @@
 namespace cluster {
 
 class EquivMutClassExtIterator {
-public:
+ public:
   /**
    * Default constructor. Does nothing much.
    */
@@ -42,12 +42,12 @@ public:
    * iterator.
    * @param matrix Matrix to seed to the mutation class
    */
-  EquivMutClassExtIterator(QuiverMatrix const &matrix);
+  EquivMutClassExtIterator(QuiverMatrix const& matrix);
 
   /**
    * Get the next matrix from the iterator.
    */
-  QuiverMatrix const &next();
+  QuiverMatrix const& next();
 
   /**
    * Check whether the iterator has another matrix to return.
@@ -55,9 +55,9 @@ public:
    */
   bool has_next();
 
-private:
+ private:
   EquivMutationClassLoader class_;
   ExtensionIterator<QuiverMatrix> iter_;
 };
 
-} // namespace cluster
+}  // namespace cluster

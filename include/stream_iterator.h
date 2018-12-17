@@ -25,11 +25,12 @@
 #include <string>
 
 namespace cluster {
-template <class T> class StreamIterator {
-private:
+template <class T>
+class StreamIterator {
+ private:
   typedef std::shared_ptr<std::istream> StreamPtr;
 
-public:
+ public:
   /**
    * Create an empty iterator.
    */
@@ -39,7 +40,7 @@ public:
    * stream.
    * @param stream Stream containing matrices
    */
-  StreamIterator(std::istream &stream);
+  StreamIterator(std::istream& stream);
   /**
    * Get the next matrix from the input stream.
    * @return The next matrix
@@ -51,9 +52,9 @@ public:
    * @return true if next() will return a valid matrix
    */
   bool has_next();
-  StreamIterator &operator=(const StreamIterator &iter) = default;
+  StreamIterator& operator=(const StreamIterator& iter) = default;
 
-private:
+ private:
   /** True if next() will return a valid matrix. */
   bool has_next_;
   /** String buffer to store the current matrix string in. */
@@ -68,7 +69,7 @@ private:
    * the shared_ptr determines that it should be deleted.
    */
   struct NullDeleter {
-    void operator()(const void *const) const {}
+    void operator()(const void* const) const {}
   };
 };
-} // namespace cluster
+}  // namespace cluster

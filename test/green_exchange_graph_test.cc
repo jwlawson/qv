@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "gtest/gtest.h"
 #include "green_exchange_graph.h"
+#include "gtest/gtest.h"
 
 #include "ginac_util.h"
 
@@ -25,81 +25,87 @@ typedef green_exchange::MultiArrowTriangleCheck GCheck;
 
 cluster::Seed::Cluster
 default_cluster(size_t size) {
-	cluster::Seed::Cluster result(size);
-	std::string var = "x";
-	for(size_t i = 0; i < size; ++i) {
-		result[i] = cluster::ginac::symbol(var + std::to_string(i));
-	}
-	return result;
+  cluster::Seed::Cluster result(size);
+  std::string var = "x";
+  for (size_t i = 0; i < size; ++i) {
+    result[i] = cluster::ginac::symbol(var + std::to_string(i));
+  }
+  return result;
 }
-}
+}  // namespace
 TEST(GreenContinue, Simple) {
-	const QuiverMatrix m("{ { 0 1 0 } { -1 0 1 } { 0 -1 0 } }");
-	GCheck chk;
-	EXPECT_TRUE(chk(&m, 0));
-	EXPECT_TRUE(chk(&m, 1));
-	EXPECT_TRUE(chk(&m, 2));
-	EXPECT_TRUE(chk(&m, 3));
+  const QuiverMatrix m("{ { 0 1 0 } { -1 0 1 } { 0 -1 0 } }");
+  GCheck chk;
+  EXPECT_TRUE(chk(&m, 0));
+  EXPECT_TRUE(chk(&m, 1));
+  EXPECT_TRUE(chk(&m, 2));
+  EXPECT_TRUE(chk(&m, 3));
 }
 TEST(GreenContinue, Cycle) {
-	const QuiverMatrix m("{ { 0 1 -1 0 } { -1 0 1 1 } { 1 -1 0 1 } { 0 -1 -1 0 } }");
-	GCheck chk;
-	EXPECT_TRUE(chk(&m, 0));
-	EXPECT_TRUE(chk(&m, 1));
-	EXPECT_TRUE(chk(&m, 2));
-	EXPECT_TRUE(chk(&m, 3));
+  const QuiverMatrix m(
+      "{ { 0 1 -1 0 } { -1 0 1 1 } { 1 -1 0 1 } { 0 -1 -1 0 } }");
+  GCheck chk;
+  EXPECT_TRUE(chk(&m, 0));
+  EXPECT_TRUE(chk(&m, 1));
+  EXPECT_TRUE(chk(&m, 2));
+  EXPECT_TRUE(chk(&m, 3));
 }
 TEST(GreenContinue, InfiniteCycle) {
-	const QuiverMatrix m("{ { 0 2 -1 0 } { -2 0 1 1 } { 1 -1 0 1 } { 0 -1 -1 0 } }");
-	GCheck chk;
-	EXPECT_TRUE(chk(&m, 0));
-	/* Disabled as this functionality is not implemented.
-	 * The vertex is not taken into account at this point, instead only the matrix
-	 * is considered, and the computation of the exchange graph stops after these
-	 * infinite type matrices have been computed, not before
-	EXPECT_FALSE(chk(&m, 1));
-	*/
-	EXPECT_TRUE(chk(&m, 2));
-	EXPECT_TRUE(chk(&m, 3));
+  const QuiverMatrix m(
+      "{ { 0 2 -1 0 } { -2 0 1 1 } { 1 -1 0 1 } { 0 -1 -1 0 } }");
+  GCheck chk;
+  EXPECT_TRUE(chk(&m, 0));
+  /* Disabled as this functionality is not implemented.
+   * The vertex is not taken into account at this point, instead only the matrix
+   * is considered, and the computation of the exchange graph stops after these
+   * infinite type matrices have been computed, not before
+  EXPECT_FALSE(chk(&m, 1));
+  */
+  EXPECT_TRUE(chk(&m, 2));
+  EXPECT_TRUE(chk(&m, 3));
 }
 TEST(GreenContinue, AllInfiniteCycle) {
-	const QuiverMatrix m("{ { 0 2 -2 0 } { -2 0 2 1 } { 2 -2 0 1 } { 0 -1 -1 0 } }");
-	GCheck chk;
-	EXPECT_FALSE(chk(&m, 0));
-	EXPECT_FALSE(chk(&m, 1));
-	EXPECT_FALSE(chk(&m, 2));
-	EXPECT_FALSE(chk(&m, 3));
+  const QuiverMatrix m(
+      "{ { 0 2 -2 0 } { -2 0 2 1 } { 2 -2 0 1 } { 0 -1 -1 0 } }");
+  GCheck chk;
+  EXPECT_FALSE(chk(&m, 0));
+  EXPECT_FALSE(chk(&m, 1));
+  EXPECT_FALSE(chk(&m, 2));
+  EXPECT_FALSE(chk(&m, 3));
 }
 TEST(GreenContinue, Reuse) {
-	const QuiverMatrix m("{ { 0 2 -2 0 } { -2 0 2 1 } { 2 -2 0 1 } { 0 -1 -1 0 } }");
-	GCheck chk;
-	EXPECT_FALSE(chk(&m, 0));
-	EXPECT_FALSE(chk(&m, 1));
-	EXPECT_FALSE(chk(&m, 2));
-	EXPECT_FALSE(chk(&m, 3));
+  const QuiverMatrix m(
+      "{ { 0 2 -2 0 } { -2 0 2 1 } { 2 -2 0 1 } { 0 -1 -1 0 } }");
+  GCheck chk;
+  EXPECT_FALSE(chk(&m, 0));
+  EXPECT_FALSE(chk(&m, 1));
+  EXPECT_FALSE(chk(&m, 2));
+  EXPECT_FALSE(chk(&m, 3));
 
-	const QuiverMatrix n("{ { 0 1 -1 0 } { -1 0 1 1 } { 1 -1 0 1 } { 0 -1 -1 0 } }");
-	EXPECT_TRUE(chk(&n, 0));
-	EXPECT_TRUE(chk(&n, 1));
-	EXPECT_TRUE(chk(&n, 2));
-	EXPECT_TRUE(chk(&n, 3));
+  const QuiverMatrix n(
+      "{ { 0 1 -1 0 } { -1 0 1 1 } { 1 -1 0 1 } { 0 -1 -1 0 } }");
+  EXPECT_TRUE(chk(&n, 0));
+  EXPECT_TRUE(chk(&n, 1));
+  EXPECT_TRUE(chk(&n, 2));
+  EXPECT_TRUE(chk(&n, 3));
 
-	const QuiverMatrix k("{ { 0 1 0 0 } { -1 0 3 -4 } { 0 -3 0 5 } { 0 4 -5 0 } }");
-	EXPECT_FALSE(chk(&k, 0));
-	EXPECT_FALSE(chk(&k, 1));
-	EXPECT_FALSE(chk(&k, 2));
-	EXPECT_FALSE(chk(&k, 3));
+  const QuiverMatrix k(
+      "{ { 0 1 0 0 } { -1 0 3 -4 } { 0 -3 0 5 } { 0 4 -5 0 } }");
+  EXPECT_FALSE(chk(&k, 0));
+  EXPECT_FALSE(chk(&k, 1));
+  EXPECT_FALSE(chk(&k, 2));
+  EXPECT_FALSE(chk(&k, 3));
 }
 TEST(GreenContinue, Seed) {
-	EquivQuiverMatrix k("{ { 0 1 0 0 } { -1 0 3 -4 } { 0 -3 0 2 } { 0 4 -2 0 } }");
-	Seed::Cluster cl = default_cluster(4);
-	Seed s(std::move(k), std::move(cl));
+  EquivQuiverMatrix k(
+      "{ { 0 1 0 0 } { -1 0 3 -4 } { 0 -3 0 2 } { 0 4 -2 0 } }");
+  Seed::Cluster cl = default_cluster(4);
+  Seed s(std::move(k), std::move(cl));
 
-	GCheck chk;
-	EXPECT_FALSE(chk(&s, 0));
-	EXPECT_FALSE(chk(&s, 1));
-	EXPECT_FALSE(chk(&s, 2));
-	EXPECT_FALSE(chk(&s, 3));
+  GCheck chk;
+  EXPECT_FALSE(chk(&s, 0));
+  EXPECT_FALSE(chk(&s, 1));
+  EXPECT_FALSE(chk(&s, 2));
+  EXPECT_FALSE(chk(&s, 3));
 }
-}
-
+}  // namespace cluster

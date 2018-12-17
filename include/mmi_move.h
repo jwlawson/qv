@@ -42,14 +42,16 @@ typedef std::shared_ptr<IntMatrix> MatrixPtr;
  * larger matrix.
  */
 struct Submatrix {
-  Submatrix(const MatrixPtr mat, const std::vector<int> &&sub,
-            const std::vector<int> &&perm)
-      : matrix_(mat), submatrix_(std::make_shared<std::vector<int>>(sub)),
-        perm_(std::make_shared<std::vector<int>>(perm)) {}
+  Submatrix(const MatrixPtr mat, const std::vector<int>&& sub,
+            const std::vector<int>&& perm)
+      : matrix_(mat)
+      , submatrix_(std::make_shared<std::vector<int>>(sub))
+      , perm_(std::make_shared<std::vector<int>>(perm)) {}
   Submatrix(const MatrixPtr mat, const VectorPtr sub,
-            const std::vector<int> &&perm)
-      : matrix_(mat), submatrix_(sub),
-        perm_(std::make_shared<std::vector<int>>(perm)) {}
+            const std::vector<int>&& perm)
+      : matrix_(mat)
+      , submatrix_(sub)
+      , perm_(std::make_shared<std::vector<int>>(perm)) {}
   const MatrixPtr matrix_;
   const VectorPtr submatrix_;
   const VectorPtr perm_;
@@ -60,18 +62,18 @@ struct Submatrix {
  * return to the submatrix.
  */
 struct Unconnected {
-  bool operator()(const Submatrix &sub, int connection);
+  bool operator()(const Submatrix& sub, int connection);
 
-private:
+ private:
   std::vector<int> seen_;
-  bool isUnconnected(const Submatrix &sub, int depth, int next);
+  bool isUnconnected(const Submatrix& sub, int depth, int next);
 };
 
 struct Line {
-  bool operator()(const Submatrix &sub, int connection) const;
+  bool operator()(const Submatrix& sub, int connection) const;
 
-private:
-  bool isLine(const Submatrix &sub, int next, int prev) const;
+ private:
+  bool isLine(const Submatrix& sub, int next, int prev) const;
 };
 
 /**
@@ -84,13 +86,13 @@ struct ConnectedTo {
   ConnectedTo(int conn) : conn_({conn}), sub_conn_(1) {}
   ConnectedTo(int conn1, int conn2) : conn_({conn1, conn2}), sub_conn_(2) {}
   ConnectedTo(std::initializer_list<int> l) : conn_(l), sub_conn_(l.size()) {}
-  bool operator()(const Submatrix &sub, int connection);
+  bool operator()(const Submatrix& sub, int connection);
 
-private:
+ private:
   std::vector<int> conn_;
   std::vector<int> sub_conn_;
   std::vector<int> seen_;
-  bool isConnected(const Submatrix &sub, int depth, int next);
+  bool isConnected(const Submatrix& sub, int depth, int next);
 };
 
 /**
@@ -99,12 +101,12 @@ private:
  */
 struct LineTo {
   LineTo(int conn) : conn_(conn) {}
-  bool operator()(const Submatrix &sub, int connection);
+  bool operator()(const Submatrix& sub, int connection);
 
-private:
+ private:
   const int conn_;
   int sub_conn_;
-  bool isLine(const Submatrix &sub, int next, int prev) const;
+  bool isLine(const Submatrix& sub, int next, int prev) const;
 };
 
 /**
@@ -128,21 +130,22 @@ private:
  * determine whether a matrix is mut-finite, but the MMI results could give a
  * different way to tell whether a quiver is mut-finite.
  */
-template <typename IsFinite> struct Finite {
-  Finite(EquivQuiverMatrix &&submatrix) : matrix_(submatrix) {}
-  bool operator()(const Submatrix &sub);
+template <typename IsFinite>
+struct Finite {
+  Finite(EquivQuiverMatrix&& submatrix) : matrix_(submatrix) {}
+  bool operator()(const Submatrix& sub);
 
-private:
+ private:
   IsFinite check_;
   EquivQuiverMatrix matrix_;
   EquivQuiverMatrix moved_;
 };
-} // namespace mmi_conn
+}  // namespace mmi_conn
 
 class MMIMove {
-public:
-  typedef std::function<bool(const mmi_conn::Submatrix &, int)> ConnReq;
-  typedef std::function<bool(const mmi_conn::Submatrix &)> FiniteReq;
+ public:
+  typedef std::function<bool(const mmi_conn::Submatrix&, int)> ConnReq;
+  typedef std::function<bool(const mmi_conn::Submatrix&)> FiniteReq;
   typedef std::map<int, ConnReq> Connections;
   typedef std::shared_ptr<const std::vector<int>> VectorPtr;
   typedef std::shared_ptr<IntMatrix> MatrixPtr;
@@ -153,13 +156,15 @@ public:
    * submatrix, but rather the one that the move will take that to.
    */
   struct Applicable {
-    Applicable(const mmi_conn::Submatrix &sub, const IntMatrix &match)
-        : matrix_(sub.matrix_), submatrix_(sub.submatrix_), perm_(sub.perm_),
-          match_(match) {}
+    Applicable(const mmi_conn::Submatrix& sub, const IntMatrix& match)
+        : matrix_(sub.matrix_)
+        , submatrix_(sub.submatrix_)
+        , perm_(sub.perm_)
+        , match_(match) {}
     const MatrixPtr matrix_;
     const VectorPtr submatrix_;
     const VectorPtr perm_;
-    const IntMatrix &match_;
+    const IntMatrix& match_;
   };
 
   /**
@@ -173,8 +178,8 @@ public:
    * The default connection requirement is Unconnected, that is each subquiver
    * at the connection is not connected to any other connection.
    */
-  MMIMove(const IntMatrix &mata, const IntMatrix &matb,
-          const std::vector<int> &connections);
+  MMIMove(const IntMatrix& mata, const IntMatrix& matb,
+          const std::vector<int>& connections);
 
   /**
    * Create an MMIMove which switches the submatrix mata with the submatrix
@@ -188,15 +193,15 @@ public:
    * the vector of ints, and the requirements for the shape of the quiver at
    * that connection in the other vector.
    */
-  MMIMove(const IntMatrix &mata, const IntMatrix &matb,
-          const std::vector<int> &conn, const std::vector<ConnReq> &req);
+  MMIMove(const IntMatrix& mata, const IntMatrix& matb,
+          const std::vector<int>& conn, const std::vector<ConnReq>& req);
 
   /**
    * Apply the move to the provided matrix.
    * The matrix must contain one of the move's submatrices, and the rows
    * which make up this submatrix must be given in the vector provided.
    */
-  static void move(const Applicable &app, IntMatrix &result);
+  static void move(const Applicable& app, IntMatrix& result);
 
   /**
    * Find all submatrices of the matrix to which this move can be applied.
@@ -204,7 +209,7 @@ public:
    * The submatrices are returned in a vector, each submatrix represented by
    * a vector of which rows in the initial matrix make up the submatrix.
    */
-  std::vector<Applicable> applicable_submatrices(const IntMatrix &matrix);
+  std::vector<Applicable> applicable_submatrices(const IntMatrix& matrix);
   std::vector<Applicable> applicable_submatrices(const MatrixPtr matrix);
 
   /**
@@ -229,7 +234,7 @@ public:
     b_fin_ = req;
   }
 
-private:
+ private:
   /** First submatrix in move. */
   const EquivQuiverMatrix mata_;
   /** Second submatrix in move. */
@@ -250,7 +255,7 @@ private:
   Connections conn_;
 
   /** Check whether the submatrix matches the required connections. */
-  bool check_connections(const mmi_conn::Submatrix &submatrix) const;
+  bool check_connections(const mmi_conn::Submatrix& submatrix) const;
 };
 
 /*
@@ -260,7 +265,8 @@ private:
  * implementation must be included in header files.
  */
 template <typename IsFinite>
-bool mmi_conn::Finite<IsFinite>::operator()(const Submatrix &sub) {
+bool
+mmi_conn::Finite<IsFinite>::operator()(const Submatrix& sub) {
   if (moved_.num_rows() != sub.matrix_->num_rows() &&
       moved_.num_cols() != sub.matrix_->num_cols()) {
     moved_.set_matrix(*sub.matrix_);
@@ -278,4 +284,4 @@ bool mmi_conn::Finite<IsFinite>::operator()(const Submatrix &sub) {
   MMIMove::move(appl, moved_);
   return check_(moved_);
 }
-} // namespace cluster
+}  // namespace cluster

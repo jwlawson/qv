@@ -35,13 +35,13 @@ namespace mmi {
  * @param matrix Matrix to check
  * @return true if the matrix is probably minimally mutation infinite
  */
-bool fast_mmi(const QuiverMatrix &matrix);
+bool fast_mmi(const QuiverMatrix& matrix);
 
 /**
  * Add matrices which are known to be finite to the finite checker.
  * @param mat Mutation finite matrix to add
  */
-void add_finite(const std::shared_ptr<EquivQuiverMatrix> &mat);
+void add_finite(const std::shared_ptr<EquivQuiverMatrix>& mat);
 
 /**
  * Check whether the matrix is minimally mutation infinite.
@@ -57,6 +57,6 @@ void add_finite(const std::shared_ptr<EquivQuiverMatrix> &mat);
  * @param matrix The matrix to check
  * @return true if the matrix is minimally mutation infinite
  */
-bool slow_mmi(const QuiverMatrix &matrix);
-} // namespace mmi
-} // namespace cluster
+bool slow_mmi(const QuiverMatrix& matrix);
+}  // namespace mmi
+}  // namespace cluster

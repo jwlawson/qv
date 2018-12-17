@@ -19,13 +19,20 @@
 namespace cluster {
 
 SkewSymmetricIterator::SkewSymmetricIterator(const int size)
-    : matrix_(size, size), col_comp_(size - 1), index_(),
-      num_vars_(num_vars(size)), max_(ipow(5, num_vars_)) {}
+    : matrix_(size, size)
+    , col_comp_(size - 1)
+    , index_()
+    , num_vars_(num_vars(size))
+    , max_(ipow(5, num_vars_)) {}
 
-bool SkewSymmetricIterator::has_next() const { return index_ < max_; }
+bool
+SkewSymmetricIterator::has_next() const {
+  return index_ < max_;
+}
 
 // TODO Only set the entries which need to be changed
-SkewSymmetricIterator::MPtr SkewSymmetricIterator::next() {
+SkewSymmetricIterator::MPtr
+SkewSymmetricIterator::next() {
   int num(index_);
   int row = -1;
   int col = 0;
@@ -52,14 +59,15 @@ SkewSymmetricIterator::MPtr SkewSymmetricIterator::next() {
   return std::make_shared<M>(matrix_);
 }
 
-long int SkewSymmetricIterator::ipow(const int x, const int p) const {
+long int
+SkewSymmetricIterator::ipow(const int x, const int p) const {
   long i = 1;
-  for (int j = 1; j <= p; j++)
-    i *= x;
+  for (int j = 1; j <= p; j++) i *= x;
   return i;
 }
 
-int SkewSymmetricIterator::num_vars(int size) const {
+int
+SkewSymmetricIterator::num_vars(int size) const {
   return ((size - 1) * size) / 2;
 }
-} // namespace cluster
+}  // namespace cluster

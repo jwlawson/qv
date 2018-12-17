@@ -20,7 +20,7 @@
 
 namespace cluster {
 
-OrientedCycleInfo::OrientedCycleInfo(const QuiverMatrix &matrix) : matrix_() {
+OrientedCycleInfo::OrientedCycleInfo(const QuiverMatrix& matrix) : matrix_() {
   CycleInfo inf(matrix);
   std::vector<int> vertices;
   int size = std::min(matrix.num_rows(), matrix.num_cols());
@@ -37,14 +37,19 @@ OrientedCycleInfo::OrientedCycleInfo(const QuiverMatrix &matrix) : matrix_() {
   }
 }
 
-bool OrientedCycleInfo::equals(const OrientedCycleInfo &cycle) const {
+bool
+OrientedCycleInfo::equals(const OrientedCycleInfo& cycle) const {
   return matrix_.equals(cycle.matrix_);
 }
 
-std::size_t OrientedCycleInfo::hash() const { return matrix_.hash(); }
+std::size_t
+OrientedCycleInfo::hash() const {
+  return matrix_.hash();
+}
 
-std::ostream &operator<<(std::ostream &os, const OrientedCycleInfo &cycle) {
+std::ostream&
+operator<<(std::ostream& os, const OrientedCycleInfo& cycle) {
   os << cycle.matrix_;
   return os;
 }
-} // namespace cluster
+}  // namespace cluster

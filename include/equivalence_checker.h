@@ -29,12 +29,12 @@
 
 namespace cluster {
 class EquivalenceChecker {
-private:
+ private:
   typedef EquivQuiverMatrix M;
   typedef std::vector<int> Permutation;
   typedef std::shared_ptr<std::vector<Permutation>> PermVecPtr;
 
-public:
+ public:
   /**
    * Get the singleton instance of EquivalenceChecker.
    * This is less important now that we are not creating every possible
@@ -56,9 +56,9 @@ public:
    * @param rhs Second matrix
    * @return true if matrices are equivalent
    */
-  bool are_equivalent(const M &lhs, const M &rhs);
+  bool are_equivalent(const M& lhs, const M& rhs);
   /** Get the mapping used in last equals check. */
-  const Permutation &last_row_map() const;
+  const Permutation& last_row_map() const;
   /**
    * Get all valid permutations from lhs to rhs.
    *
@@ -69,14 +69,14 @@ public:
    * @param rhs Matrix to get permutations to
    * @return vector of vectors representing the permutations
    */
-  PermVecPtr valid_row_maps(const M &lhs, const M &rhs);
+  PermVecPtr valid_row_maps(const M& lhs, const M& rhs);
 
-private:
+ private:
   /**
    * Stores information about possible mappings between the matrices.
    */
   class Mapping {
-  public:
+   public:
     Mapping(int size) : row_mappings(size) {}
     /**
      * Reset all mapping information.
@@ -97,29 +97,31 @@ private:
   std::vector<int> last_row_map_;
 
   /** Check whether the rows of the matrices match. */
-  bool do_rows_match(const M &a, const M &b);
+  bool do_rows_match(const M& a, const M& b);
   /**
    * Check whether the two matrices are permutations by considering the
    * mappings calculated earlier. Uses recursion on the index.
    */
-  bool check_perm(Permutation &row_map, int index, const M &a, const M &b);
+  bool check_perm(Permutation& row_map, int index, const M& a, const M& b);
   /**
    * Run through all permutations and add any valid ones to the PermVecPtr
    * parameter.
    */
-  void all_perms(Permutation &row_map, int index, const M &a, const M &b,
+  void all_perms(Permutation& row_map, int index, const M& a, const M& b,
                  PermVecPtr perms);
 };
-inline const EquivalenceChecker::Permutation &
+inline const EquivalenceChecker::Permutation&
 EquivalenceChecker::last_row_map() const {
   return last_row_map_;
 }
-inline void EquivalenceChecker::Mapping::reset() {
+inline void
+EquivalenceChecker::Mapping::reset() {
   std::for_each(row_mappings.begin(), row_mappings.end(),
-                [](std::vector<int> &v) { v.resize(0); });
+                [](std::vector<int>& v) { v.resize(0); });
 }
-inline void EquivalenceChecker::Mapping::update_row_mapping(const int a_index,
-                                                            const int b_index) {
+inline void
+EquivalenceChecker::Mapping::update_row_mapping(const int a_index,
+                                                const int b_index) {
   row_mappings[a_index].push_back(b_index);
 }
-} // namespace cluster
+}  // namespace cluster

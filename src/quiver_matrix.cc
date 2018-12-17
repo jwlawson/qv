@@ -32,13 +32,14 @@ QuiverMatrix::QuiverMatrix(const int rows, const int cols)
 QuiverMatrix::QuiverMatrix(const int rows, const int cols, const int values[])
     : IntMatrix(rows, cols, values) {}
 
-QuiverMatrix::QuiverMatrix(IntMatrix const &matrix) : IntMatrix(matrix) {}
+QuiverMatrix::QuiverMatrix(IntMatrix const& matrix) : IntMatrix(matrix) {}
 
-QuiverMatrix::QuiverMatrix(std::string const &str) : IntMatrix(str) {}
+QuiverMatrix::QuiverMatrix(std::string const& str) : IntMatrix(str) {}
 
-bool QuiverMatrix::is_infinite() const {
+bool
+QuiverMatrix::is_infinite() const {
   return std::any_of(data_.data(), data_.data() + num_rows_ * num_cols_,
                      [](int val) { return val >= 3 || val <= -3; });
 }
 
-} // namespace cluster
+}  // namespace cluster

@@ -28,7 +28,7 @@
 
 namespace cluster {
 class IntMatrix {
-public:
+ public:
   typedef std::vector<int> IntVector;
   /**
    * Create a default IntMatrix. The default matrix is essentially empty and
@@ -58,12 +58,12 @@ public:
    * Copy constructor.
    * @param mat Matrix to copy
    */
-  IntMatrix(const IntMatrix &mat) = default;
+  IntMatrix(const IntMatrix& mat) = default;
   /**
    * Move constructor. Leaves the passed matrix as a default IntMatrix.
    * @param mat Matrix to move into this
    */
-  IntMatrix(IntMatrix &&mat) = default;
+  IntMatrix(IntMatrix&& mat) = default;
   /**
    * Construct an IntMatrix from a string. the string is expected to be
    * formatted like one used in the << method.
@@ -79,14 +79,14 @@ public:
    *
    * @param str String containing matrix
    */
-  IntMatrix(std::string const &str);
+  IntMatrix(std::string const& str);
   virtual ~IntMatrix(){};
   /**
    * Assignment operator. Sets this matrix to the one passed.
    * @param mat Matrix to copy
    */
-  IntMatrix &operator=(IntMatrix const &mat) = default;
-  IntMatrix &operator=(IntMatrix &&mat) = default;
+  IntMatrix& operator=(IntMatrix const& mat) = default;
+  IntMatrix& operator=(IntMatrix&& mat) = default;
   /**
    * Get the number of rows in the matrix.
    * @return Number of rows
@@ -118,7 +118,7 @@ public:
    * @param row Row to return
    * @param result Vector to put entries in the row
    */
-  void get_row(const int row, std::vector<int> &result) const;
+  void get_row(const int row, std::vector<int>& result) const;
   /**
    * Get a vector containing all entries in the specified column.
    * @param col Column to return
@@ -133,12 +133,12 @@ public:
    * @param col Column to return
    * @param result Vector to hold entries in the column
    */
-  void get_col(const int col, std::vector<int> &result) const;
+  void get_col(const int col, std::vector<int>& result) const;
   /**
    * Set this matrix to be a copy of the matrix provided.
    * @param mat Matrix to copy
    */
-  virtual void set_matrix(const IntMatrix &mat);
+  virtual void set_matrix(const IntMatrix& mat);
   /**
    * Set the value in the matrix at the specified position to be the value
    * provided.
@@ -167,16 +167,16 @@ public:
    * @param mat Matrix to check
    * @return true if the matries are equal
    */
-  virtual bool equals(const IntMatrix &mat) const;
+  virtual bool equals(const IntMatrix& mat) const;
   /**
    * Get a pointer to the underlying array.
    *
    * Only use this if you are sure you know what you are doing.
    * @return Pointer to the array that the matrix data is stored in
    */
-  int *data();
-  const int *data() const;
-  const IntVector &vector() const;
+  int* data();
+  const int* data() const;
+  const IntVector& vector() const;
   /**
    * Compute the hash of the matrix.
    *
@@ -192,17 +192,17 @@ public:
    * @param rhs Second matrix to check
    * @return true if the matrices are equal as IntMatrices
    */
-  static bool are_equal(const IntMatrix &lhs, const IntMatrix &rhs);
+  static bool are_equal(const IntMatrix& lhs, const IntMatrix& rhs);
   /**
    * Provide method to easily write IntMatrix objects to output stream.
    */
-  friend std::ostream &operator<<(std::ostream &os, const IntMatrix &mat);
+  friend std::ostream& operator<<(std::ostream& os, const IntMatrix& mat);
   /**
    * Swap the data in two IntMatrix objects.
    * @param first First matrix
    * @param second Second matrix
    */
-  friend void swap(IntMatrix &first, IntMatrix &second);
+  friend void swap(IntMatrix& first, IntMatrix& second);
 
   /**
    * Multiply this matrix on the left by the matrix provided. The result is
@@ -213,7 +213,7 @@ public:
    * @param left Matrix to multiply by
    * @param result Matrix to store the result
    */
-  void mult_left(const IntMatrix &left, IntMatrix &result) const {
+  void mult_left(const IntMatrix& left, IntMatrix& result) const {
     IntMatrix::mult(left, *this, result);
   }
   /**
@@ -225,7 +225,7 @@ public:
    * @param right Matrix to multiply by
    * @param result Matrix to store the result
    */
-  void mult_right(const IntMatrix &right, IntMatrix &result) const {
+  void mult_right(const IntMatrix& right, IntMatrix& result) const {
     IntMatrix::mult(*this, right, result);
   }
   /**
@@ -236,7 +236,7 @@ public:
    * @param col Column to remove
    * @param result Matrix to write the result into
    */
-  void submatrix(const int row, const int col, IntMatrix &result) const;
+  void submatrix(const int row, const int col, IntMatrix& result) const;
   /**
    * Compute the submatrix of this matrix which consists of the specified rows
    * and columns as supplied in the vectors.
@@ -245,7 +245,7 @@ public:
    * @param result Matrix to write the result into
    */
   void submatrix(std::vector<int> rows, std::vector<int> cols,
-                 IntMatrix &result) const;
+                 IntMatrix& result) const;
 
   /**
    * Embed this matrix into the provided matrix, so that this matrix is the
@@ -253,7 +253,7 @@ public:
    *
    * @param result Matrix to wrtie the result into.
    */
-  void enlarge_matrix(IntMatrix &result) const;
+  void enlarge_matrix(IntMatrix& result) const;
   /**
    * Permute the rows of this matrix and write the result in the provided
    * matrix.
@@ -264,7 +264,7 @@ public:
    * @param vec Vector of mappings
    * @param result Matrix to write the result to
    */
-  void permute_rows(const std::vector<int> &vec, IntMatrix &result) const;
+  void permute_rows(const std::vector<int>& vec, IntMatrix& result) const;
   /**
    * Permute the columns of this matrix and write the result in the provided
    * matrix.
@@ -275,9 +275,9 @@ public:
    * @param vec Vector of mappings
    * @param result Matrix to write the result to
    */
-  void permute_columns(const std::vector<int> &vec, IntMatrix &result) const;
+  void permute_columns(const std::vector<int>& vec, IntMatrix& result) const;
 
-protected:
+ protected:
   /** Number of rows in the matrix. */
   int num_rows_;
   /** Number of columns in the matrix. */
@@ -287,7 +287,7 @@ protected:
   /** Compute the hash for this matrix. */
   virtual std::size_t compute_hash() const;
 
-private:
+ private:
   /** Cached hashcode for the matrix. */
   mutable std::size_t hashcode_;
   /** true if the hash needs recomputing */
@@ -297,47 +297,75 @@ private:
   int get_index(const int row, const int col) const;
 
   /** Multiply left and right together and put the result into result. */
-  void mult(const IntMatrix &left, const IntMatrix &right,
-            IntMatrix &result) const;
+  void mult(const IntMatrix& left, const IntMatrix& right,
+            IntMatrix& result) const;
 };
-inline int IntMatrix::num_rows() const { return num_rows_; }
-inline int IntMatrix::num_cols() const { return num_cols_; }
-inline int IntMatrix::get(const int row, const int col) const {
+inline int
+IntMatrix::num_rows() const {
+  return num_rows_;
+}
+inline int
+IntMatrix::num_cols() const {
+  return num_cols_;
+}
+inline int
+IntMatrix::get(const int row, const int col) const {
   return data_[get_index(row, col)];
 }
-inline void IntMatrix::set(const int row, const int col, const int value) {
+inline void
+IntMatrix::set(const int row, const int col, const int value) {
   data_[get_index(row, col)] = value;
 }
-inline void IntMatrix::set_matrix(const IntMatrix &mat) { operator=(mat); }
-inline void IntMatrix::reset() { recompute_hash_ = true; }
-inline bool IntMatrix::equals(const IntMatrix &mat) const {
+inline void
+IntMatrix::set_matrix(const IntMatrix& mat) {
+  operator=(mat);
+}
+inline void
+IntMatrix::reset() {
+  recompute_hash_ = true;
+}
+inline bool
+IntMatrix::equals(const IntMatrix& mat) const {
   return hash() == mat.hash() && data_ == mat.data_;
 }
-inline int *IntMatrix::data() { return data_.data(); }
-inline const int *IntMatrix::data() const { return data_.data(); }
-inline const IntMatrix::IntVector &IntMatrix::vector() const { return data_; }
-inline size_t IntMatrix::hash() const {
+inline int*
+IntMatrix::data() {
+  return data_.data();
+}
+inline const int*
+IntMatrix::data() const {
+  return data_.data();
+}
+inline const IntMatrix::IntVector&
+IntMatrix::vector() const {
+  return data_;
+}
+inline size_t
+IntMatrix::hash() const {
   if (recompute_hash_) {
     hashcode_ = compute_hash();
     recompute_hash_ = false;
   }
   return hashcode_;
 }
-inline int IntMatrix::get_index(const int row, const int col) const {
+inline int
+IntMatrix::get_index(const int row, const int col) const {
   return row * num_cols_ + col;
 }
 
-} // namespace cluster
+}  // namespace cluster
 namespace std {
 /* Add hash function to the std::hash struct. */
-template <> struct hash<cluster::IntMatrix> {
-  size_t operator()(const cluster::IntMatrix &x) const { return x.hash(); }
+template <>
+struct hash<cluster::IntMatrix> {
+  size_t operator()(const cluster::IntMatrix& x) const { return x.hash(); }
 };
 /* Add equals function to std::equal_to */
-template <> struct equal_to<cluster::IntMatrix> {
-  bool operator()(const cluster::IntMatrix &lhs,
-                  const cluster::IntMatrix &rhs) const {
+template <>
+struct equal_to<cluster::IntMatrix> {
+  bool operator()(const cluster::IntMatrix& lhs,
+                  const cluster::IntMatrix& rhs) const {
     return lhs.equals(rhs);
   }
 };
-} // namespace std
+}  // namespace std

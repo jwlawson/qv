@@ -21,16 +21,18 @@ namespace {
 typedef std::vector<SSMove::Applicable> AppVec;
 }
 
-AppVec SSMove::applicable_submatrices(const IntMatrix &m) const {
+AppVec
+SSMove::applicable_submatrices(const IntMatrix& m) const {
   return applicable_submatrices(std::make_shared<const IntMatrix>(m));
 }
 /**
  * Check whether there is a row that only contains zeros, or values with the
  * same sign. That is every arrow at the vertex is pointing the same way.
  */
-AppVec SSMove::applicable_submatrices(CMatrixPtr m) const {
+AppVec
+SSMove::applicable_submatrices(CMatrixPtr m) const {
   AppVec result;
-  int const *r = m->data();
+  int const* r = m->data();
   int row = 0;
   int col = 0;
   int ind = 0;
@@ -65,9 +67,10 @@ AppVec SSMove::applicable_submatrices(CMatrixPtr m) const {
   }
   return result;
 }
-void SSMove::move(const Applicable &app, IntMatrix &result) const {
-  const int *m = app.matrix_->data();
-  int *r = result.data();
+void
+SSMove::move(const Applicable& app, IntMatrix& result) const {
+  const int* m = app.matrix_->data();
+  int* r = result.data();
   int row = 0;
   int col = 0;
   int maxcol = app.matrix_->num_cols();
@@ -89,4 +92,4 @@ void SSMove::move(const Applicable &app, IntMatrix &result) const {
   }
   result.reset();
 }
-} // namespace cluster
+}  // namespace cluster

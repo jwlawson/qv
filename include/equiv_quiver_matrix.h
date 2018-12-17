@@ -28,10 +28,10 @@ namespace cluster {
 class EquivalenceChecker;
 
 class EquivQuiverMatrix : public QuiverMatrix {
-public:
+ public:
   typedef std::vector<std::pair<int, int>> PairVector;
   typedef std::vector<int> Permutation;
-  typedef const Permutation &CPermutation;
+  typedef const Permutation& CPermutation;
   typedef std::vector<Permutation> PermVec;
   typedef std::shared_ptr<PermVec> PermVecPtr;
   /**
@@ -64,17 +64,17 @@ public:
    *
    * @param mat Matrix to copy
    */
-  EquivQuiverMatrix(const IntMatrix &mat);
+  EquivQuiverMatrix(const IntMatrix& mat);
   /**
    * Copy constructor.
    * @param mat Matrix to copy
    */
-  EquivQuiverMatrix(const EquivQuiverMatrix &mat) = default;
+  EquivQuiverMatrix(const EquivQuiverMatrix& mat) = default;
   /**
    * Move constructor.
    * @param mat Matrix to move into this one.
    */
-  EquivQuiverMatrix(EquivQuiverMatrix &&mat) = default;
+  EquivQuiverMatrix(EquivQuiverMatrix&& mat) = default;
   /**
    * Create a EquivQuiverMatrix from a string. The string is expected to be
    * formatted like one from the << method.
@@ -82,62 +82,63 @@ public:
    * @see IntMatrix#IntMatrix(std::String)
    * @param str String containing matrix information
    */
-  EquivQuiverMatrix(std::string const &str);
+  EquivQuiverMatrix(std::string const& str);
   virtual ~EquivQuiverMatrix(){};
   /**
    * Overwrite the set method in IntMatrix to allow the PairVector objects
    * to be initialised to the correct size.
    * @param mat Matrix to set this one to
    */
-  virtual void set_matrix(const IntMatrix &mat);
+  virtual void set_matrix(const IntMatrix& mat);
   /** Overwritten equals method which ensures that two matrices which are
    * the same up to permuting their rows and columns are considered equal.
    *
    * @param mat Matrix to check
    * @return true if equal up to permuting rows and columns
    */
-  virtual bool equals(const IntMatrix &mat) const;
+  virtual bool equals(const IntMatrix& mat) const;
   /** Want a specialised equals for EquivQuiverMatrix to ensure that the
    * copy in static_cast used in the IntMatrix equals method is not used.
    */
-  bool equals(const EquivQuiverMatrix &mat) const;
+  bool equals(const EquivQuiverMatrix& mat) const;
   virtual void reset();
   /**
    * Assignment operator.
    */
-  EquivQuiverMatrix &operator=(const EquivQuiverMatrix &mat) = default;
-  EquivQuiverMatrix &operator=(EquivQuiverMatrix &&mat) = default;
+  EquivQuiverMatrix& operator=(const EquivQuiverMatrix& mat) = default;
+  EquivQuiverMatrix& operator=(EquivQuiverMatrix&& mat) = default;
   /**
    * Get the permutation taking this matrix to the given equivalent matrix.
    */
-  CPermutation get_permutation(const IntMatrix &mat) const;
+  CPermutation get_permutation(const IntMatrix& mat) const;
   /**
    * Get a vector of all permutations taking this matrix to the given
    * equivalent matrix.
    * This assumes that the matrix supplied is in fact equivalent to this
    * one, if not then problems could occur.
    */
-  PermVecPtr all_permutations(const EquivQuiverMatrix &mat) const;
+  PermVecPtr all_permutations(const EquivQuiverMatrix& mat) const;
 
   /** Vector holding pairs of row sums and the abs row sums. */
   PairVector rows_;
 
-protected:
+ protected:
   /** Overwritten hash function. */
   virtual std::size_t compute_hash() const;
 
-private:
+ private:
   /** Equivalence checker to check if matrices are equivalent. */
   std::shared_ptr<EquivalenceChecker> checker_;
   /** Cached sorted row sums and abs row sums. */
   mutable PairVector sorted_rows_;
 };
-} // namespace cluster
+}  // namespace cluster
 
 namespace std {
 /* Add hash function to the std::hash struct. */
-template <> struct hash<cluster::EquivQuiverMatrix> {
-  size_t operator()(const cluster::EquivQuiverMatrix &x) const {
+template <>
+struct hash<cluster::EquivQuiverMatrix> {
+  size_t operator()(const cluster::EquivQuiverMatrix& x) const {
     return x.hash();
   }
 };
@@ -145,24 +146,27 @@ template <> struct hash<cluster::EquivQuiverMatrix> {
  * Annoyingly the standard shared_ptr hash function which passes the
  * function to the object in the pointer doesn't seem to work.
  */
-template <> struct hash<std::shared_ptr<cluster::EquivQuiverMatrix>> {
-  size_t
-  operator()(const std::shared_ptr<cluster::EquivQuiverMatrix> &x) const {
+template <>
+struct hash<std::shared_ptr<cluster::EquivQuiverMatrix>> {
+  size_t operator()(
+      const std::shared_ptr<cluster::EquivQuiverMatrix>& x) const {
     return x->hash();
   }
 };
 /* Add equals function to std::equal_to */
-template <> struct equal_to<cluster::EquivQuiverMatrix> {
-  bool operator()(const cluster::EquivQuiverMatrix &lhs,
-                  const cluster::EquivQuiverMatrix &rhs) const {
+template <>
+struct equal_to<cluster::EquivQuiverMatrix> {
+  bool operator()(const cluster::EquivQuiverMatrix& lhs,
+                  const cluster::EquivQuiverMatrix& rhs) const {
     return lhs.equals(rhs);
   }
 };
-template <> struct equal_to<std::shared_ptr<cluster::EquivQuiverMatrix>> {
-  bool
-  operator()(const std::shared_ptr<cluster::EquivQuiverMatrix> &lhs,
-             const std::shared_ptr<cluster::EquivQuiverMatrix> &rhs) const {
+template <>
+struct equal_to<std::shared_ptr<cluster::EquivQuiverMatrix>> {
+  bool operator()(
+      const std::shared_ptr<cluster::EquivQuiverMatrix>& lhs,
+      const std::shared_ptr<cluster::EquivQuiverMatrix>& rhs) const {
     return lhs->equals(*rhs);
   }
 };
-} // namespace std
+}  // namespace std

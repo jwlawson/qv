@@ -29,21 +29,21 @@
 
 namespace cluster {
 class EquivMutationClassLoader : public MutationClassLoader<EquivQuiverMatrix> {
-private:
+ private:
   typedef EquivQuiverMatrix M;
 
-public:
+ public:
   EquivMutationClassLoader();
-  EquivMutationClassLoader(const M &initial);
+  EquivMutationClassLoader(const M& initial);
 
-protected:
+ protected:
   virtual void seen_matrix(std::shared_ptr<M> mat, std::shared_ptr<M> previous,
                            const int vertex);
   virtual void unseen_matrix(std::shared_ptr<M> matrix,
                              std::shared_ptr<M> previous, const int vertex);
   virtual bool have_seen(std::shared_ptr<M> matrix);
 
-private:
+ private:
   std::unordered_set<std::shared_ptr<M>> set_;
 };
-} // namespace cluster
+}  // namespace cluster

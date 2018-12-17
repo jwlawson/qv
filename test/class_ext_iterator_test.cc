@@ -20,19 +20,18 @@
 
 namespace cluster {
 
-	TEST(ClassExtIter, Twos) {
-		std::string str = "{ { 0 2 -2 } { -2 0 2 } { 2 -2 0 } }";
-		QuiverMatrix mat(str);
+TEST(ClassExtIter, Twos) {
+  std::string str = "{ { 0 2 -2 } { -2 0 2 } { 2 -2 0 } }";
+  QuiverMatrix mat(str);
 
-		EquivMutClassExtIterator iter(mat);
+  EquivMutClassExtIterator iter(mat);
 
-		int count = 0;
-		while(iter.has_next() ) {
-			count++;
-			iter.next();
-		}
-		EXPECT_EQ(count, 125);
-	}
-
+  int count = 0;
+  while (iter.has_next()) {
+    count++;
+    iter.next();
+  }
+  EXPECT_EQ(count, 125);
 }
 
+}  // namespace cluster

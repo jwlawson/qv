@@ -31,8 +31,11 @@
 #ifdef CYGWIN_STOI
 #include <cstdlib>
 namespace std {
-int stoi(const std::string &s) { return (int)strtol(s.c_str(), nullptr, 10); }
-} // namespace std
+int
+stoi(const std::string& s) {
+  return (int)strtol(s.c_str(), nullptr, 10);
+}
+}  // namespace std
 #endif
 
 namespace cluster {
@@ -40,14 +43,20 @@ namespace cluster {
 IntMatrix::IntMatrix() : num_rows_(0), num_cols_(0), data_(0), hashcode_(113) {}
 
 IntMatrix::IntMatrix(const int rows, const int cols)
-    : num_rows_(rows), num_cols_(cols), data_(rows * cols, 0),
-      hashcode_(113), recompute_hash_{true} {}
+    : num_rows_(rows)
+    , num_cols_(cols)
+    , data_(rows * cols, 0)
+    , hashcode_(113)
+    , recompute_hash_{true} {}
 
 IntMatrix::IntMatrix(const int rows, const int cols, const int values[])
-    : num_rows_(rows), num_cols_(cols), data_(values, values + rows * cols),
-      hashcode_(0), recompute_hash_{true} {}
+    : num_rows_(rows)
+    , num_cols_(cols)
+    , data_(values, values + rows * cols)
+    , hashcode_(0)
+    , recompute_hash_{true} {}
 
-IntMatrix::IntMatrix(std::string const &str)
+IntMatrix::IntMatrix(std::string const& str)
     : hashcode_{0}, recompute_hash_{true} {
   std::stringstream ss;
   ss << str;
@@ -98,24 +107,28 @@ IntMatrix::IntMatrix(std::string const &str)
 }
 
 /* Public methods */
-const std::vector<int> IntMatrix::get_row(const int row) const {
+const std::vector<int>
+IntMatrix::get_row(const int row) const {
   std::vector<int> result(num_cols_);
   get_row(row, result);
   return result;
 }
 
-void IntMatrix::get_row(const int row, std::vector<int> &result) const {
+void
+IntMatrix::get_row(const int row, std::vector<int>& result) const {
   int count = row * num_cols_;
   std::memcpy(result.data(), data_.data() + count, num_cols_ * sizeof(int));
 }
 
-const std::vector<int> IntMatrix::get_col(const int col) const {
+const std::vector<int>
+IntMatrix::get_col(const int col) const {
   std::vector<int> result(num_rows_);
   get_col(col, result);
   return result;
 }
 
-void IntMatrix::get_col(const int col, std::vector<int> &result) const {
+void
+IntMatrix::get_col(const int col, std::vector<int>& result) const {
   int count = col;
   for (int j = 0; j < num_rows_; j++) {
     result[j] = data_[count];
@@ -123,7 +136,8 @@ void IntMatrix::get_col(const int col, std::vector<int> &result) const {
   }
 }
 
-int IntMatrix::zero_row() const {
+int
+IntMatrix::zero_row() const {
   bool isZero = false;
   int row = -1;
   for (int ind = 0; ind < num_rows_ * num_cols_; ind++) {
@@ -149,12 +163,13 @@ int IntMatrix::zero_row() const {
  * hashcode is computed. This means that two matrices with the same entries
  * can have different hashcodes if they are instances of different classes.
  */
-bool IntMatrix::are_equal(const IntMatrix &lhs, const IntMatrix &rhs) {
+bool
+IntMatrix::are_equal(const IntMatrix& lhs, const IntMatrix& rhs) {
   return lhs.data_ == rhs.data_;
 }
 
-void IntMatrix::submatrix(const int row, const int col,
-                          IntMatrix &result) const {
+void
+IntMatrix::submatrix(const int row, const int col, IntMatrix& result) const {
   int resInd = 0;
   int origInd = 0;
 
@@ -176,8 +191,9 @@ void IntMatrix::submatrix(const int row, const int col,
   result.reset();
 }
 
-void IntMatrix::submatrix(std::vector<int> rows, std::vector<int> cols,
-                          IntMatrix &result) const {
+void
+IntMatrix::submatrix(std::vector<int> rows, std::vector<int> cols,
+                     IntMatrix& result) const {
   using std::size_t;
   int row_ind = 0;
   int col_ind = 0;
@@ -212,7 +228,8 @@ void IntMatrix::submatrix(std::vector<int> rows, std::vector<int> cols,
   result.reset();
 }
 
-void IntMatrix::enlarge_matrix(IntMatrix &result) const {
+void
+IntMatrix::enlarge_matrix(IntMatrix& result) const {
   int sub = 0;
   for (int index = 0; index < result.num_rows_ * result.num_cols_; index++) {
     if (index % result.num_cols_ >= num_cols_) {
@@ -227,8 +244,8 @@ void IntMatrix::enlarge_matrix(IntMatrix &result) const {
   result.reset();
 }
 
-void IntMatrix::permute_rows(const std::vector<int> &vec,
-                             IntMatrix &result) const {
+void
+IntMatrix::permute_rows(const std::vector<int>& vec, IntMatrix& result) const {
   int ind = 0;
   for (int i = 0; i < num_rows_; ++i) {
     int offset = vec[i] * num_cols_;
@@ -239,8 +256,9 @@ void IntMatrix::permute_rows(const std::vector<int> &vec,
   result.reset();
 }
 
-void IntMatrix::permute_columns(const std::vector<int> &vec,
-                                IntMatrix &result) const {
+void
+IntMatrix::permute_columns(const std::vector<int>& vec,
+                           IntMatrix& result) const {
   int ind = -1;
   for (int i = 0; i < num_rows_; ++i) {
     int offset = i * num_cols_;
@@ -253,7 +271,8 @@ void IntMatrix::permute_columns(const std::vector<int> &vec,
 
 /* Private methods */
 
-std::size_t IntMatrix::compute_hash() const {
+std::size_t
+IntMatrix::compute_hash() const {
   std::size_t hash = 113;
   int_fast16_t max = num_rows_ * num_cols_;
   for (int_fast16_t i = 0; i < max; i++) {
@@ -263,8 +282,9 @@ std::size_t IntMatrix::compute_hash() const {
   return hash;
 }
 
-void IntMatrix::mult(const IntMatrix &left, const IntMatrix &right,
-                     IntMatrix &result) const {
+void
+IntMatrix::mult(const IntMatrix& left, const IntMatrix& right,
+                IntMatrix& result) const {
   int col_inc = right.num_rows_;
   int leftInd;
   int leftIndStart = 0;
@@ -289,7 +309,8 @@ void IntMatrix::mult(const IntMatrix &left, const IntMatrix &right,
 
 /* Friends */
 
-std::ostream &operator<<(std::ostream &os, const IntMatrix &mat) {
+std::ostream&
+operator<<(std::ostream& os, const IntMatrix& mat) {
   os << "{ ";
   for (int i = 0; i < mat.num_rows_; i++) {
     os << "{ ";
@@ -302,7 +323,8 @@ std::ostream &operator<<(std::ostream &os, const IntMatrix &mat) {
   return os;
 }
 
-void swap(IntMatrix &first, IntMatrix &second) {
+void
+swap(IntMatrix& first, IntMatrix& second) {
   using std::swap;
   swap(first.data_, second.data_);
   swap(first.num_rows_, second.num_rows_);
@@ -311,4 +333,4 @@ void swap(IntMatrix &first, IntMatrix &second) {
   swap(first.recompute_hash_, second.recompute_hash_);
 }
 
-} // namespace cluster
+}  // namespace cluster

@@ -109,7 +109,7 @@ constexpr int v32[] = {0, 1,  0,  0, 0, 0,  0, 0, -1, 0, 1,  0, 0,  0, 0,  0,
                        0, 0,  0,  0, 0, -1, 0, 1, 0,  0, 0,  0, 0,  0, -1, 0};
 constexpr int v33[] = {0, 3, -1, 0};
 
-} // namespace
+}  // namespace
 
 const QuiverMatrix dynkin::dynkin::A2(2, 2, v1);
 const QuiverMatrix dynkin::A3(3, 3, v2);
@@ -158,4 +158,4 @@ const std::map<std::string, QuiverMatrix> dynkin::MAP = {
     {"D9", dynkin::D9}, {"E6", dynkin::E6}, {"E7", dynkin::E7},
     {"E8", dynkin::E8}, {"G2", dynkin::G2}};
 
-} // namespace cluster
+}  // namespace cluster

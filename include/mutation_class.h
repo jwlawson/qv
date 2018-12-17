@@ -28,13 +28,13 @@
 
 namespace cluster {
 class MutationClass {
-private:
+ private:
   typedef EquivQuiverMatrix M;
   typedef typename std::shared_ptr<M> MPtr;
   typedef typename std::unordered_set<MPtr> MSet;
   typedef typename MSet::const_iterator Iter;
 
-public:
+ public:
   /**
    * Create a new MutationClass from this inital matrix.
    *
@@ -42,12 +42,12 @@ public:
    * take a significant amount of time.
    * @param initial The initial matrix in the mutation class.
    */
-  MutationClass(const IntMatrix &initial);
+  MutationClass(const IntMatrix& initial);
   /**
    * Same as MutationClass(const IntMatrix&), but does not need to create a
    * new EquivQuiverMatrix object.
    */
-  MutationClass(const EquivQuiverMatrix &initial);
+  MutationClass(const EquivQuiverMatrix& initial);
 
   /**
    * Check whether the mutation class contains a specific matrix.
@@ -76,7 +76,7 @@ public:
    */
   Iter end() const;
 
-private:
+ private:
   /**
    * The set containing all matrices in the mutation class.
    *
@@ -87,4 +87,4 @@ private:
   /** Whether the class is finite or not. */
   bool finite_;
 };
-} // namespace cluster
+}  // namespace cluster

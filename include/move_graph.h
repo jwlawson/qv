@@ -31,25 +31,26 @@
 
 namespace cluster {
 
-template <class Matrix> class MoveGraph {
-  typedef Matrix *MatrixPtr;
-  typedef Matrix const *CMatrixPtr;
+template <class Matrix>
+class MoveGraph {
+  typedef Matrix* MatrixPtr;
+  typedef Matrix const* CMatrixPtr;
 
-private:
+ private:
   class _GraphLoader;
   class _Link;
   /** Checks whether the matrices are equal, rather than the pointers */
   struct PtrEqual {
-    bool operator()(CMatrixPtr const &lhs, CMatrixPtr const &rhs) const {
+    bool operator()(CMatrixPtr const& lhs, CMatrixPtr const& rhs) const {
       return lhs->equals(*rhs);
     }
   };
   /** Gets the matrix hash */
   struct PtrHash {
-    size_t operator()(CMatrixPtr const &ptr) const { return ptr->hash(); }
+    size_t operator()(CMatrixPtr const& ptr) const { return ptr->hash(); }
   };
 
-public:
+ public:
   typedef _GraphLoader loader;
   typedef _Link Link;
   typedef std::pair<Matrix, Link> value_type;
@@ -68,7 +69,7 @@ public:
    * All computations are done in the constructor - so once constructed the
    * class is fully formed, but it does take a while for the largest classes.
    */
-  MoveGraph(const Matrix &mat, MoveVec moves);
+  MoveGraph(const Matrix& mat, MoveVec moves);
   ~MoveGraph() {
     for (auto it = _map.begin(); it != _map.end(); ++it) {
       delete it->first;
@@ -77,9 +78,9 @@ public:
   const typename GraphMap::const_iterator begin() const { return _map.begin(); }
   const typename GraphMap::const_iterator end() const { return _map.end(); }
 
-private:
+ private:
   /** Initial matrix */
-  const Matrix &_matrix;
+  const Matrix& _matrix;
   /** Map storing the links related to each matrix. */
   GraphMap _map;
   /** Queue of matrices to compute moves on */
@@ -101,23 +102,23 @@ private:
    * member of _GraphLoader rather than MoveGraph.
    */
   class _GraphLoader {
-  public:
+   public:
     _GraphLoader() = default;
 
-    _GraphLoader(MoveGraph &graph)
+    _GraphLoader(MoveGraph& graph)
         : _graph(graph), _size(_graph._matrix.num_rows()) {}
     /** Compute all moves for the next matrix in the queue. */
-    loader &operator++();
+    loader& operator++();
     /** Check whether the whole class is laoded. Returns true when it is. */
     bool end() const { return _end; }
 
-  private:
-    MoveGraph &_graph;
+   private:
+    MoveGraph& _graph;
     bool _end = false;
     int _size;
 
     void seen_matrix(CMatrixPtr new_mat, CMatrixPtr old_mat);
-    void unseen_matrix(CMatrixPtr const &new_mat, CMatrixPtr old_mat);
+    void unseen_matrix(CMatrixPtr const& new_mat, CMatrixPtr old_mat);
   };
   /**
    * Stores the edges between vertices in the graph.
@@ -126,10 +127,10 @@ private:
    * each matrix which is connected to M by an edge.
    */
   class _Link {
-  private:
+   private:
     typedef std::unordered_set<CMatrixPtr, PtrHash, PtrEqual> Set;
 
-  public:
+   public:
     _Link() : _matrix(nullptr){};
     _Link(CMatrixPtr matrix) : _matrix(matrix) {}
     /** Initial matrix */
@@ -139,8 +140,8 @@ private:
     const typename Set::const_iterator begin() const { return _links.begin(); }
     const typename Set::const_iterator end() const { return _links.end(); }
 
-  private:
+   private:
     Set _links;
   };
 };
-} // namespace cluster
+}  // namespace cluster

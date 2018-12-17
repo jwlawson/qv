@@ -20,7 +20,8 @@
 namespace cluster {
 namespace equivsize {
 
-int Size(const EquivQuiverMatrix &matrix) {
+int
+Size(const EquivQuiverMatrix& matrix) {
   EquivMutationClassLoader c(matrix);
   int result = 0;
   while (c.has_next()) {
@@ -34,5 +35,5 @@ int Size(const EquivQuiverMatrix &matrix) {
   return result;
 }
 
-} // namespace equivsize
-} // namespace cluster
+}  // namespace equivsize
+}  // namespace cluster

@@ -14,20 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "gtest/gtest.h"
 #include "underlying_graph.h"
 #include "dynkin.h"
+#include "gtest/gtest.h"
 
 namespace cluster {
 
-	TEST(UnderlyingGraph, IntMatrix) {
-		QuiverMatrix m = dynkin::A3;
-		UnderlyingGraph res(m);
-		int v[] = {0,1,0,1,0,1,0,1,0};
-		IntMatrix exp(3,3,v);
+TEST(UnderlyingGraph, IntMatrix) {
+  QuiverMatrix m = dynkin::A3;
+  UnderlyingGraph res(m);
+  int v[] = {0, 1, 0, 1, 0, 1, 0, 1, 0};
+  IntMatrix exp(3, 3, v);
 
-		EXPECT_TRUE(exp.equals(res));
-	}
-
+  EXPECT_TRUE(exp.equals(res));
 }
 
+}  // namespace cluster

@@ -24,20 +24,21 @@
 
 namespace cluster {
 namespace arrays {
-int *sort(int *arr, const int size);
-std::size_t hash(const int *arr, const int size);
-template <class T> std::size_t hash(const std::vector<T> &arr);
-std::size_t hash(const std::vector<std::pair<int, int>> &vec);
+int* sort(int* arr, const int size);
+std::size_t hash(const int* arr, const int size);
+template <class T>
+std::size_t hash(const std::vector<T>& arr);
+std::size_t hash(const std::vector<std::pair<int, int>>& vec);
 /** Find the number of occurences of the value in the vector. */
-int number_in(const std::vector<int> &arr, const int val);
+int number_in(const std::vector<int>& arr, const int val);
 
 /**
  * Find the next index at which the specified value is found in the vector,
  * after the previous index.
  */
 template <class T>
-int next_index_of(const std::vector<T> &arr, const T &val,
-                  const std::size_t prev) {
+int
+next_index_of(const std::vector<T>& arr, const T& val, const std::size_t prev) {
   for (std::size_t i = prev + 1; i < arr.size(); i++) {
     if (arr[i] == val) {
       return i;
@@ -50,10 +51,12 @@ int next_index_of(const std::vector<T> &arr, const T &val,
  *
  * PROBABLY NOT NEEDED, use a == b.
  */
-bool equal(const std::vector<int> &a, const std::vector<int> &b);
-} // namespace arrays
-template <class T> inline std::size_t hash(const std::vector<T> &vec) {
-  T const *data_ = vec.data();
+bool equal(const std::vector<int>& a, const std::vector<int>& b);
+}  // namespace arrays
+template <class T>
+inline std::size_t
+hash(const std::vector<T>& vec) {
+  T const* data_ = vec.data();
   std::size_t hash{113};
   for (int_fast16_t i = 0; i < vec.size(); i++) {
     hash *= 31;
@@ -61,4 +64,4 @@ template <class T> inline std::size_t hash(const std::vector<T> &vec) {
   }
   return hash;
 }
-} // namespace cluster
+}  // namespace cluster

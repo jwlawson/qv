@@ -22,19 +22,19 @@
 #include <memory>
 
 namespace cluster {
-template <class T> class SubmatrixIterator {
-
-public:
+template <class T>
+class SubmatrixIterator {
+ public:
   SubmatrixIterator();
-  SubmatrixIterator(const T &initial);
+  SubmatrixIterator(const T& initial);
 
-  T const &next();
+  T const& next();
   bool has_next();
 
-private:
+ private:
   T matrix_;
   T submatrix_;
   int count_;
   int max_;
 };
-} // namespace cluster
+}  // namespace cluster

@@ -83,11 +83,12 @@
 
 namespace cluster {
 namespace exchange_graph {
-template <class VertexInfo, class GraphInfo> class Graph {
-public:
+template <class VertexInfo, class GraphInfo>
+class Graph {
+ public:
   typedef typename VertexInfo::vertex_value Vertex;
-  typedef Vertex *VertexPtr;
-  typedef Vertex const *CVertexPtr;
+  typedef Vertex* VertexPtr;
+  typedef Vertex const* CVertexPtr;
   typedef typename VertexInfo::hash_value VertexHash;
   typedef typename VertexInfo::equiv_value VertexEquiv;
   typedef typename VertexInfo::equals_value VertexEqual;
@@ -97,11 +98,11 @@ public:
   typedef typename GraphInfo::shouldmutate_value ShouldMutate;
   typedef typename GraphInfo::shouldstop_value ShouldStop;
 
-private:
+ private:
   class _GraphLoader;
   class _Link;
 
-public:
+ public:
   typedef _GraphLoader loader;
   typedef _Link Link;
   typedef std::unordered_map<CVertexPtr, Link, VertexHash, VertexEquiv>
@@ -110,15 +111,15 @@ public:
   /** Construct an empty graph which contains nothing. */
   Graph() = default;
   /** Construct the exchange graph for the specified matrix. */
-  Graph(Vertex const &mat, int mat_size, size_t max_num = SIZE_MAX);
+  Graph(Vertex const& mat, int mat_size, size_t max_num = SIZE_MAX);
   /** Delete any matrix pointers controlled by this graph. */
   ~Graph();
   const typename GraphMap::const_iterator begin() const;
   const typename GraphMap::const_iterator end() const;
   /** Get a reference to the underlying map which holds the graph. */
-  GraphMap const &underlying_map() const;
+  GraphMap const& underlying_map() const;
 
-private:
+ private:
   /** Size of matrix. */
   const size_t _matrix_size;
   /** Maximum number of entries in the graph. */
@@ -132,17 +133,17 @@ private:
    * load_next() until end() returns true.
    */
   class _GraphLoader {
-  public:
+   public:
     _GraphLoader() = default;
 
-    _GraphLoader(Graph &graph);
+    _GraphLoader(Graph& graph);
     /** Load the next section of the graph. */
     void load_next();
     /** Return whether the whole graph been loaded. */
     bool end() const;
 
-  private:
-    Graph &_graph;
+   private:
+    Graph& _graph;
     bool _end = false;
     size_t _size;
     VertexEqual is_exactly;
@@ -163,19 +164,19 @@ private:
   class _Link {
     typedef std::vector<CVertexPtr> LinkVec;
 
-  public:
+   public:
     /** Construct link for null matrix. */
     _Link();
     /** Construct link for given matrix. */
     _Link(CVertexPtr matrix, int size);
     /** Get link at i */
-    CVertexPtr &operator[](int i);
+    CVertexPtr& operator[](int i);
     const typename LinkVec::const_iterator begin() const;
     const typename LinkVec::const_iterator end() const;
     /** Inital matrix */
     CVertexPtr _matrix;
 
-  private:
+   private:
     LinkVec _links;
   };
 };
@@ -191,67 +192,73 @@ struct VertexInfo {
   typedef NewInstance newinstance_value;
 };
 
-template <class ShouldMutate, class ShouldStop> struct GraphInfo {
+template <class ShouldMutate, class ShouldStop>
+struct GraphInfo {
   typedef ShouldMutate shouldmutate_value;
   typedef ShouldStop shouldstop_value;
 };
 struct AlwaysMutate {
-  bool operator()(void const *const /* ignored */,
+  bool operator()(void const* const /* ignored */,
                   int const /* ignored */) const {
     return true;
   }
 };
-template <class M> struct Equiv {
-  bool operator()(M const *const lhs, M const *const rhs) const {
+template <class M>
+struct Equiv {
+  bool operator()(M const* const lhs, M const* const rhs) const {
     return lhs->equals(*rhs);
   }
 };
-template <class M> struct Hash {
-  bool operator()(M const *const m) const { return m->hash(); }
+template <class M>
+struct Hash {
+  bool operator()(M const* const m) const { return m->hash(); }
 };
 struct IsExactly {
-  bool operator()(QuiverMatrix const *const, QuiverMatrix const *const) {
+  bool operator()(QuiverMatrix const* const, QuiverMatrix const* const) {
     return true;
   }
-  bool operator()(EquivQuiverMatrix const *const lhs,
-                  EquivQuiverMatrix const *const rhs) {
+  bool operator()(EquivQuiverMatrix const* const lhs,
+                  EquivQuiverMatrix const* const rhs) {
     return IntMatrix::are_equal(*lhs, *rhs);
   }
-  bool operator()(Seed const *const lhs, Seed const *const rhs) {
+  bool operator()(Seed const* const lhs, Seed const* const rhs) {
     return IntMatrix::are_equal(lhs->matrix(), rhs->matrix()) &&
            (lhs->cluster() == rhs->cluster());
   }
-  bool operator()(LabelledSeed const *const /* ignored */,
-                  LabelledSeed const *const /* ignored */) {
+  bool operator()(LabelledSeed const* const /* ignored */,
+                  LabelledSeed const* const /* ignored */) {
     return true;
   }
 };
-template <class M> struct Mutate {
-  void operator()(M const *const m, int vertex, M &out) const {
+template <class M>
+struct Mutate {
+  void operator()(M const* const m, int vertex, M& out) const {
     m->mutate(vertex, out);
   }
 };
 struct NeverStop {
-  bool operator()(void const *const /*ignored */) { return false; }
+  bool operator()(void const* const /*ignored */) { return false; }
 };
-template <class M, class Enable = void> struct GetInstance {
-  M *operator()(std::size_t const size) const { return new M(size); }
+template <class M, class Enable = void>
+struct GetInstance {
+  M* operator()(std::size_t const size) const { return new M(size); }
 };
 template <class M>
 struct GetInstance<
     M, typename std::enable_if<std::is_base_of<QuiverMatrix, M>::value>::type> {
-  M *operator()(std::size_t const size) const { return new M(size, size); }
+  M* operator()(std::size_t const size) const { return new M(size, size); }
 };
 template <class M>
 using QuiverVertex =
     VertexInfo<M, Hash<M>, Equiv<M>, IsExactly, Mutate<M>, GetInstance<M>>;
 using ComputeAllGraph = GraphInfo<AlwaysMutate, NeverStop>;
-template <class M> using QuiverEG = Graph<QuiverVertex<M>, ComputeAllGraph>;
-} // namespace detail
-} // namespace exchange_graph
+template <class M>
+using QuiverEG = Graph<QuiverVertex<M>, ComputeAllGraph>;
+}  // namespace detail
+}  // namespace exchange_graph
 typedef exchange_graph::detail::QuiverEG<Seed> ExchangeGraph;
 typedef exchange_graph::detail::QuiverEG<LabelledSeed> LabelledExchangeGraph;
 typedef exchange_graph::detail::QuiverEG<QuiverMatrix> LabelledQuiverGraph;
 typedef exchange_graph::detail::QuiverEG<EquivQuiverMatrix> QuiverGraph;
-} // namespace cluster
+}  // namespace cluster
 #include "template_exchange_graph.impl"

@@ -36,10 +36,11 @@ typedef std::map<std::string, GiNaC::symbol> SymbolMap;
  * different units would have different instances of symbols, both of which
  * represent "x".
  */
-const GiNaC::symbol &symbol(const std::string &s);
-} // namespace ginac
-} // namespace cluster
-inline const GiNaC::symbol &cluster::ginac::symbol(const std::string &s) {
+const GiNaC::symbol& symbol(const std::string& s);
+}  // namespace ginac
+}  // namespace cluster
+inline const GiNaC::symbol&
+cluster::ginac::symbol(const std::string& s) {
   static SymbolMap sym_map;
   SymbolMap::iterator found = sym_map.find(s);
   if (found != sym_map.end()) {

@@ -27,7 +27,7 @@
 
 namespace cluster {
 class dynkin {
-public:
+ public:
   static const QuiverMatrix A2;
   static const QuiverMatrix A3;
   static const QuiverMatrix A4;
@@ -63,4 +63,4 @@ public:
   static const QuiverMatrix G2;
   static const std::map<std::string, QuiverMatrix> MAP;
 };
-} // namespace cluster
+}  // namespace cluster

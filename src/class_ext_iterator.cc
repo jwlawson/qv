@@ -20,17 +20,19 @@ namespace cluster {
 
 EquivMutClassExtIterator::EquivMutClassExtIterator() : class_(), iter_() {}
 
-EquivMutClassExtIterator::EquivMutClassExtIterator(QuiverMatrix const &mat)
+EquivMutClassExtIterator::EquivMutClassExtIterator(QuiverMatrix const& mat)
     : class_(mat), iter_() {}
 
-QuiverMatrix const &EquivMutClassExtIterator::next() {
+QuiverMatrix const&
+EquivMutClassExtIterator::next() {
   if (!iter_.has_next()) {
     iter_ = ExtensionIterator<QuiverMatrix>(class_.next());
   }
   return iter_.next();
 }
 
-bool EquivMutClassExtIterator::has_next() {
+bool
+EquivMutClassExtIterator::has_next() {
   return iter_.has_next() || class_.has_next();
 }
-} // namespace cluster
+}  // namespace cluster

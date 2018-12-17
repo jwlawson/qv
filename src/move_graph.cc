@@ -23,10 +23,10 @@ namespace cluster {
 
 namespace {
 typedef std::vector<MMIMove::Applicable> AVec;
-} // namespace
+}  // namespace
 
 template <class M>
-MoveGraph<M>::MoveGraph(const M &mat, MoveVec moves)
+MoveGraph<M>::MoveGraph(const M& mat, MoveVec moves)
     : _matrix(mat), _moves(std::move(moves)) {
   CMatrixPtr m(new M(mat));
   add_ss_equiv(m);
@@ -38,7 +38,8 @@ MoveGraph<M>::MoveGraph(const M &mat, MoveVec moves)
 }
 
 template <class M>
-typename MoveGraph<M>::_GraphLoader &MoveGraph<M>::_GraphLoader::operator++() {
+typename MoveGraph<M>::_GraphLoader&
+MoveGraph<M>::_GraphLoader::operator++() {
   CMatrixPtr mat = _graph._queue.front();
   _graph._queue.pop_front();
   CMatrixPtr in_map = _graph.ss_move_equiv(mat);
@@ -66,22 +67,26 @@ typename MoveGraph<M>::_GraphLoader &MoveGraph<M>::_GraphLoader::operator++() {
 }
 
 template <class M>
-void MoveGraph<M>::_GraphLoader::seen_matrix(CMatrixPtr new_mat,
-                                             CMatrixPtr old_mat) {
+void
+MoveGraph<M>::_GraphLoader::seen_matrix(CMatrixPtr new_mat,
+                                        CMatrixPtr old_mat) {
   _graph._map[new_mat].add_link(old_mat);
   _graph._map[old_mat].add_link(new_mat);
 }
 
 template <class M>
-void MoveGraph<M>::_GraphLoader::unseen_matrix(CMatrixPtr const &new_mat,
-                                               CMatrixPtr old_mat) {
+void
+MoveGraph<M>::_GraphLoader::unseen_matrix(CMatrixPtr const& new_mat,
+                                          CMatrixPtr old_mat) {
   _graph._map.emplace(std::pair<CMatrixPtr, Link>(new_mat, Link(new_mat)));
   _graph._map[new_mat].add_link(old_mat);
   _graph._map[old_mat].add_link(new_mat);
   _graph.add_ss_equiv(new_mat);
 }
 
-template <class M> void MoveGraph<M>::add_ss_equiv(CMatrixPtr new_mat) {
+template <class M>
+void
+MoveGraph<M>::add_ss_equiv(CMatrixPtr new_mat) {
   typedef std::unordered_set<CMatrixPtr, PtrHash, PtrEqual> Set;
   Set to_add;
   std::deque<CMatrixPtr> queue;
@@ -149,4 +154,4 @@ MoveGraph<M>::ss_move_equiv(CMatrixPtr chk_mat) {
 }
 
 template class MoveGraph<EquivQuiverMatrix>;
-} // namespace cluster
+}  // namespace cluster

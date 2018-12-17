@@ -18,7 +18,7 @@ function(qv_target)
                                   ${ARGN})
   target_include_directories(${QV_TARGET_TARGET}
     PUBLIC $<BUILD_INTERFACE:${qv_SOURCE_DIR}/include>
-           $<INSTALL_INTERFACE:>
+           $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
   )
   if(QV_TARGET_INCLUDE_BINARY_DIR)
     target_include_directories(${QV_TARGET_TARGET}

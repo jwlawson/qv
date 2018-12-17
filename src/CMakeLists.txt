@@ -78,12 +78,14 @@ set(_sources
 qv_library(
   TARGET  qv
   SOURCES ${_sources} ${_headers}
-  PUBLIC_LIBRARIES Boost::boost
+  PRIVATE_LIBRARIES Boost::boost
   INCLUDE_BINARY_DIR
 )
 
 include(GenerateExportHeader)
-generate_export_header(qv)
+generate_export_header(qv
+  EXPORT_FILE_NAME "qv/qv_export.h"
+)
 
 include(GNUInstallDirs)
 install(TARGETS qv
@@ -91,11 +93,11 @@ install(TARGETS qv
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
-install(FILES ${_headers}
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+install(FILES ${_headers} ${CMAKE_CURRENT_BINARY_DIR}/qv/qv_export.h
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/qv
 )
 install(EXPORT qv_targets
-  FILE QVTargets.cmake
+  FILE QVConfig.cmake
   NAMESPACE QV::
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/QV
 )

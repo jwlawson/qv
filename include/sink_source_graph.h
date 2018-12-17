@@ -22,30 +22,27 @@ namespace cluster {
 
 namespace _sinksource {
 struct OnlyMutateSinkSource {
-	bool
-	operator()(IntMatrix const& matrix, int vertex) const {
-		int const * const row = matrix.data() + vertex * matrix.num_cols();
-		bool all_pos = true;
-		bool all_neg = true;
-		for(int i = 0, max = matrix.num_cols(); i < max && (all_pos || all_neg); ++i) {
-			all_neg = all_neg && row[i] <= 0;
-			all_pos = all_pos && row[i] >= 0;
-		}
-		return all_pos || all_neg;
-	}
-	bool
-	operator()(IntMatrix const * const matrix, int vertex) const {
-		return operator()(*matrix, vertex);
-	}
-	template<class M>
-	bool
-	operator()(__Seed<M> const * const seed, int vertex) const {
-		return operator()(seed->matrix(), vertex);
-	}
+  bool operator()(IntMatrix const &matrix, int vertex) const {
+    int const *const row = matrix.data() + vertex * matrix.num_cols();
+    bool all_pos = true;
+    bool all_neg = true;
+    for (int i = 0, max = matrix.num_cols(); i < max && (all_pos || all_neg);
+         ++i) {
+      all_neg = all_neg && row[i] <= 0;
+      all_pos = all_pos && row[i] >= 0;
+    }
+    return all_pos || all_neg;
+  }
+  bool operator()(IntMatrix const *const matrix, int vertex) const {
+    return operator()(*matrix, vertex);
+  }
+  template <class M>
+  bool operator()(__Seed<M> const *const seed, int vertex) const {
+    return operator()(seed->matrix(), vertex);
+  }
 };
-}
-template<class M>
+} // namespace _sinksource
+template <class M>
 using SinkSourceGraph = __ExchangeGraph<M, _sinksource::OnlyMutateSinkSource>;
 
-}
-
+} // namespace cluster

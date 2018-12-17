@@ -21,37 +21,31 @@
 
 namespace cluster {
 
-	template<class T>
-	T const&
-	StreamSubIter<T>::next() {
-		if(!sub_iter_.has_next()) {
-			std::shared_ptr<T> mat = stream_iter_.next();
-			removed_ = -1;
-			matrix_ = mat;
-			sub_iter_ = SubmatrixIterator<T>(*mat);
-		}
-		++removed_;
-		return sub_iter_.next();
-	}
-
-	template<class T>
-	void
-	StreamSubIter<T>::next_info(MatrixSub& info) {
-		if(info.submatrix) {
-			info.submatrix->set_matrix(next());
-		} else {
-			info.submatrix = std::make_shared<T>(next());
-		}
-		info.matrix = matrix_;
-		info.removed = removed_;
-	}
-
-	template<class T>
-	bool StreamSubIter<T>::has_next() {
-		return sub_iter_.has_next() || stream_iter_.has_next();
-	}
-
-	template class StreamSubIter<QuiverMatrix>;
-	template class StreamSubIter<EquivQuiverMatrix>;
+template <class T> T const &StreamSubIter<T>::next() {
+  if (!sub_iter_.has_next()) {
+    std::shared_ptr<T> mat = stream_iter_.next();
+    removed_ = -1;
+    matrix_ = mat;
+    sub_iter_ = SubmatrixIterator<T>(*mat);
+  }
+  ++removed_;
+  return sub_iter_.next();
 }
 
+template <class T> void StreamSubIter<T>::next_info(MatrixSub &info) {
+  if (info.submatrix) {
+    info.submatrix->set_matrix(next());
+  } else {
+    info.submatrix = std::make_shared<T>(next());
+  }
+  info.matrix = matrix_;
+  info.removed = removed_;
+}
+
+template <class T> bool StreamSubIter<T>::has_next() {
+  return sub_iter_.has_next() || stream_iter_.has_next();
+}
+
+template class StreamSubIter<QuiverMatrix>;
+template class StreamSubIter<EquivQuiverMatrix>;
+} // namespace cluster

@@ -20,8 +20,8 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 #include <unordered_set>
+#include <vector>
 
 #include "equiv_quiver_matrix.h"
 #include "equiv_underlying_graph.h"
@@ -32,8 +32,8 @@ namespace consts {
 
 extern std::vector<std::shared_ptr<cluster::MMIMove>> Moves;
 extern std::unordered_set<std::shared_ptr<cluster::EquivQuiverMatrix>> Reps;
-extern std::unordered_set<std::shared_ptr<cluster::EquivUnderlyingGraph>> Graphs;
+extern std::unordered_set<std::shared_ptr<cluster::EquivUnderlyingGraph>>
+    Graphs;
 
-}
-}
-
+} // namespace consts
+} // namespace qv

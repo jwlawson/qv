@@ -23,8 +23,7 @@
 #define MAX_MUTATIONS 3000
 
 namespace cluster {
-	namespace fastinf {
-		bool is_infinite(const QuiverMatrix& matrix);
-	}
+namespace fastinf {
+bool is_infinite(const QuiverMatrix &matrix);
 }
-
+} // namespace cluster

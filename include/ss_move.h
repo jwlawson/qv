@@ -28,24 +28,24 @@
 namespace cluster {
 
 class SSMove {
-	private:
-		typedef const std::shared_ptr<const IntMatrix> CMatrixPtr;
-		typedef const std::shared_ptr<IntMatrix> MatrixPtr;
-	public:
-		struct Applicable {
-			Applicable(int row, CMatrixPtr ptr) : row_(row), matrix_(ptr) {}
-			int row_;
-			CMatrixPtr matrix_;
-		};
-		/**
-		 * Check whether the supplied matrix contains any sink or source vertices.
-		 * If it does, then a non-empty vector of Applicables is returned detailing
-		 * each possible sink-source mutation.
-		 */
-		std::vector<Applicable> applicable_submatrices(const IntMatrix& m) const;
-		std::vector<Applicable> applicable_submatrices(CMatrixPtr m) const;
-		/** Perform the applicable sink-source mutation. */
-		void move(const Applicable& app, IntMatrix& result) const;
-};
-}
+private:
+  typedef const std::shared_ptr<const IntMatrix> CMatrixPtr;
+  typedef const std::shared_ptr<IntMatrix> MatrixPtr;
 
+public:
+  struct Applicable {
+    Applicable(int row, CMatrixPtr ptr) : row_(row), matrix_(ptr) {}
+    int row_;
+    CMatrixPtr matrix_;
+  };
+  /**
+   * Check whether the supplied matrix contains any sink or source vertices.
+   * If it does, then a non-empty vector of Applicables is returned detailing
+   * each possible sink-source mutation.
+   */
+  std::vector<Applicable> applicable_submatrices(const IntMatrix &m) const;
+  std::vector<Applicable> applicable_submatrices(CMatrixPtr m) const;
+  /** Perform the applicable sink-source mutation. */
+  void move(const Applicable &app, IntMatrix &result) const;
+};
+} // namespace cluster

@@ -23,59 +23,59 @@
 #include "submatrix_iterator.h"
 
 namespace cluster {
-	namespace mmi {
+namespace mmi {
 
-		MassFiniteCheck chk;
+namespace {
+MassFiniteCheck chk;
+} // namespace
 
-		void add_finite(const std::shared_ptr<EquivQuiverMatrix>& mat) {
-			chk.add_finite(mat);
-		}
-
-		bool fast_mmi(const QuiverMatrix& matrix) {
-
-			if(!fastinf::is_infinite(matrix)) {
-				EquivQuiverMatrix e(matrix);
-				if(chk.is_finite(e)) {
-					/* Actually finite. */
-					return false;
-				}
-			} 
-			SubmatrixIterator<QuiverMatrix> iter(matrix);
-			while(iter.has_next()) {
-				QuiverMatrix const& n = iter.next();
-				if(fastinf::is_infinite(n)){
-					return false;
-				}
-			}
-			return true;
-		}
-
-		bool slow_mmi(const QuiverMatrix& matrix) {
-
-			if(!fastinf::is_infinite(matrix)) {
-				/* Matrix probably finite. */
-				EquivQuiverMatrix e(matrix);
-				if(chk.is_finite(e)) {
-					/* Actually finite. */
-					return false;
-				}
-			}
-			/* Now check submatrices. */
-			SubmatrixIterator<QuiverMatrix> iter(matrix);
-			while(iter.has_next()) {
-				QuiverMatrix const& n = iter.next();
-				if(fastinf::is_infinite(n)){
-					return false;
-				}
-				/* Probably finite. */
-				EquivQuiverMatrix e(n);
-				if(!chk.is_finite(e)) {
-					/* Actually infinite. */
-					return false;
-				}
-			}
-			return true;
-		}
-	}
+void add_finite(const std::shared_ptr<EquivQuiverMatrix> &mat) {
+  chk.add_finite(mat);
 }
 
+bool fast_mmi(const QuiverMatrix &matrix) {
+  if (!fastinf::is_infinite(matrix)) {
+    EquivQuiverMatrix e(matrix);
+    if (chk.is_finite(e)) {
+      /* Actually finite. */
+      return false;
+    }
+  }
+  SubmatrixIterator<QuiverMatrix> iter(matrix);
+  while (iter.has_next()) {
+    QuiverMatrix const &n = iter.next();
+    if (fastinf::is_infinite(n)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool slow_mmi(const QuiverMatrix &matrix) {
+  if (!fastinf::is_infinite(matrix)) {
+    /* Matrix probably finite. */
+    EquivQuiverMatrix e(matrix);
+    if (chk.is_finite(e)) {
+      /* Actually finite. */
+      return false;
+    }
+  }
+  /* Now check submatrices. */
+  SubmatrixIterator<QuiverMatrix> iter(matrix);
+  while (iter.has_next()) {
+    QuiverMatrix const &n = iter.next();
+    if (fastinf::is_infinite(n)) {
+      return false;
+    }
+    /* Probably finite. */
+    EquivQuiverMatrix e(n);
+    if (!chk.is_finite(e)) {
+      /* Actually infinite. */
+      return false;
+    }
+  }
+  return true;
+}
+
+} // namespace mmi
+} // namespace cluster

@@ -39,14 +39,14 @@ namespace green_exchange {
  * have an arrow in its cache which leads back to the initial vertex.
  */
 struct MultiArrowTriangleCheck {
-  bool operator()(QuiverMatrix const* const mptr, int /*vertex*/) const {
+  bool operator()(QuiverMatrix const *const mptr, int /*vertex*/) const {
     const int nrows = mptr->num_rows();
     const int ncols = mptr->num_cols();
-		_vertex_cache.resize(nrows);
+    _vertex_cache.resize(nrows);
     for (int i = 0; i < nrows; ++i) {
       _vertex_cache[i].clear();
     }
-    const int* row = mptr->data();
+    const int *row = mptr->data();
     for (int r = 0; r < nrows; ++r) {
       for (int c = 0; c < ncols; ++c) {
         if (*(row++) > 1) {
@@ -54,8 +54,8 @@ struct MultiArrowTriangleCheck {
         }
       }
     }
-    for (int i = 0; i < nrows; ++i ) {
-			auto ith_vertex = _vertex_cache[i];
+    for (int i = 0; i < nrows; ++i) {
+      auto ith_vertex = _vertex_cache[i];
       for (int next_vert : ith_vertex) {
         for (int third_vert : _vertex_cache[next_vert]) {
           if (std::find(_vertex_cache[third_vert].begin(),
@@ -68,10 +68,10 @@ struct MultiArrowTriangleCheck {
     }
     return true;
   }
-  bool operator()(Seed const* const sptr, int vertex) const {
+  bool operator()(Seed const *const sptr, int vertex) const {
     return operator()(&(sptr->matrix()), vertex);
   }
-  bool operator()(LabelledSeed const* const sptr, int vertex) const {
+  bool operator()(LabelledSeed const *const sptr, int vertex) const {
     return operator()(&(sptr->matrix()), vertex);
   }
   mutable std::vector<std::vector<int>> _vertex_cache;
@@ -82,11 +82,10 @@ using GreenGraphInfo =
 template <class M>
 using GreenVertexInfo = exchange_graph::detail::QuiverVertex<M>;
 template <class M>
-using GreenGraph =
-    exchange_graph::Graph<GreenVertexInfo<M>, GreenGraphInfo>;
-}
+using GreenGraph = exchange_graph::Graph<GreenVertexInfo<M>, GreenGraphInfo>;
+} // namespace green_exchange
 typedef green_exchange::GreenGraph<Seed> GreenExchangeGraph;
 typedef green_exchange::GreenGraph<LabelledSeed> GreenLabelledExchangeGraph;
 typedef green_exchange::GreenGraph<QuiverMatrix> GreenLabelledQuiverGraph;
 typedef green_exchange::GreenGraph<EquivQuiverMatrix> GreenQuiverGraph;
-}
+} // namespace cluster

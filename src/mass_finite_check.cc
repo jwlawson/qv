@@ -20,53 +20,46 @@
 
 namespace cluster {
 
-	MassFiniteCheck::MassFiniteCheck()
-		: set_{ std::make_shared<MSet>() }
-		, last_new_{false}
-		, last_checked_{ std::make_shared<M>() }
-	{}
+MassFiniteCheck::MassFiniteCheck()
+    : set_{std::make_shared<MSet>()}, last_new_{false},
+      last_checked_{std::make_shared<M>()} {}
 
-	bool MassFiniteCheck::is_finite(const M& matrix) {
-		if(matrix.num_rows() < 2 && matrix.num_cols() < 2) {
-			return true;
-		}
-		*last_checked_ = matrix;
-		last_new_ = false;
-		if(set_contains(last_checked_)) {
-			return true;
-		}
-		if(fastinf::is_infinite(matrix)) {
-			return false;
-		}
-		MutationClass c(matrix);
-		if(c.is_finite()) {
-			last_new_ = true;
-			add_class(c);
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	bool MassFiniteCheck::last_new_class() const {
-		return last_new_;
-	}
-
-	std::shared_ptr<const MassFiniteCheck::MSet> MassFiniteCheck::set() const {
-		return set_;
-	}
-
-	void MassFiniteCheck::add_finite(const MPtr& matrix) {
-		set_->insert(matrix);
-	}
-
-	bool MassFiniteCheck::set_contains(MPtr mat) const {
-		return set_->find(mat) != set_->end();
-	}
-
-	void MassFiniteCheck::add_class(const MutationClass& c){
-		set_->insert(c.begin(), c.end());
-	}
-
+bool MassFiniteCheck::is_finite(const M &matrix) {
+  if (matrix.num_rows() < 2 && matrix.num_cols() < 2) {
+    return true;
+  }
+  *last_checked_ = matrix;
+  last_new_ = false;
+  if (set_contains(last_checked_)) {
+    return true;
+  }
+  if (fastinf::is_infinite(matrix)) {
+    return false;
+  }
+  MutationClass c(matrix);
+  if (c.is_finite()) {
+    last_new_ = true;
+    add_class(c);
+    return true;
+  } else {
+    return false;
+  }
 }
 
+bool MassFiniteCheck::last_new_class() const { return last_new_; }
+
+std::shared_ptr<const MassFiniteCheck::MSet> MassFiniteCheck::set() const {
+  return set_;
+}
+
+void MassFiniteCheck::add_finite(const MPtr &matrix) { set_->insert(matrix); }
+
+bool MassFiniteCheck::set_contains(MPtr mat) const {
+  return set_->find(mat) != set_->end();
+}
+
+void MassFiniteCheck::add_class(const MutationClass &c) {
+  set_->insert(c.begin(), c.end());
+}
+
+} // namespace cluster

@@ -83,9 +83,7 @@ qv_library(
 )
 
 include(GenerateExportHeader)
-generate_export_header(qv
-  EXPORT_FILE_NAME "qv/qv_export.h"
-)
+generate_export_header(qv)
 
 include(GNUInstallDirs)
 install(TARGETS qv
@@ -93,7 +91,7 @@ install(TARGETS qv
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
-install(FILES ${_headers} ${CMAKE_CURRENT_BINARY_DIR}/qv/qv_export.h
+install(FILES ${_headers} ${CMAKE_CURRENT_BINARY_DIR}/qv_export.h
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/qv
 )
 install(EXPORT qv_targets

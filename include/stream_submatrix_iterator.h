@@ -24,39 +24,36 @@
 #include "submatrix_iterator.h"
 
 namespace cluster {
-	template<class T>
-	class StreamSubIter {
+template <class T> class StreamSubIter {
 
-		private:
-			typedef std::shared_ptr<T> MatrixPtr;
-		public:
-			StreamSubIter() : stream_iter_() {}
-			StreamSubIter(std::istream& stream) : stream_iter_(stream) {}
+private:
+  typedef std::shared_ptr<T> MatrixPtr;
 
-			struct MatrixSub{
-				MatrixPtr matrix;
-				MatrixPtr submatrix;
-				int removed;
-			};
+public:
+  StreamSubIter() : stream_iter_() {}
+  StreamSubIter(std::istream &stream) : stream_iter_(stream) {}
 
-			T const& next();
-			MatrixSub next_info();
-			void next_info(MatrixSub& info);
-			bool has_next();
+  struct MatrixSub {
+    MatrixPtr matrix;
+    MatrixPtr submatrix;
+    int removed;
+  };
 
-		private:
-			StreamIterator<T> stream_iter_;
-			SubmatrixIterator<T> sub_iter_;
-			MatrixPtr matrix_;
-			int removed_;
-	};
-	template<class T>
-	inline
-	typename StreamSubIter<T>::MatrixSub
-	StreamSubIter<T>::next_info() {
-		MatrixSub result {nullptr, nullptr, 0};
-		next_info(result);
-		return result;
-	}
+  T const &next();
+  MatrixSub next_info();
+  void next_info(MatrixSub &info);
+  bool has_next();
+
+private:
+  StreamIterator<T> stream_iter_;
+  SubmatrixIterator<T> sub_iter_;
+  MatrixPtr matrix_;
+  int removed_;
+};
+template <class T>
+inline typename StreamSubIter<T>::MatrixSub StreamSubIter<T>::next_info() {
+  MatrixSub result{nullptr, nullptr, 0};
+  next_info(result);
+  return result;
 }
-
+} // namespace cluster

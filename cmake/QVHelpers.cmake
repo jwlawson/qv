@@ -1,4 +1,28 @@
 
+if(MSVC)
+  set(_warning_flags /W4)
+  set(_optimisation_flags "")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  set(_warning_flags -Wall -Wextra -Werror)
+  set(_optimisation_flags
+    -march=native -fno-signed-zeros -fno-math-errno -fno-rounding-math
+    -fno-signaling-nans -fno-trapping-math -ffinite-math-only
+  )
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  set(_warning_flags -Wall -Wextra -Werror)
+  set(_optimisation_flags -march=native)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+  set(_warning_flags -Wall)
+  set(_optimisation_flags -xHOST -ipo -no-prec-div)
+else()
+  set(_warning_flags "")
+  set(_optimisation_flags "")
+endif()
+set(QV_WARNING_FLAGS "${_warning_flags}"
+  CACHE STRING "Warning flags to use when compiling")
+list(APPEND CMAKE_CXX_FLAGS_RELEASE "${_optimisation_flags}")
+STRING(REPLACE ";" " " CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+
 macro(forward_option OUT_VAR PREFIX OPTION_NAME)
   if(${${PREFIX}_${OPTION_NAME}})
     set(${OUT_VAR} "${OPTION_NAME}")

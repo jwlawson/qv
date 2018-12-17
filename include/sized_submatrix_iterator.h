@@ -27,43 +27,42 @@
 
 namespace cluster {
 
-	class SizedSubmatrixIterator {
-		public:
-		/**
-		 * Create an iterator which returns submatrices of size `size` of the
-		 * provided matrix.
-		 * @param size Size of each submatrix.
-		 * @param matrix Initial matrix to take submatrices of.
-		 */
-		SizedSubmatrixIterator(int size, const IntMatrix& matrix);
-		/**
-		 * Check if the iterator will return a valid submatrix if next is called.
-		 * @return true if next() will return a valid submatrix.
-		 */
-		bool has_next();
-		/**
-		 * Get the next submatrix without allocations.
-		 * The matrix will be stored in the provided matrix. No bounds or size
-		 * checks are carried out, so ensure that the matrix is the correct size.
-		 */
-		void next(IntMatrix& result);
-		/** Get the rows which make up the previously returned submatrix. */
-		std::vector<int> get_rows();
+class SizedSubmatrixIterator {
+public:
+  /**
+   * Create an iterator which returns submatrices of size `size` of the
+   * provided matrix.
+   * @param size Size of each submatrix.
+   * @param matrix Initial matrix to take submatrices of.
+   */
+  SizedSubmatrixIterator(int size, const IntMatrix &matrix);
+  /**
+   * Check if the iterator will return a valid submatrix if next is called.
+   * @return true if next() will return a valid submatrix.
+   */
+  bool has_next();
+  /**
+   * Get the next submatrix without allocations.
+   * The matrix will be stored in the provided matrix. No bounds or size
+   * checks are carried out, so ensure that the matrix is the correct size.
+   */
+  void next(IntMatrix &result);
+  /** Get the rows which make up the previously returned submatrix. */
+  std::vector<int> get_rows();
 
-		private:
-		/** Initial matrix to take submatrices of. */
-		const IntMatrix& m_;
-		/** Size of smallest dimension of m_ */
-		int max_val_;
-		/** Vector of which rows and columns were in the last returned submatrix. */
-		std::vector<int> last_rows_;
-		/** Vector of which rows and columns to include in the next submatrix. */
-		std::vector<int> rows_;
-		/** True if the iterator will return a valid matrix next. */
-		bool has_next_;
+private:
+  /** Initial matrix to take submatrices of. */
+  const IntMatrix &m_;
+  /** Size of smallest dimension of m_ */
+  int max_val_;
+  /** Vector of which rows and columns were in the last returned submatrix. */
+  std::vector<int> last_rows_;
+  /** Vector of which rows and columns to include in the next submatrix. */
+  std::vector<int> rows_;
+  /** True if the iterator will return a valid matrix next. */
+  bool has_next_;
 
-		/** Compute the next set of rows and columns for the next submatrix. */
-		void check_add_index(size_t ind);
-	};
-}
-
+  /** Compute the next set of rows and columns for the next submatrix. */
+  void check_add_index(size_t ind);
+};
+} // namespace cluster

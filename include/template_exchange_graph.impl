@@ -2,7 +2,7 @@ namespace cluster {
 namespace exchange_graph {
 /* ExchangeGraph */
 template <class V, class G>
-inline Graph<V, G>::Graph(Vertex const& mat, int matrix_size, size_t max_num)
+inline Graph<V, G>::Graph(Vertex const &mat, int matrix_size, size_t max_num)
     : _matrix_size(matrix_size), _max_num(max_num) {
   VertexPtr m = new Vertex(mat);
   _queue.push_back(m);
@@ -13,34 +13,32 @@ inline Graph<V, G>::Graph(Vertex const& mat, int matrix_size, size_t max_num)
     l.load_next();
   }
 }
-template <class V, class G>
-inline Graph<V, G>::~Graph() {
+template <class V, class G> inline Graph<V, G>::~Graph() {
   for (auto it = _map.begin(); it != _map.end(); ++it) {
     delete it->first;
   }
 }
 template <class V, class G>
-inline typename Graph<V, G>::GraphMap const& Graph<V, G>::underlying_map()
-    const {
+inline typename Graph<V, G>::GraphMap const &
+Graph<V, G>::underlying_map() const {
   return _map;
 }
 template <class V, class G>
-inline const typename Graph<V, G>::GraphMap::const_iterator Graph<V, G>::begin()
-    const {
+inline const typename Graph<V, G>::GraphMap::const_iterator
+Graph<V, G>::begin() const {
   return _map.begin();
 }
 template <class V, class G>
-inline const typename Graph<V, G>::GraphMap::const_iterator Graph<V, G>::end()
-    const {
+inline const typename Graph<V, G>::GraphMap::const_iterator
+Graph<V, G>::end() const {
   return _map.end();
 }
 /* _GraphLoader */
 template <class V, class G>
-inline Graph<V, G>::_GraphLoader::_GraphLoader(Graph& graph)
+inline Graph<V, G>::_GraphLoader::_GraphLoader(Graph &graph)
     : _graph(graph), _size(graph._matrix_size) {}
 
-template <class V, class G>
-inline void Graph<V, G>::_GraphLoader::load_next() {
+template <class V, class G> inline void Graph<V, G>::_GraphLoader::load_next() {
   CVertexPtr mat = _graph._queue.front();
   _graph._queue.pop_front();
   for (std::size_t i = 0; !_end && i < _size; ++i) {
@@ -53,14 +51,14 @@ inline void Graph<V, G>::_GraphLoader::load_next() {
       } else {
         // up to this point _end is always false
         unseen_matrix(new_matrix, mat, i);
-        _end = (_graph._map.size() >= _graph._max_num) || should_stop(new_matrix);
+        _end =
+            (_graph._map.size() >= _graph._max_num) || should_stop(new_matrix);
       }
     }
   }
   _end = _end || _graph._queue.empty();
 }
-template <class V, class G>
-inline bool Graph<V, G>::_GraphLoader::end() const {
+template <class V, class G> inline bool Graph<V, G>::_GraphLoader::end() const {
   return _end;
 }
 template <class V, class G>
@@ -86,7 +84,7 @@ inline void Graph<V, G>::_GraphLoader::seen_matrix(CVertexPtr new_mat,
   if (ref != _graph._map.end() && is_exactly(new_mat, ref->first)) {
     ref->second[vertex] = old_mat;
   }
-  auto& old_matrix_vertex_link = _graph._map[old_mat][vertex];
+  auto &old_matrix_vertex_link = _graph._map[old_mat][vertex];
   if (old_matrix_vertex_link == nullptr) {
     old_matrix_vertex_link = ref->first;
   }
@@ -110,7 +108,7 @@ inline Graph<V, G>::_Link::_Link(CVertexPtr matrix, int size)
     : _matrix(matrix), _links(size, nullptr) {}
 
 template <class V, class G>
-inline typename Graph<V, G>::CVertexPtr& Graph<V, G>::_Link::operator[](int i) {
+inline typename Graph<V, G>::CVertexPtr &Graph<V, G>::_Link::operator[](int i) {
   return _links[i];
 }
 template <class V, class G>
@@ -123,5 +121,5 @@ inline const typename Graph<V, G>::_Link::LinkVec::const_iterator
 Graph<V, G>::_Link::end() const {
   return _links.end();
 }
-}
-}
+} // namespace exchange_graph
+} // namespace cluster

@@ -29,65 +29,62 @@
 #include "equiv_quiver_matrix.h"
 
 namespace cluster {
-	class OrientedCycleInfo {
+class OrientedCycleInfo {
 
-		public:
-			/**
-			 * Construct the cycle information about the specified matrix.
-			 * @param matrix Matrix to extract cycle information from
-			 */
-			OrientedCycleInfo(const QuiverMatrix& matrix);
-			/**
-			 * Check whether two instances are equal.
-			 * @param cycle Instance to check
-			 * @return true if cycle is the same (up to permutation) as this
-			 */
-			bool equals(const OrientedCycleInfo& cycle) const;
-			/**
-			 * Calculate the has of the cycle information.
-			 * @return Hashcode of this information
-			 */
-			std::size_t hash() const;
-			/**
-			 * Output the matrix which stores the cycle information.
-			 */
-			friend std::ostream& operator<<(std::ostream& os, const OrientedCycleInfo& cycle);
+public:
+  /**
+   * Construct the cycle information about the specified matrix.
+   * @param matrix Matrix to extract cycle information from
+   */
+  OrientedCycleInfo(const QuiverMatrix &matrix);
+  /**
+   * Check whether two instances are equal.
+   * @param cycle Instance to check
+   * @return true if cycle is the same (up to permutation) as this
+   */
+  bool equals(const OrientedCycleInfo &cycle) const;
+  /**
+   * Calculate the has of the cycle information.
+   * @return Hashcode of this information
+   */
+  std::size_t hash() const;
+  /**
+   * Output the matrix which stores the cycle information.
+   */
+  friend std::ostream &operator<<(std::ostream &os,
+                                  const OrientedCycleInfo &cycle);
 
-		private:
-			/** Matrix containing only the cyclic part of the initial matrix. */
-			EquivQuiverMatrix matrix_;
-	};
-}
+private:
+  /** Matrix containing only the cyclic part of the initial matrix. */
+  EquivQuiverMatrix matrix_;
+};
+} // namespace cluster
 
 namespace std {
-	/* Add hash function to the std::hash struct. */
-	template <>
-	struct hash<cluster::OrientedCycleInfo> {
-		size_t operator()(const cluster::OrientedCycleInfo &x) const {
-			return x.hash();
-		}
-	};
-	template <>
-	struct hash<std::shared_ptr<cluster::OrientedCycleInfo>> {
-		size_t operator()(const std::shared_ptr<cluster::OrientedCycleInfo> &x)
-				const {
-			return x->hash();
-		}
-	};
-	/* Add equals function to std::equal_to */
-	template<>
-	struct equal_to<cluster::OrientedCycleInfo> {
-		bool operator()(const cluster::OrientedCycleInfo &lhs,
-		                const cluster::OrientedCycleInfo &rhs) const {
-			return lhs.equals(rhs);
-		}
-	};
-	template<>
-	struct equal_to<std::shared_ptr<cluster::OrientedCycleInfo>> {
-		bool operator()(const std::shared_ptr<cluster::OrientedCycleInfo> &lhs,
-		                const std::shared_ptr<cluster::OrientedCycleInfo> &rhs) const {
-			return lhs->equals(*rhs);
-		}
-	};
-}
-
+/* Add hash function to the std::hash struct. */
+template <> struct hash<cluster::OrientedCycleInfo> {
+  size_t operator()(const cluster::OrientedCycleInfo &x) const {
+    return x.hash();
+  }
+};
+template <> struct hash<std::shared_ptr<cluster::OrientedCycleInfo>> {
+  size_t
+  operator()(const std::shared_ptr<cluster::OrientedCycleInfo> &x) const {
+    return x->hash();
+  }
+};
+/* Add equals function to std::equal_to */
+template <> struct equal_to<cluster::OrientedCycleInfo> {
+  bool operator()(const cluster::OrientedCycleInfo &lhs,
+                  const cluster::OrientedCycleInfo &rhs) const {
+    return lhs.equals(rhs);
+  }
+};
+template <> struct equal_to<std::shared_ptr<cluster::OrientedCycleInfo>> {
+  bool
+  operator()(const std::shared_ptr<cluster::OrientedCycleInfo> &lhs,
+             const std::shared_ptr<cluster::OrientedCycleInfo> &rhs) const {
+    return lhs->equals(*rhs);
+  }
+};
+} // namespace std

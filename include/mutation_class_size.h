@@ -22,14 +22,13 @@
 #include "quiver_matrix.h"
 
 namespace cluster {
-	namespace classsize {
-		/**
-		 * Find the size of the mutation class of the matrix.
-		 * @param matrix Matrix to check
-		 * @return The size of the mutation class
-		 */
-		int Size(const QuiverMatrix& matrix);
+namespace classsize {
+/**
+ * Find the size of the mutation class of the matrix.
+ * @param matrix Matrix to check
+ * @return The size of the mutation class
+ */
+int Size(const QuiverMatrix &matrix);
 
-	}
-}
-
+} // namespace classsize
+} // namespace cluster

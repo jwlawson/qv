@@ -81,6 +81,7 @@ qv_library(
   PRIVATE_LIBRARIES Boost::boost
   INCLUDE_BINARY_DIR
 )
+add_library(QV::qv ALIAS qv)
 
 include(GenerateExportHeader)
 generate_export_header(qv)

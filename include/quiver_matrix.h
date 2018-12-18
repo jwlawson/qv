@@ -38,8 +38,8 @@ class QuiverMatrix : public IntMatrix {
    * @param rows Number of rows in matrix
    * @param cols Number of columns in matrix
    */
-
   QuiverMatrix(const int rows, const int cols);
+
   /**
    * Construct a QuiverMatrix of specified size and fill with the values
    * provided in the array.

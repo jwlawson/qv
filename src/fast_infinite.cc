@@ -21,14 +21,12 @@
 namespace cluster {
 namespace fastinf {
 
-namespace {
-std::default_random_engine gen;
-std::array<QuiverMatrix, 2> mutated;
-std::uniform_int_distribution<int> dist;
-}  // namespace
-
 bool
 is_infinite(const QuiverMatrix& matrix) {
+  static std::default_random_engine gen;
+  static std::array<QuiverMatrix, 2> mutated;
+  static std::uniform_int_distribution<int> dist;
+
   // All 2x2 matrices are mutation finite
   if (matrix.num_rows() <= 2 && matrix.num_cols() <= 2) {
     return false;
@@ -43,11 +41,9 @@ is_infinite(const QuiverMatrix& matrix) {
   if (dist.max() != matrix.num_rows() - 1 || dist.min() != 0) {
     dist = std::uniform_int_distribution<int>(0, matrix.num_rows() - 1);
   }
-  auto random = []() { return dist(gen); };
 
   while (counter < MAX_MUTATIONS) {
-    int rand;
-    rand = random();
+    int rand = dist(gen);
     if (rand == lastMutation) {
       // Want to avoid repeating a mutation as that will never yield a new
       // quiver. Instead of repeatedly generating random numbers, just use the
